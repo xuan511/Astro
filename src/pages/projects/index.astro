@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+const projects = await getCollection('projects');
+---
+
+<Base title="项目与作品" description="一些把想法做出来的尝试：Linux、嵌入式与设备开发。">
+  <div class="shell">
+    <PageHeading
+      title="把想法，做成可以运行的东西"
+      eyebrow="A WORK IN PROGRESS"
+      description="从一个小问题开始，一点一点搭起来。\n这里保留项目的样子，也诚实地保留它们的进度。"
+    />
+    <div class="project-grid">
+      {projects.map((project, index) => (
+        <ProjectCard project={project} index={index} />
+      ))}
+    </div>
+    {projects.length === 0 && (
+      <div class="empty-state">
+        <h2>新的尝试，正在路上。</h2>
+      </div>
+    )}
+  </div>
+</Base>

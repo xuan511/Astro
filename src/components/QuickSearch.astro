@@ -1,0 +1,28 @@
+---
+import SearchPanel from './SearchPanel.astro';
+import Icon from './Icon.astro';
+---
+
+<dialog id="quick-search" class="search-dialog" aria-labelledby="quick-search-title">
+  <div class="search-dialog-heading">
+    <div>
+      <p class="eyebrow">A LITTLE DISCOVERY</p>
+      <h2 id="quick-search-title">翻找一段记录</h2>
+    </div>
+    <button class="icon-button" type="button" data-search-close aria-label="关闭搜索">
+      <Icon name="close" />
+    </button>
+  </div>
+  <SearchPanel compact />
+  <div class="search-key-hints" aria-hidden="true">
+    <span>
+      <kbd>↓</kbd> 浏览结果
+    </span>
+    <span>
+      <kbd>↵</kbd> 打开
+    </span>
+    <span>
+      <kbd>Esc</kbd> 关闭
+    </span>
+  </div>
+</dialog>

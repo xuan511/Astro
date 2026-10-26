@@ -1,0 +1,19 @@
+---
+import PostIndex from '../../layouts/PostIndex.astro';
+import { publishedPosts } from '../../lib/content';
+export async function getStaticPaths() {
+  const all = await publishedPosts();
+  return [...new Set(all.map((post) => post.data.category))].map((category) => ({
+    params: { category },
+    props: { category, posts: all.filter((post) => post.data.category === category) },
+  }));
+}
+const { category, posts } = Astro.props;
+---
+
+<PostIndex
+  title={category}
+  eyebrow="COLLECTION"
+  description={`归在「${category}」里的文字与片刻。`}
+  posts={posts}
+/>

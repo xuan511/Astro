@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { projectPath } from '../lib/paths';
+import Icon from './Icon.astro';
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index?: number;
+}
+const { project, index = 0 } = Astro.props;
+const data = project.data;
+---
+
+<article class="project-card">
+  <a href={projectPath(project.id)}>
+    <div class="project-card-top">
+      <span class="project-number">0{index + 1} / BUILD SOMETHING</span>
+      <Icon name="arrow" size={18} />
+    </div>
+    <div class="project-glyph" aria-hidden="true">
+      <Icon name={index % 2 ? 'book' : 'code'} size={32} />
+    </div>
+    <p class="project-status">{data.status}</p>
+    <h3>{data.name}</h3>
+    <p>{data.description}</p>
+    <div class="stack">
+      {data.stack.map((tag) => (
+        <span>{tag}</span>
+      ))}
+    </div>
+  </a>
+</article>

@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { postPath, formatDate, readingMinutes } from '../lib/paths';
+import Icon from './Icon.astro';
+import Media from './Media.astro';
+interface Props {
+  post: CollectionEntry<'posts'>;
+  featured?: boolean;
+}
+const { post, featured = false } = Astro.props;
+const { data } = post;
+---
+
+<article class:list={['post-card', { featured }]}>
+  <a class="post-card-link" href={postPath(post.id)}>
+    {featured && data.cover && (
+      <div class="featured-art">
+        <Media src={data.cover} alt={data.coverAlt} width={480} height={360} eager />
+      </div>
+    )}
+    <div class="post-card-content">
+      <div class="post-meta">
+        <span>{data.category}</span>
+        <span class="meta-dot"></span>
+        <time datetime={data.publishedAt.toISOString()}>{formatDate(data.publishedAt)}</time>
+        {data.demo && <span class="sample-badge">示例</span>}
+      </div>
+      <h3>{data.title}</h3>
+      <p class="excerpt">{data.description}</p>
+      <div class="post-card-tail">
+        <span class="tag-line">
+          {data.tags.slice(0, 2).map((tag) => (
+            <span>#{tag}</span>
+          ))}
+        </span>
+        <span class="read-time">
+          <Icon name="clock" size={13} />
+          {readingMinutes(post.body)} 分钟
+        </span>
+      </div>
+      {featured && (
+        <span class="text-link">
+          读一读 <Icon name="arrow" size={15} />
+        </span>
+      )}
+    </div>
+    {!featured && (
+      <div class:list={['post-mark', data.tone]} aria-hidden="true">
+        <Icon name={data.kind === 'tech' ? 'code' : 'leaf'} size={30} />
+        <span></span>
+      </div>
+    )}
+  </a>
+</article>

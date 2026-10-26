@@ -1,0 +1,16 @@
+---
+import { site } from '../config/site';
+import { withBase } from '../lib/paths';
+---
+
+<footer class="site-footer shell">
+  <p>
+    © {new Date().getFullYear()} {site.author} · {site.title}
+  </p>
+  <p class="footer-note">{site.footer}</p>
+  <nav aria-label="页脚导航">
+    <a href={withBase('archive/')}>归档</a>
+    <a href={withBase('rss.xml')}>RSS</a>
+    <a href={withBase('writing/')}>写作指南</a>
+  </nav>
+</footer>

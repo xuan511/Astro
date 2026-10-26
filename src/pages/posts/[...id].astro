@@ -1,0 +1,166 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Media from '../../components/Media.astro';
+import ReadingControls from '../../components/ReadingControls.astro';
+import ImageViewer from '../../components/ImageViewer.astro';
+import { publishedPosts } from '../../lib/content';
+import { site } from '../../config/site';
+import { withBase, postPath, taxonomyPath, formatDate, readingMinutes } from '../../lib/paths';
+import '../../styles/prose.css';
+export async function getStaticPaths() {
+  const all = await publishedPosts();
+  return all.map((post, index) => ({
+    params: { id: post.id },
+    props: { post, previous: all[index + 1], next: all[index - 1] },
+  }));
+}
+const { post, previous, next } = Astro.props;
+const { Content, headings } = await render(post);
+const { data } = post;
+const back = data.kind === 'tech' ? 'tech/' : 'life/';
+const url = new URL(postPath(post.id), Astro.site);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: data.title,
+  description: data.description,
+  datePublished: data.publishedAt.toISOString(),
+  dateModified: (data.updatedAt || data.publishedAt).toISOString(),
+  author: { '@type': 'Person', name: site.author },
+  mainEntityOfPage: url.href,
+};
+---
+
+<Base
+  title={data.title}
+  description={data.description}
+  image={typeof data.cover === 'string' ? data.cover : undefined}
+  ogType="article"
+  section={back}
+>
+  <Fragment slot="head">
+    <meta property="article:published_time" content={data.publishedAt.toISOString()} />
+    <meta
+      property="article:modified_time"
+      content={(data.updatedAt || data.publishedAt).toISOString()}
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+  </Fragment>
+  <div id="reading-progress" aria-hidden="true"></div>
+  <div class:list={['shell', 'article-layout', { 'life-article': data.kind === 'life' }]}>
+    <article data-reading-article>
+      <a class="text-link article-back" href={withBase(back)}>
+        <Icon name="arrow" size={15} class="reverse" />
+        回到{data.kind === 'tech' ? '技术' : '生活'}记录
+      </a>
+      <header class="article-heading">
+        <div class="post-meta">
+          <a href={taxonomyPath('categories', data.category)}>{data.category}</a>
+          <span class="meta-dot"></span>
+          <span>{data.kind === 'tech' ? '技术记录' : '生活随笔'}</span>
+          {data.demo && <span class="sample-badge">示例文章</span>}
+        </div>
+        <h1 id="article-title">{data.title}</h1>
+        <p class="article-description">{data.description}</p>
+        <div class="article-info">
+          <span>{site.author}</span>
+          <time datetime={data.publishedAt.toISOString()}>
+            发布于 {formatDate(data.publishedAt)}
+          </time>
+          {data.updatedAt && data.updatedAt.getTime() !== data.publishedAt.getTime() && (
+            <time datetime={data.updatedAt.toISOString()}>更新于 {formatDate(data.updatedAt)}</time>
+          )}
+          <span>约 {readingMinutes(post.body)} 分钟</span>
+        </div>
+        <nav class="article-tags" aria-label="文章标签">
+          {data.tags.map((tag) => (
+            <a href={taxonomyPath('tags', tag)}>#{tag}</a>
+          ))}
+        </nav>
+      </header>
+      <ReadingControls />
+      {data.kind === 'life' && data.cover && (
+        <Media src={data.cover} alt={data.coverAlt} class="article-cover" eager />
+      )}
+      {headings.length > 1 && (
+        <details class="mobile-toc">
+          <summary>
+            <span>目录</span>
+            <span data-current-heading>在这篇记录里</span>
+            <Icon name="chevron" size={15} />
+          </summary>
+          <nav aria-label="移动端文章目录">
+            {headings
+              .filter((heading) => heading.depth <= 3)
+              .map((heading) => (
+                <a
+                  href={`#${heading.slug}`}
+                  data-toc-link
+                  class:list={[{ nested: heading.depth === 3 }]}
+                >
+                  {heading.text}
+                </a>
+              ))}
+          </nav>
+        </details>
+      )}
+      <div class="prose" id="article-content">
+        <Content />
+      </div>
+      <footer class="article-tail">
+        <div>
+          <p>谢谢你，读到了这里。</p>
+          <a class="text-link" href="#article-title">
+            回到开头 ↑
+          </a>
+        </div>
+        <a class="text-link" href={withBase('rss.xml')}>
+          用 RSS 继续阅读 <Icon name="arrow" size={15} />
+        </a>
+      </footer>
+      <nav class="article-neighbors" aria-label="相邻文章">
+        {previous ? (
+          <a href={postPath(previous.id)}>
+            <small>上一篇记录</small>
+            <p>{previous.data.title}</p>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a href={postPath(next.id)}>
+            <small>下一篇记录</small>
+            <p>{next.data.title}</p>
+          </a>
+        )}
+      </nav>
+    </article>
+    <aside class="article-sidebar">
+      <nav class="toc" aria-label="文章目录">
+        <h2>在这篇记录里</h2>
+        {headings
+          .filter((heading) => heading.depth <= 3)
+          .map((heading) => (
+            <a
+              href={`#${heading.slug}`}
+              data-toc-link
+              class:list={[{ nested: heading.depth === 3 }]}
+            >
+              {heading.text}
+            </a>
+          ))}
+        <p class="handwritten">
+          Take your time.
+          <br />
+          Enjoy the reading.
+        </p>
+      </nav>
+    </aside>
+  </div>
+  <ImageViewer />
+  <script>
+    import '../../scripts/reading';
+  </script>
+</Base>

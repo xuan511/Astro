@@ -1,0 +1,31 @@
+---
+interface Props {
+  title?: string;
+}
+const { title = '记在这里' } = Astro.props;
+---
+
+<aside class="callout">
+  <strong>{title}</strong>
+  <div>
+    <slot />
+  </div>
+</aside>
+<style>
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--soft);
+    padding: 1.1rem 1.35rem;
+    border-radius: 0 12px 12px 0;
+    margin: 1.8rem 0;
+  }
+  .callout strong {
+    font-size: 0.9rem;
+  }
+  .callout div {
+    margin-top: 0.35rem;
+  }
+  .callout :global(p) {
+    margin: 0.3rem 0;
+  }
+</style>

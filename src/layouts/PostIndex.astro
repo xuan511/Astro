@@ -1,0 +1,115 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import PageHeading from '../components/PageHeading.astro';
+import PostCard from '../components/PostCard.astro';
+import { taxonomyPath, withBase } from '../lib/paths';
+interface Props {
+  title: string;
+  eyebrow: string;
+  description: string;
+  posts: CollectionEntry<'posts'>[];
+  kind?: 'tech' | 'life';
+}
+const { title, eyebrow, description, posts, kind } = Astro.props;
+const categories = [...new Set(posts.map((post) => post.data.category))];
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+---
+
+<Base title={title} description={description}>
+  <div class:list={['shell', 'post-index', { 'life-index': kind === 'life' }]}>
+    <PageHeading title={title} eyebrow={eyebrow} description={description} />
+    <div class="index-layout">
+      <section aria-label="文章列表">
+        <nav class="filter-links" aria-label="文章分类">
+          <a class="pill" href={withBase('archive/')}>
+            全部归档
+          </a>
+          {categories.map((category) => (
+            <a class="pill" href={taxonomyPath('categories', category)}>
+              {category}
+            </a>
+          ))}
+          <span class="count">{posts.length} 篇记录</span>
+        </nav>
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+        {posts.length === 0 && (
+          <div class="empty-state">
+            <h2>这里还很安静。</h2>
+            <p>新的记录会从下一次落笔开始。</p>
+          </div>
+        )}
+      </section>
+      <aside class="index-aside">
+        <h2 class="aside-title">沿着标签，继续翻翻</h2>
+        <nav class="tag-cloud" aria-label="文章标签">
+          {tags.map((tag) => (
+            <a href={taxonomyPath('tags', tag)}>#{tag}</a>
+          ))}
+        </nav>
+        <p class="handwritten">
+          Take your time.
+          <br />
+          Enjoy the reading.
+        </p>
+      </aside>
+    </div>
+  </div>
+</Base>
+<style>
+  .index-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 70px;
+  }
+  .tag-cloud {
+    display: flex;
+    gap: 10px 15px;
+    flex-wrap: wrap;
+    color: var(--body);
+    font-size: 12px;
+  }
+  .index-aside {
+    padding-top: 12px;
+  }
+  .life-index {
+    max-width: 1020px;
+  }
+  .life-index :global(.post-card h3) {
+    font-size: 25px;
+  }
+  .life-index :global(.post-card-link) {
+    padding-block: 35px;
+  }
+  .life-index :global(.excerpt) {
+    line-height: 2.1;
+    -webkit-line-clamp: 3;
+  }
+  .life-index :global(.post-mark) {
+    background: var(--sand);
+  }
+  @media (max-width: 800px) {
+    .index-layout {
+      grid-template-columns: minmax(0, 1fr) 175px;
+      gap: 35px;
+    }
+  }
+  @media (max-width: 640px) {
+    .index-layout {
+      display: block;
+    }
+    .index-aside {
+      margin-top: 35px;
+      border-top: 1px solid var(--line);
+      padding-top: 25px;
+    }
+    .life-index :global(.post-card h3) {
+      font-size: 22px;
+    }
+    .life-index :global(.post-card-link) {
+      padding-block: 28px;
+    }
+  }
+</style>

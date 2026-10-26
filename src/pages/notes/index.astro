@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import { recentNotes } from '../../lib/content';
+import { formatDate } from '../../lib/paths';
+const notes = await recentNotes();
+---
+
+<Base title="随手记下" description="不必每次都写成长篇。一句话，一点想法，也值得有个去处。">
+  <div class="shell">
+    <PageHeading
+      title="一些生活的切片"
+      eyebrow="LITTLE MOMENTS"
+      description="不必每次都写成长篇。\n一句话，一点想法，也值得有个去处。"
+    />
+    <div class="notes-grid">
+      {notes.map((note, index) => (
+        <article class="note-card">
+          <div>
+            <time datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time>
+            {note.data.demo && <span class="sample-badge">示例</span>}
+          </div>
+          <p>{note.data.body}</p>
+          <span>{String(index + 1).padStart(2, '0')} / a little thought</span>
+        </article>
+      ))}
+    </div>
+    {notes.length === 0 && (
+      <div class="empty-state">
+        <h2>留一点空白，等下一次想起。</h2>
+      </div>
+    )}
+  </div>
+</Base>
+<style>
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+  .note-card {
+    padding: 28px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 17px;
+    display: flex;
+    flex-direction: column;
+    min-height: 240px;
+  }
+  .note-card > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .note-card time {
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .note-card > p {
+    font: 17px/2 var(--serif);
+    white-space: pre-line;
+    margin: 22px 0 28px;
+    flex: 1;
+  }
+  .note-card > span {
+    font:
+      italic 10px Georgia,
+      serif;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+  @media (max-width: 900px) {
+    .notes-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .notes-grid {
+      grid-template-columns: 1fr;
+      gap: 17px;
+    }
+    .note-card {
+      padding: 25px;
+      min-height: 210px;
+    }
+  }
+</style>

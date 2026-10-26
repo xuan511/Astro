@@ -1,0 +1,70 @@
+---
+import { site } from '../config/site';
+import { withBase } from '../lib/paths';
+import Icon from './Icon.astro';
+const current = Astro.url.pathname;
+interface Props {
+  section?: string;
+}
+const { section } = Astro.props;
+function currentSection(path: string) {
+  if (current === withBase(path)) return 'page';
+  if (path && (path === section || current.startsWith(withBase(path)))) return 'location';
+  return undefined;
+}
+---
+
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="brand" href={withBase()} aria-label={`${site.title} 首页`}>
+      <span class="brand-mark">
+        <Icon name="book" size={22} />
+      </span>
+      <span>
+        <span class="brand-name">{site.title}</span>
+        <span class="brand-sub">{site.author.toUpperCase()}'S JOURNAL</span>
+      </span>
+    </a>
+    <nav class="desktop-nav" aria-label="主导航">
+      {site.navigation.map(({ label, path }) => (
+        <a href={withBase(path)} aria-current={currentSection(path)}>
+          {label}
+        </a>
+      ))}
+    </nav>
+    <div class="header-tools">
+      <a
+        class="icon-button search-trigger"
+        href={withBase('search/')}
+        aria-label="搜索文章"
+        aria-keyshortcuts="Control+k Meta+k"
+        title="搜索文章（Ctrl / ⌘ K）"
+        data-search-open
+      >
+        <Icon name="search" />
+        <kbd data-search-shortcut>Ctrl K</kbd>
+      </a>
+      <button class="icon-button" type="button" data-theme-toggle aria-label="切换深色模式">
+        <Icon name="moon" class="theme-moon" />
+        <Icon name="sun" class="theme-sun" />
+      </button>
+      <button
+        class="icon-button mobile-menu-toggle"
+        type="button"
+        data-menu-toggle
+        aria-label="展开导航"
+        aria-expanded="false"
+        aria-controls="mobile-navigation"
+      >
+        <Icon name="menu" />
+      </button>
+    </div>
+  </div>
+  <nav id="mobile-navigation" class="mobile-nav" aria-label="移动端导航" hidden>
+    {site.navigation.map(({ label, path }) => (
+      <a href={withBase(path)} aria-current={currentSection(path)}>
+        {label}
+      </a>
+    ))}
+  </nav>
+</header>

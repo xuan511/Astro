@@ -1,0 +1,151 @@
+---
+import { tracks } from '../lib/music';
+import { withBase } from '../lib/paths';
+import Icon from './Icon.astro';
+import '../styles/player.css';
+const first = tracks[0];
+---
+
+<section
+  id="persistent-player"
+  class="player-root"
+  transition:persist="shijian-player"
+  aria-label="音乐播放器"
+  hidden={!first}
+>
+  <audio id="journal-audio" preload="none" aria-label="当前音频"></audio>
+  <script
+    type="application/json"
+    data-playlist
+    set:html={JSON.stringify(tracks).replace(/</g, '\\u003c')}
+  />
+  <div
+    class="mini-player"
+    data-player-controls
+    tabindex="0"
+    aria-label="迷你播放器，空格播放，方向键快进快退"
+  >
+    <button class="mini-cover" type="button" data-queue-open aria-label="打开播放列表">
+      <img
+        src={withBase(first?.cover || 'images/avatar.svg')}
+        alt=""
+        width="44"
+        height="44"
+        data-player-cover
+      />
+    </button>
+    <button
+      class="mini-info"
+      type="button"
+      data-mini-expand
+      aria-expanded="false"
+      aria-label="展开播放进度"
+    >
+      <span data-player-title>{first?.title}</span>
+      <small data-player-artist>{first?.artist}</small>
+    </button>
+    <div class="player-buttons">
+      <button class="icon-button" type="button" data-player-prev aria-label="上一首">
+        <Icon name="prev" size={18} />
+      </button>
+      <button class="player-play" type="button" data-player-toggle aria-label="播放">
+        <span data-play-icon>
+          <Icon name="play" size={18} />
+        </span>
+        <span data-pause-icon hidden>
+          <Icon name="pause" size={18} />
+        </span>
+      </button>
+      <button class="icon-button" type="button" data-player-next aria-label="下一首">
+        <Icon name="next" size={18} />
+      </button>
+    </div>
+    <div class="mini-progress">
+      <input
+        type="range"
+        min="0"
+        max="1000"
+        value="0"
+        disabled
+        aria-label="播放进度"
+        data-player-seek
+      />
+      <div class="time-row">
+        <span data-player-current>0:00</span>
+        <span data-player-duration>--:--</span>
+      </div>
+    </div>
+    <div class="mini-volume">
+      <Icon name="volume" size={16} />
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.55"
+        aria-label="音量"
+        data-player-volume
+      />
+    </div>
+    <button
+      class="icon-button mini-mode"
+      type="button"
+      data-player-mode
+      aria-label="播放模式：顺序播放"
+    >
+      <Icon name="repeat" size={17} />
+    </button>
+    <button
+      class="icon-button queue-button"
+      type="button"
+      data-queue-open
+      aria-label="打开播放列表"
+    >
+      <Icon name="list" size={19} />
+    </button>
+    <p class="player-feedback mini-feedback" data-player-feedback role="status"></p>
+  </div>
+  <dialog class="queue-dialog" id="queue-dialog" aria-labelledby="queue-title">
+    <div class="queue-heading">
+      <div>
+        <p class="eyebrow">A SOUNDTRACK FOR TODAY</p>
+        <h2 id="queue-title">给日常一点背景乐</h2>
+      </div>
+      <button class="icon-button" type="button" data-queue-close aria-label="关闭播放列表">
+        <Icon name="close" />
+      </button>
+    </div>
+    <p class="queue-intro">{tracks.length} 首音乐 · 第一次播放，由你按下开始。</p>
+    <div class="queue-tracks">
+      {tracks.map((track, index) => (
+        <button
+          class="queue-track"
+          type="button"
+          data-play-track={track.id}
+          aria-label={`播放 ${track.title}`}
+        >
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <img
+            src={withBase(track.cover || 'images/avatar.svg')}
+            width="42"
+            height="42"
+            alt=""
+            loading="lazy"
+          />
+          <span>
+            <strong>{track.title}</strong>
+            <small>{track.artist}</small>
+          </span>
+          <span data-track-state={track.id}>播放</span>
+        </button>
+      ))}
+    </div>
+    <p class="player-feedback" data-player-feedback role="status"></p>
+    <a class="text-link" href={withBase('music/')}>
+      去音乐房间 <Icon name="arrow" size={15} />
+    </a>
+  </dialog>
+</section>
+<script>
+  import '../scripts/player';
+</script>

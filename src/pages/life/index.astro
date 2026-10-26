@@ -1,0 +1,13 @@
+---
+import PostIndex from '../../layouts/PostIndex.astro';
+import { publishedPosts } from '../../lib/content';
+const posts = (await publishedPosts()).filter((post) => post.data.kind === 'life');
+---
+
+<PostIndex
+  title="普通日子，也值得记下"
+  eyebrow="SMALL THINGS, SLOW DAYS."
+  description="一些生活的切片，一些不必有用的想法。\n不赶路的时候，读一点，停一会儿。"
+  posts={posts}
+  kind="life"
+/>

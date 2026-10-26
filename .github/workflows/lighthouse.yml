@@ -1,0 +1,31 @@
+name: Lighthouse audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build root-path audit fixture
+        run: npm run build
+        env:
+          BASE_PATH: /
+          SITE_URL: https://audit.invalid
+      - name: Audit three pages, three mobile runs each
+        run: npx --yes @lhci/cli@0.15.1 autorun
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: reports/lighthouse
+          retention-days: 7

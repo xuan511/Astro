@@ -1,0 +1,88 @@
+---
+import Icon from './Icon.astro';
+---
+
+<div class="reading-controls" aria-label="阅读设置">
+  <div class="reading-size-controls" role="group" aria-label="正文字号">
+    <span>字号</span>
+    <button type="button" data-reading-smaller aria-label="缩小正文字号">
+      A−
+    </button>
+    <output data-reading-size-label aria-live="polite">
+      标准
+    </output>
+    <button type="button" data-reading-larger aria-label="放大正文字号">
+      A＋
+    </button>
+  </div>
+  <button class="reading-width-control" type="button" data-reading-width aria-pressed="false">
+    <Icon name="width" size={16} />
+    <span>宽屏阅读</span>
+  </button>
+  <button class="reading-share" type="button" data-copy-article>
+    <Icon name="link" size={16} />
+    <span>复制链接</span>
+  </button>
+  <span class="sr-only" data-reading-feedback role="status"></span>
+</div>
+<style>
+  .reading-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0;
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .reading-size-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .reading-size-controls > span {
+    margin-right: 3px;
+  }
+  .reading-controls button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    gap: 7px;
+    border-radius: 6px;
+    padding: 5px 8px;
+  }
+  .reading-controls button:hover,
+  .reading-controls button[aria-pressed='true'] {
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .reading-controls button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .reading-size-controls button {
+    font-size: 14px;
+    min-width: 34px;
+  }
+  .reading-size-controls output {
+    min-width: 28px;
+    text-align: center;
+  }
+  .reading-share {
+    margin-left: auto;
+  }
+  @media (max-width: 800px) {
+    .reading-width-control {
+      display: none !important;
+    }
+  }
+  @media (max-width: 640px) {
+    .reading-controls {
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+  }
+</style>

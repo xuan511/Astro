@@ -1,0 +1,10 @@
+[
+  {
+    "id": "paper-light",
+    "title": "纸上微光",
+    "artist": "拾间 · 原创合成示例",
+    "src": "music/paper-light.wav",
+    "cover": "images/hero.svg",
+    "demo": true
+  }
+]

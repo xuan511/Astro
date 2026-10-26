@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { withBase } from '../lib/paths';
+---
+
+<Base
+  title="这一页，好像走远了"
+  description="页面不存在或已经移动，可以返回首页、搜索文章或查看归档。"
+  noindex
+>
+  <section class="not-found shell">
+    <p class="eyebrow">404 / A LITTLE DETOUR</p>
+    <Icon name="leaf" size={47} />
+    <h1>这一页，好像走远了。</h1>
+    <p>
+      也许链接变了，也许故事还没有写下。
+      <br />
+      回到熟悉的地方，再慢慢翻一翻。
+    </p>
+    <div>
+      <a class="button primary" href={withBase()}>
+        回到首页
+      </a>
+      <a class="button" href={withBase('search/')}>
+        搜索文章
+      </a>
+      <a class="text-link" href={withBase('archive/')}>
+        看看归档 <Icon name="arrow" size={15} />
+      </a>
+    </div>
+  </section>
+</Base>
+<style>
+  .not-found {
+    text-align: center;
+    padding: 70px 20px 30px;
+  }
+  .not-found .eyebrow {
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .not-found > svg {
+    color: var(--muted);
+  }
+  .not-found h1 {
+    font: 36px/1.6 var(--serif);
+    margin: 25px 0 18px;
+  }
+  .not-found > p:not(.eyebrow) {
+    color: var(--body);
+    font-size: 14px;
+    line-height: 2;
+  }
+  .not-found > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+  }
+  @media (max-width: 640px) {
+    .not-found {
+      padding-top: 45px;
+    }
+    .not-found h1 {
+      font-size: 28px;
+    }
+  }
+</style>

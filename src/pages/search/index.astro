@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import SearchPanel from '../../components/SearchPanel.astro';
+import { withBase } from '../../lib/paths';
+---
+
+<Base title="搜索" description="搜索技术博客、生活随笔与项目中的一个关键词。" noindex>
+  <div class="shell search-page">
+    <PageHeading
+      title="翻找一段记录"
+      eyebrow="FIND A LITTLE SOMETHING"
+      description="一个关键词，也许能带回一个想法。"
+    />
+    <SearchPanel />
+    <noscript>
+      <p class="notice">
+        搜索需要 JavaScript。你也可以通过<a href={withBase('archive/')}>文章归档</a>按时间阅读。
+      </p>
+    </noscript>
+  </div>
+</Base>
+<style>
+  .search-page {
+    max-width: 900px;
+  }
+</style>

@@ -1,0 +1,93 @@
+---
+import Icon from './Icon.astro';
+import { withBase } from '../lib/paths';
+import { publishedPosts } from '../lib/content';
+import '../styles/search.css';
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+const prefix = compact ? 'quick' : 'page';
+const counts = new Map<string, number>();
+for (const post of await publishedPosts()) {
+  for (const tag of post.data.tags) counts.set(tag, (counts.get(tag) || 0) + 1);
+}
+const suggestions = [...counts]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 5)
+  .map(([tag]) => tag);
+---
+
+<div
+  class:list={['search-panel', { 'compact-search': compact }]}
+  data-search-root
+  data-compact={compact}
+>
+  <form
+    role="search"
+    aria-label={compact ? '快捷搜索' : '站内搜索'}
+    action={withBase('search/')}
+    method="get"
+    data-search-form
+  >
+    <label class="sr-only" for={`${prefix}-query`}>
+      搜索关键词
+    </label>
+    <div class="search-input-wrap">
+      <Icon name="search" />
+      <input
+        id={`${prefix}-query`}
+        name="q"
+        type="search"
+        maxlength="120"
+        placeholder="标题、正文、标签，或者一个项目…"
+        autocomplete="off"
+        enterkeyhint="search"
+        data-search-input
+      />
+      <button class="button primary" type="submit">
+        搜索
+      </button>
+    </div>
+    <div class="search-tools">
+      <label for={`${prefix}-kind`}>范围</label>
+      <select id={`${prefix}-kind`} name="kind" data-search-kind>
+        <option value="all">所有内容</option>
+        <option value="tech">技术博客</option>
+        <option value="life">生活随笔</option>
+        <option value="project">项目</option>
+      </select>
+      <button type="button" class="text-link" data-search-clear>
+        清空
+      </button>
+    </div>
+  </form>
+  {suggestions.length > 0 && (
+    <div class="search-suggestions" data-search-suggestions>
+      <span>从一个标签开始</span>
+      {suggestions.map((tag) => (
+        <button class="pill" type="button" data-search-suggestion={tag}>
+          #{tag}
+        </button>
+      ))}
+    </div>
+  )}
+  <p role="status" aria-live="polite" class="search-status" data-search-status>
+    输入关键词，搜索公开文章与项目。
+  </p>
+  <div class="search-results" aria-busy="false" data-search-results></div>
+  <button type="button" class="button search-more" data-search-more hidden>
+    显示更多结果
+  </button>
+  <button type="button" class="button search-retry" data-search-retry hidden>
+    重新载入搜索
+  </button>
+  {compact && (
+    <a class="text-link search-all" href={withBase('search/')} data-search-all hidden>
+      在搜索页查看全部结果 <Icon name="arrow" size={15} />
+    </a>
+  )}
+</div>
+<script>
+  import '../scripts/search';
+</script>

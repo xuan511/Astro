@@ -1,0 +1,79 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import Media from '../../components/Media.astro';
+import Icon from '../../components/Icon.astro';
+import { withBase } from '../../lib/paths';
+import '../../styles/prose.css';
+export async function getStaticPaths() {
+  return (await getCollection('projects')).map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+const { project } = Astro.props;
+const { data } = project;
+---
+
+<Base title={data.name} description={data.description}>
+  <div class="shell project-detail">
+    <PageHeading title={data.name} eyebrow="PROJECT JOURNAL" description={data.description}>
+      <div class="project-detail-meta">
+        <span class="project-status">{data.status}</span>
+        <a class="button" href={data.github} target="_blank" rel="noopener noreferrer">
+          在 GitHub 查看 <Icon name="external" size={15} />
+        </a>
+      </div>
+      <div class="stack">
+        {data.stack.map((tag) => (
+          <span>{tag}</span>
+        ))}
+      </div>
+    </PageHeading>
+    {data.screenshot && (
+      <Media
+        src={data.screenshot}
+        alt={data.screenshotAlt || `${data.name} 项目截图`}
+        class="article-cover"
+      />
+    )}
+    <article class="prose">
+      <h2>关于这个项目</h2>
+      {data.details.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </article>
+    <a class="text-link" href={withBase('projects/')} style="margin-top:35px">
+      继续看看其他项目 <Icon name="arrow" size={15} />
+    </a>
+  </div>
+</Base>
+<style>
+  .project-detail {
+    max-width: 860px;
+  }
+  .project-detail-meta {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 25px;
+  }
+  .project-detail .page-heading h1 {
+    overflow-wrap: anywhere;
+    font-family: Georgia, var(--serif);
+  }
+  @media (max-width: 640px) {
+    .project-detail .page-heading h1 {
+      font-size: 30px;
+    }
+    .project-detail-meta {
+      gap: 12px;
+    }
+    .project-detail-meta .button {
+      font-size: 11px;
+      padding: 7px 12px;
+    }
+  }
+</style>

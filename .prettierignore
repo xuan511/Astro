@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.git/
+.sites-runtime/
+legacy/
+public/
+package-lock.json
+reports/

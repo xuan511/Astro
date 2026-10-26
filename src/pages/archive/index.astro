@@ -1,0 +1,100 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import Icon from '../../components/Icon.astro';
+import { publishedPosts } from '../../lib/content';
+import { postPath } from '../../lib/paths';
+const posts = await publishedPosts();
+const years = [...new Set(posts.map((post) => post.data.publishedAt.getFullYear()))];
+---
+
+<Base title="归档" description="所有技术博客与生活随笔，按时间慢慢翻阅。">
+  <div class="shell">
+    <PageHeading
+      title="时光的目录"
+      eyebrow="THE ARCHIVE"
+      description={`${posts.length} 篇记录，都是来过的痕迹。`}
+    />
+    {years.map((year) => (
+      <section class="archive-year">
+        <h2>{year}</h2>
+        <div>
+          {posts
+            .filter((post) => post.data.publishedAt.getFullYear() === year)
+            .map((post) => (
+              <a class="archive-entry" href={postPath(post.id)}>
+                <time datetime={post.data.publishedAt.toISOString()}>
+                  {String(post.data.publishedAt.getMonth() + 1).padStart(2, '0')} /{' '}
+                  {String(post.data.publishedAt.getDate()).padStart(2, '0')}
+                </time>
+                <h3>{post.data.title}</h3>
+                {post.data.demo && <span class="sample-badge">示例</span>}
+                <Icon name="arrow" size={17} />
+              </a>
+            ))}
+        </div>
+      </section>
+    ))}
+    {posts.length === 0 && (
+      <div class="empty-state">
+        <h2>从第一篇开始。</h2>
+      </div>
+    )}
+  </div>
+</Base>
+<style>
+  .archive-year {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 40px;
+    margin: 42px 0 60px;
+  }
+  .archive-year > h2 {
+    font:
+      48px Georgia,
+      serif;
+    color: var(--muted);
+  }
+  .archive-entry {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 23px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .archive-entry time {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .archive-entry h3 {
+    font: 23px/1.6 var(--serif);
+    flex: 1;
+  }
+  .archive-entry svg {
+    color: var(--muted);
+  }
+  @media (max-width: 640px) {
+    .archive-year {
+      display: block;
+      margin: 28px 0;
+    }
+    .archive-year > h2 {
+      font-size: 35px;
+      margin-bottom: 5px;
+    }
+    .archive-entry {
+      gap: 14px;
+      padding: 20px 0;
+    }
+    .archive-entry h3 {
+      font-size: 19px;
+    }
+    .archive-entry time {
+      font-size: 10px;
+    }
+    .archive-entry .sample-badge {
+      display: none;
+    }
+  }
+</style>

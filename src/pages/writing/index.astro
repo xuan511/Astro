@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import { Content } from '../../../docs/WRITING.md';
+import { withBase } from '../../lib/paths';
+import '../../styles/prose.css';
+---
+
+<Base
+  title="写作与发布指南"
+  description="用 VS Code、Markdown 和仓库提交，持续维护拾间博客。"
+  noindex
+>
+  <div class="shell writing-page">
+    <PageHeading
+      title="给下一篇文章，留好位置"
+      eyebrow="THE WRITING DESK"
+      description="打开 VS Code，写下来，预览，再提交。"
+    />
+    <p class="notice">
+      从旧版升级？
+      <a href={withBase('legacy/#/studio')} data-astro-reload>
+        打开旧版数据恢复入口
+      </a>
+      ，先导出本地完整备份。
+    </p>
+    <article class="prose">
+      <Content />
+    </article>
+  </div>
+</Base>
+<style>
+  .writing-page {
+    max-width: 860px;
+  }
+  .writing-page > .notice {
+    margin-bottom: 35px;
+  }
+</style>

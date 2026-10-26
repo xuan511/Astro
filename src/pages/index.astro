@@ -1,0 +1,164 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site } from '../config/site';
+import { withBase, formatDate } from '../lib/paths';
+import { publishedPosts, recentNotes } from '../lib/content';
+import { getCollection } from 'astro:content';
+const posts = await publishedPosts();
+const featured = posts.find((post) => post.data.featured) || posts[0];
+const latest = posts.filter((post) => post.id !== featured?.id).slice(0, 4);
+const notes = await recentNotes(2);
+const projects = (await getCollection('projects'))
+  .filter((project) => project.data.featured)
+  .slice(0, 2);
+---
+
+<Base>
+  <div class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">A SMALL CORNER OF THE INTERNET</p>
+        <h1>{site.hero.title}</h1>
+        <p class="hero-description">{site.hero.description}</p>
+        <div class="hero-actions">
+          <a class="text-link" href="#latest">
+            从这里开始 <Icon name="arrow" size={17} />
+          </a>
+          <span>{site.hero.note}</span>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img
+          src={withBase('images/hero.svg')}
+          alt="窗边的唱片、纸页与绿叶插画"
+          width="640"
+          height="530"
+          fetchpriority="high"
+        />
+        <p>ordinary days, little wonders.</p>
+      </div>
+    </section>
+    <div id="latest" class="home-columns">
+      <section aria-labelledby="latest-heading">
+        <div class="section-heading">
+          <h2 id="latest-heading">
+            最近的记录 <small>LATEST STORIES</small>
+          </h2>
+          <a class="text-link" href={withBase('archive/')}>
+            全部归档 <Icon name="arrow" size={14} />
+          </a>
+        </div>
+        {featured && <PostCard post={featured} featured />}
+        <nav class="collection-links" aria-label="文章栏目">
+          <a href={withBase('tech/')}>
+            技术与折腾 <Icon name="code" size={14} />
+          </a>
+          <a href={withBase('life/')}>
+            生活与片刻 <Icon name="leaf" size={14} />
+          </a>
+          <span>{posts.length} 篇记录</span>
+        </nav>
+        {latest.map((post) => (
+          <PostCard post={post} />
+        ))}
+        {posts.length === 0 && (
+          <div class="empty-state">
+            <Icon name="leaf" size={30} />
+            <h3>故事，正要开始。</h3>
+            <p>新的记录会慢慢出现在这里。</p>
+          </div>
+        )}
+        <p class="list-end">写给未来的自己</p>
+      </section>
+      <aside class="home-aside">
+        <section>
+          <h2 class="aside-title">
+            ABOUT ME <span></span>
+          </h2>
+          <div class="profile-card">
+            <div class="profile-top">
+              <img
+                class="avatar"
+                src={withBase(site.avatar)}
+                width="54"
+                height="54"
+                alt={`${site.author} 的字母头像`}
+              />
+              <div>
+                <h3>{site.author}</h3>
+                <p class="online">在自己的节奏里</p>
+              </div>
+            </div>
+            <p>
+              {site.description}
+              <br />
+              把好奇心留给每一天。
+            </p>
+            <div class="profile-links">
+              {site.social.map((social) => (
+                <a href={social.url} target="_blank" rel="noopener noreferrer">
+                  {social.label}
+                  <Icon name="external" size={12} />
+                </a>
+              ))}
+              <a href={withBase('about/')}>
+                关于我 <Icon name="arrow" size={13} />
+              </a>
+            </div>
+          </div>
+        </section>
+        <section>
+          <h2 class="aside-title">
+            随手记下 <span></span>
+          </h2>
+          {notes.map((note) => (
+            <a class="mini-note" href={withBase('notes/')}>
+              <p>{note.data.body}</p>
+              <div>
+                <time datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time>
+                {note.data.demo && <span class="sample-badge">示例</span>}
+              </div>
+            </a>
+          ))}
+          <a class="text-link muted" href={withBase('notes/')}>
+            所有随记 <Icon name="arrow" size={14} />
+          </a>
+        </section>
+        <a class="music-invitation" href={withBase('music/')}>
+          <p class="eyebrow">MUSIC CORNER</p>
+          <div>
+            <span class="vinyl" aria-hidden="true"></span>
+            <h3>给日常一点背景乐</h3>
+          </div>
+          <p>文字之外，还有旋律。</p>
+          <span class="text-link">
+            去听一首 <Icon name="arrow" size={14} />
+          </span>
+        </a>
+        <p class="handwritten">
+          A little space for thoughts,
+          <br />
+          and everything in between.
+        </p>
+      </aside>
+    </div>
+    <section class="home-projects" aria-labelledby="projects-heading">
+      <div class="section-heading">
+        <h2 id="projects-heading">
+          把想法做出来 <small>SELECTED PROJECTS</small>
+        </h2>
+        <a class="text-link" href={withBase('projects/')}>
+          所有项目 <Icon name="arrow" size={14} />
+        </a>
+      </div>
+      <div class="project-grid">
+        {projects.map((project, index) => (
+          <ProjectCard project={project} index={index} />
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

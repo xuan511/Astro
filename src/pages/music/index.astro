@@ -1,0 +1,132 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import Icon from '../../components/Icon.astro';
+import { tracks } from '../../lib/music';
+import { withBase } from '../../lib/paths';
+const first = tracks[0];
+---
+
+<Base title="音乐房间" description="给日常一点背景乐。选择一首音乐，让时间慢下来。">
+  <div class="shell">
+    <PageHeading
+      title="给日常一点背景乐"
+      eyebrow="THE LISTENING ROOM"
+      description="文字之外，还有旋律。\n选择一首，让时间慢下来。"
+    />
+    {first ? (
+      <div class="music-room">
+        <section
+          class="full-player"
+          data-player-controls
+          tabindex="0"
+          aria-label="音乐控制面板，空格播放，方向键快进快退"
+        >
+          <div class="record-art">
+            <img
+              data-player-cover
+              src={withBase(first.cover || 'images/avatar.svg')}
+              alt="当前音乐封面"
+              width="200"
+              height="200"
+            />
+          </div>
+          <h2 data-player-title>{first.title}</h2>
+          <p data-player-artist>{first.artist}</p>
+          <div class="player-buttons">
+            <button class="icon-button" type="button" data-player-prev aria-label="上一首">
+              <Icon name="prev" />
+            </button>
+            <button class="player-play" type="button" data-player-toggle aria-label="播放">
+              <span data-play-icon>
+                <Icon name="play" size={22} />
+              </span>
+              <span data-pause-icon hidden>
+                <Icon name="pause" size={22} />
+              </span>
+            </button>
+            <button class="icon-button" type="button" data-player-next aria-label="下一首">
+              <Icon name="next" />
+            </button>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="1000"
+            value="0"
+            disabled
+            data-player-seek
+            aria-label="播放进度"
+          />
+          <div class="time-row">
+            <span data-player-current>0:00</span>
+            <span data-player-duration>--:--</span>
+          </div>
+          <div class="full-options">
+            <button type="button" data-player-mode aria-label="播放模式：顺序播放">
+              <Icon name="repeat" size={15} />
+              <span data-mode-label>顺序播放</span>
+            </button>
+            <label>
+              <Icon name="volume" size={15} />
+              音量
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.55"
+                data-player-volume
+                aria-label="音乐页面音量"
+              />
+            </label>
+          </div>
+          <p class="player-feedback" data-player-feedback role="status"></p>
+        </section>
+        <section class="music-playlist" aria-labelledby="playlist-title">
+          <h2 id="playlist-title">
+            此刻的歌单 <span class="count">{tracks.length} 首</span>
+          </h2>
+          {tracks.map((track, index) => (
+            <button
+              class="queue-track"
+              type="button"
+              data-play-track={track.id}
+              aria-label={`播放 ${track.title}`}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <img
+                src={withBase(track.cover || 'images/avatar.svg')}
+                alt=""
+                width="45"
+                height="45"
+                loading="lazy"
+              />
+              <span>
+                <strong>
+                  {track.title} {track.demo && <span class="sample-badge">示例</span>}
+                </strong>
+                <small>{track.artist}</small>
+              </span>
+              <span data-track-state={track.id}>播放</span>
+            </button>
+          ))}
+          {tracks.some((track) => track.demo) && (
+            <p class="notice">「纸上微光」是为这个小站合成的原创氛围示例。歌单还会慢慢生长。</p>
+          )}
+          <p class="room-note">
+            安静也很好。
+            <br />
+            音乐不会自动响起。
+          </p>
+        </section>
+      </div>
+    ) : (
+      <div class="empty-state">
+        <Icon name="music" size={32} />
+        <h2>歌单还很安静。</h2>
+        <p>新的旋律，会在以后慢慢加入。</p>
+      </div>
+    )}
+  </div>
+</Base>

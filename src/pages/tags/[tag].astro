@@ -1,0 +1,19 @@
+---
+import PostIndex from '../../layouts/PostIndex.astro';
+import { publishedPosts } from '../../lib/content';
+export async function getStaticPaths() {
+  const all = await publishedPosts();
+  return [...new Set(all.flatMap((post) => post.data.tags))].map((tag) => ({
+    params: { tag },
+    props: { tag, posts: all.filter((post) => post.data.tags.includes(tag)) },
+  }));
+}
+const { tag, posts } = Astro.props;
+---
+
+<PostIndex
+  title={`# ${tag}`}
+  eyebrow="COLLECTION"
+  description={`一些有关「${tag}」的记录。`}
+  posts={posts}
+/>

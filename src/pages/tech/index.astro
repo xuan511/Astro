@@ -1,0 +1,13 @@
+---
+import PostIndex from '../../layouts/PostIndex.astro';
+import { publishedPosts } from '../../lib/content';
+const posts = (await publishedPosts()).filter((post) => post.data.kind === 'tech');
+---
+
+<PostIndex
+  title="代码与折腾"
+  eyebrow="THINK. BUILD. UNDERSTAND."
+  description="从遇到一个问题，到慢慢把它弄清楚。\n留下过程，也留下仍然好奇的地方。"
+  posts={posts}
+  kind="tech"
+/>

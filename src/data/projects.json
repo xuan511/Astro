@@ -1,0 +1,32 @@
+[
+  {
+    "id": "linux-device-manager",
+    "name": "Linux Device Manager",
+    "description": "从串口设备到 Linux 守护进程，把通信、状态管理与固件升级串成一条完整链路。",
+    "stack": ["C17", "Linux", "epoll", "UART"],
+    "status": "持续维护",
+    "github": "https://github.com/xuan511/linux-device-manager",
+    "featured": true,
+    "details": [
+      "由 devmgrd、devctl 和 PTY 设备模拟器组成。守护进程拥有文件描述符和会话状态，CLI 通过 Unix Socket 与它通信。",
+      "采用 epoll、timerfd、signalfd 组织事件与超时；增量解析串口数据，处理半包、粘包、CRC 错误与重新同步。",
+      "支持可恢复、幂等的固件升级，以及丢包、延迟、校验失败等故障注入。仓库提供无硬件演示和测试说明。",
+      "本页内容整理自项目的公开 README；完整实现和当前验证情况以仓库为准。"
+    ]
+  },
+  {
+    "id": "embedded-console",
+    "name": "Embedded Device Console",
+    "description": "用带触摸屏的 ESP32 终端管理 STM32，把设备状态、日志和故障处理放到可交互的界面中。",
+    "stack": ["ESP-IDF", "FreeRTOS", "LVGL", "STM32"],
+    "status": "待真机验证",
+    "github": "https://github.com/xuan511/ESP32-S31-Embedded-Device-Console",
+    "featured": true,
+    "details": [
+      "ESP32-S31-Korvo-1 通过 USB Host、CH340 与 STM32F103 连接，承担设备运维终端的角色。",
+      "功能包含 LVGL 页面、设备状态、日志、命令调度，以及 CRC、请求超时和断线后的恢复。",
+      "公开 README 明确说明：代码框架和主机单元测试已完成，ESP-IDF 编译、烧录及真实硬件联调仍待验证。这里保留这一限制。",
+      "接线与运行步骤请阅读仓库文档。本页不将概念配图当作真实设备截图。"
+    ]
+  }
+]

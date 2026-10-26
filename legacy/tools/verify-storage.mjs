@@ -1,0 +1,27 @@
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=await fs.readFile(new URL('../src/storage.js',import.meta.url),'utf8');
+const ctx=vm.createContext({window:{},URL,structuredClone,Date,location:{href:'https://example.test/a/'}});
+vm.runInContext(source,ctx);
+const {Repository,scopeFor}=ctx.window.ShijianStorage;
+function memory(){const data=new Map();return {getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k),data};}
+const local=memory(),session=memory(),initial={schemaVersion:1,site:{name:'A'},posts:[]};
+const legacy={...initial,posts:[{id:'legacy-draft',title:'必须保留',status:'draft'}]};
+local.setItem('shijian-workspace-v1',JSON.stringify(legacy));
+const a=new Repository({scope:'/a/',indexedDB:null,local,session});
+const migrated=await a.load(initial);
+assert.equal(a.mode,'compat');assert.equal(migrated.data.posts[0].id,'legacy-draft');
+assert(local.getItem('shijian-workspace-v1'),'Legacy bytes must remain intact');
+assert.equal(scopeFor('https://example.test/a/index.html#/studio'),'/a/');
+assert.equal(scopeFor('https://example.test/b/#/post/example'),'/b/');
+const b=new Repository({scope:'/b/',indexedDB:null,local,session});
+assert.equal((await b.load(initial)).data.posts.length,0,'A second GitHub project must not inherit the first project workspace');
+const tab2=new Repository({scope:'/a/',indexedDB:null,local,session});const read2=await tab2.load(initial);
+await a.write({...migrated,data:{...legacy,marker:'tab-one'}},migrated.revision);
+await assert.rejects(()=>tab2.write({...read2,data:{...legacy,marker:'tab-two'}},read2.revision),error=>error.name==='StorageConflict');
+assert.equal((await a.readRecord()).data.marker,'tab-one');
+const quota=new Repository({scope:'/quota/',indexedDB:null,local:{getItem(){return null;},setItem(){throw Error('quota');},removeItem(){}},session});
+await quota.load(initial);await assert.rejects(()=>quota.write({data:initial,trash:[]},0),/本地保存失败/);
+a.recovery({post:{title:'最后几个字'}});assert.equal(a.recovery().post.title,'最后几个字');a.recovery(null);assert.equal(a.recovery(),null);
+console.log('PASS: legacy migration, per-path isolation, stale-writer rejection, storage failure reporting and editor recovery.');
