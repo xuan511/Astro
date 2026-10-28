@@ -2,6 +2,7 @@
 import Icon from './Icon.astro';
 import { withBase } from '../lib/paths';
 import { publishedPosts } from '../lib/content';
+import { searchScopes } from '../lib/search';
 import '../styles/search.css';
 interface Props {
   compact?: boolean;
@@ -40,7 +41,7 @@ const suggestions = [...counts]
         name="q"
         type="search"
         maxlength="120"
-        placeholder="标题、正文、标签，或者一个项目…"
+        placeholder="标题、正文、标签或项目 ID…"
         autocomplete="off"
         enterkeyhint="search"
         data-search-input
@@ -50,18 +51,46 @@ const suggestions = [...counts]
       </button>
     </div>
     <div class="search-tools">
-      <label for={`${prefix}-kind`}>范围</label>
-      <select id={`${prefix}-kind`} name="kind" data-search-kind>
-        <option value="all">所有内容</option>
-        <option value="tech">技术博客</option>
-        <option value="life">生活随笔</option>
-        <option value="project">项目</option>
-      </select>
-      <button type="button" class="text-link" data-search-clear>
-        清空
-      </button>
+      <div class="search-kind-fallback" data-search-kind-fallback>
+        <label for={`${prefix}-kind`}>范围</label>
+        <select id={`${prefix}-kind`} name="kind" data-search-kind>
+          {Object.entries(searchScopes).map(([value, label]) => (
+            <option value={value}>{label}</option>
+          ))}
+        </select>
+      </div>
+      <div class="search-scopes" role="group" aria-label="搜索范围" data-search-scopes hidden>
+        {Object.entries(searchScopes).map(([value, label]) => (
+          <button type="button" data-search-scope={value} aria-pressed={value === 'all'}>
+            <span class="search-scope-check" aria-hidden="true">
+              ✓
+            </span>
+            {label}
+          </button>
+        ))}
+      </div>
     </div>
   </form>
+  <div
+    class="search-conditions"
+    role="group"
+    aria-label="当前搜索条件"
+    data-search-conditions
+    hidden
+  >
+    <span class="search-conditions-label">当前条件</span>
+    <button type="button" class="search-condition" data-search-remove-query hidden>
+      <span data-search-query-label></span>
+      <Icon name="close" size={13} />
+    </button>
+    <button type="button" class="search-condition" data-search-remove-kind hidden>
+      <span data-search-kind-label></span>
+      <Icon name="close" size={13} />
+    </button>
+    <button type="button" class="text-link search-clear" data-search-clear>
+      清除全部
+    </button>
+  </div>
   {suggestions.length > 0 && (
     <div class="search-suggestions" data-search-suggestions>
       <span>从一个标签开始</span>

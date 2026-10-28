@@ -2,30 +2,38 @@
 import type { CollectionEntry } from 'astro:content';
 import { projectPath } from '../lib/paths';
 import Icon from './Icon.astro';
+import ProjectPreview from './ProjectPreview.astro';
 interface Props {
   project: CollectionEntry<'projects'>;
   index?: number;
+  heading?: 'h2' | 'h3';
 }
-const { project, index = 0 } = Astro.props;
+const { project, index = 0, heading: Heading = 'h3' } = Astro.props;
 const data = project.data;
+const titleId = `project-card-title-${project.id}`;
 ---
 
 <article class="project-card">
-  <a href={projectPath(project.id)}>
+  <a class="project-card-link" href={projectPath(project.id)} aria-labelledby={titleId}>
     <div class="project-card-top">
-      <span class="project-number">0{index + 1} / BUILD SOMETHING</span>
-      <Icon name="arrow" size={18} />
+      <span class="project-number">{String(index + 1).padStart(2, '0')} / PROJECT JOURNAL</span>
+      <span class="project-status">{data.status}</span>
     </div>
     <div class="project-glyph" aria-hidden="true">
       <Icon name={index % 2 ? 'book' : 'code'} size={32} />
     </div>
-    <p class="project-status">{data.status}</p>
-    <h3>{data.name}</h3>
-    <p>{data.description}</p>
-    <div class="stack">
+    <Heading id={titleId} class="project-card-title">
+      {data.name}
+    </Heading>
+    <p class="project-card-summary">{data.description}</p>
+    <div class="stack" aria-label="技术栈">
       {data.stack.map((tag) => (
         <span>{tag}</span>
       ))}
     </div>
+    <span class="project-card-cta">
+      查看完整项目 <Icon name="arrow" size={16} />
+    </span>
   </a>
+  <ProjectPreview project={project} />
 </article>

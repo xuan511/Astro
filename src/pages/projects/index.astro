@@ -15,7 +15,7 @@ const projects = await getCollection('projects');
     />
     <div class="project-grid">
       {projects.map((project, index) => (
-        <ProjectCard project={project} index={index} />
+        <ProjectCard project={project} index={index} heading="h2" />
       ))}
     </div>
     {projects.length === 0 && (

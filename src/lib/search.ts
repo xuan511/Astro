@@ -11,6 +11,13 @@ export interface SearchEntry {
   demo: boolean;
 }
 
+export const searchScopes = {
+  all: '所有内容',
+  tech: '技术博客',
+  life: '生活随笔',
+  project: '项目',
+} as const;
+
 /** Validate the network boundary before a shared request can cache unusable data. */
 export function parseSearchIndex(value: unknown): SearchEntry[] {
   const strings = ['id', 'title', 'description', 'body', 'url', 'category', 'date'] as const;
@@ -50,6 +57,8 @@ export function searchEntries(entries: SearchEntry[], query: string, kind = 'all
         .normalize('NFKC')
         .toLocaleLowerCase();
       const body = entry.body.normalize('NFKC').toLocaleLowerCase();
+      const identifier =
+        entry.kind === 'project' ? entry.id.normalize('NFKC').toLocaleLowerCase() : '';
       const score = words.reduce(
         (sum, word) =>
           sum +
@@ -57,9 +66,11 @@ export function searchEntries(entries: SearchEntry[], query: string, kind = 'all
             ? 9
             : metadata.includes(word)
               ? 4
-              : body.includes(word)
-                ? 1
-                : -1000),
+              : identifier.includes(word)
+                ? 3
+                : body.includes(word)
+                  ? 1
+                  : -1000),
         0,
       );
       return { entry, score };

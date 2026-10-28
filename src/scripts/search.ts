@@ -3,6 +3,7 @@ import {
   snippet,
   highlightParts,
   parseSearchIndex,
+  searchScopes,
   type SearchEntry,
 } from '../lib/search';
 import { withBase } from '../lib/paths';
@@ -42,6 +43,14 @@ function initSearch() {
     const retry = root.querySelector<HTMLButtonElement>('[data-search-retry]')!;
     const all = root.querySelector<HTMLAnchorElement>('[data-search-all]');
     const suggestions = root.querySelector<HTMLElement>('[data-search-suggestions]');
+    const scopeButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-search-scope]')];
+    const scopeControls = root.querySelector<HTMLElement>('[data-search-scopes]')!;
+    const kindFallback = root.querySelector<HTMLElement>('[data-search-kind-fallback]')!;
+    const conditions = root.querySelector<HTMLElement>('[data-search-conditions]')!;
+    const removeQuery = root.querySelector<HTMLButtonElement>('[data-search-remove-query]')!;
+    const removeKind = root.querySelector<HTMLButtonElement>('[data-search-remove-kind]')!;
+    const queryLabel = root.querySelector<HTMLElement>('[data-search-query-label]')!;
+    const kindLabel = root.querySelector<HTMLElement>('[data-search-kind-label]')!;
     const compact = root.dataset.compact === 'true';
     const controller = new AbortController();
     const options = { signal: controller.signal };
@@ -52,13 +61,32 @@ function initSearch() {
     if (!compact) {
       const params = new URLSearchParams(location.search);
       input.value = params.get('q')?.slice(0, 120) || '';
-      kind.value = ['all', 'tech', 'life', 'project'].includes(params.get('kind') || '')
+      kind.value = Object.hasOwn(searchScopes, params.get('kind') || '')
         ? params.get('kind')!
         : 'all';
+    }
+    function syncFilters() {
+      const query = input.value.trim();
+      const selected = kind.value as keyof typeof searchScopes;
+      for (const button of scopeButtons)
+        button.setAttribute('aria-pressed', String(button.dataset.searchScope === selected));
+      conditions.hidden = !query && selected === 'all';
+      removeQuery.hidden = !query;
+      queryLabel.textContent = `关键词：${query}`;
+      removeQuery.setAttribute('aria-label', `移除关键词：${query}`);
+      removeKind.hidden = selected === 'all';
+      kindLabel.textContent = `范围：${searchScopes[selected]}`;
+      removeKind.setAttribute('aria-label', `移除范围：${searchScopes[selected]}`);
+    }
+    function emptyMessage() {
+      return kind.value === 'all'
+        ? '输入关键词，搜索公开文章与项目。'
+        : `输入关键词，在${searchScopes[kind.value as keyof typeof searchScopes]}中查找。`;
     }
     async function run() {
       const seq = ++sequence,
         query = input.value.trim();
+      syncFilters();
       retry.hidden = true;
       more.hidden = true;
       if (all) all.hidden = true;
@@ -75,7 +103,7 @@ function initSearch() {
         );
       if (!query) {
         results.replaceChildren();
-        status.textContent = '输入关键词，搜索公开文章与项目。';
+        status.textContent = emptyMessage();
         results.setAttribute('aria-busy', 'false');
         return;
       }
@@ -101,6 +129,13 @@ function initSearch() {
           text.className = 'excerpt';
           highlight(text, snippet(row, query), query);
           link.append(meta, heading, text);
+          if (row.kind === 'project') {
+            const identifier = document.createElement('p');
+            identifier.className = 'search-result-id';
+            identifier.append(document.createTextNode('ID · '));
+            highlight(identifier, row.id, query);
+            link.append(identifier);
+          }
           article.append(link);
           results.append(article);
         }
@@ -130,6 +165,7 @@ function initSearch() {
       // Invalidate at the keystroke, before the debounce starts. A pending index
       // request must not render results for text that is no longer in the input.
       sequence++;
+      syncFilters();
       results.replaceChildren();
       results.setAttribute('aria-busy', 'false');
       more.hidden = true;
@@ -144,7 +180,7 @@ function initSearch() {
         if (composing) return;
         clearTimeout(timer);
         page = 1;
-        invalidate(input.value.trim() ? '正在翻找…' : '输入关键词，搜索公开文章与项目。');
+        invalidate(input.value.trim() ? '正在翻找…' : emptyMessage());
         timer = setTimeout(run, 180);
       },
       options,
@@ -175,10 +211,39 @@ function initSearch() {
       options,
     );
     kind.addEventListener('change', changed, options);
+    scopeButtons.forEach((button) =>
+      button.addEventListener(
+        'click',
+        () => {
+          kind.value = button.dataset.searchScope!;
+          changed();
+        },
+        options,
+      ),
+    );
+    removeQuery.addEventListener(
+      'click',
+      () => {
+        input.value = '';
+        changed();
+        input.focus();
+      },
+      options,
+    );
+    removeKind.addEventListener(
+      'click',
+      () => {
+        kind.value = 'all';
+        changed();
+        scopeButtons.find((button) => button.dataset.searchScope === 'all')?.focus();
+      },
+      options,
+    );
     root.querySelector('[data-search-clear]')!.addEventListener(
       'click',
       () => {
         input.value = '';
+        kind.value = 'all';
         changed();
         input.focus();
       },
@@ -189,7 +254,6 @@ function initSearch() {
         'click',
         () => {
           input.value = button.dataset.searchSuggestion!;
-          kind.value = 'all';
           changed();
           input.focus();
         },
@@ -233,7 +297,10 @@ function initSearch() {
       clearTimeout(timer);
       controller.abort();
     });
-    if (input.value) void run();
+    syncFilters();
+    kindFallback.hidden = true;
+    scopeControls.hidden = false;
+    if (input.value || kind.value !== 'all') void run();
   });
   dispose = () => cleanup.forEach((stop) => stop());
 }

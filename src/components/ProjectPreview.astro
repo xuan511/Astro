@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { projectPath } from '../lib/paths';
+import Icon from './Icon.astro';
+import '../styles/project-preview.css';
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const { data } = project;
+const previewId = `project-preview-${project.id}`;
+---
+
+<button
+  type="button"
+  class="project-preview-trigger"
+  data-project-preview-open
+  aria-controls={previewId}
+  aria-haspopup="dialog"
+  aria-expanded="false"
+  aria-label={`快速了解：${data.name}`}
+  hidden
+>
+  快速了解 <Icon name="chevron" size={14} />
+</button>
+<dialog
+  id={previewId}
+  class="project-preview"
+  data-project-preview
+  aria-labelledby={`${previewId}-title`}
+  aria-describedby={`${previewId}-summary`}
+>
+  <header class="project-preview-header">
+    <p class="eyebrow">项目速览</p>
+    <button
+      class="icon-button"
+      type="button"
+      data-project-preview-close
+      aria-label="关闭项目速览"
+      autofocus
+    >
+      <Icon name="close" />
+    </button>
+  </header>
+  <div class="project-preview-content">
+    <p class="project-status">{data.status}</p>
+    <h2 id={`${previewId}-title`}>{data.name}</h2>
+    <p id={`${previewId}-summary`} class="project-preview-summary">
+      {data.description}
+    </p>
+    <h3>使用的技术</h3>
+    <ul class="project-preview-stack" aria-label="技术栈">
+      {data.stack.map((tag) => (
+        <li>{tag}</li>
+      ))}
+    </ul>
+    <p class="project-preview-note">
+      项目的完整说明、运行方式与当前验证情况，请继续阅读项目记录和仓库。
+    </p>
+  </div>
+  <footer class="project-preview-actions">
+    <a class="button" href={projectPath(project.id)}>
+      打开完整项目 <Icon name="arrow" size={16} />
+    </a>
+    <a class="text-link" href={data.github} target="_blank" rel="noopener noreferrer">
+      GitHub 仓库 <Icon name="external" size={15} />
+    </a>
+  </footer>
+</dialog>
+<script>
+  import '../scripts/project-preview';
+</script>

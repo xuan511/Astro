@@ -54,3 +54,19 @@ test('Chinese body search, AND tokens, scope and title ranking', () => {
   assert.equal(searchEntries(entries, '<script>')[0], undefined);
   assert.match(snippet(entries[0], '分片'), /分片/);
 });
+test('project IDs supplement search while title and metadata matches remain stronger', () => {
+  const identifier = 'linux-device-manager';
+  const rows = [
+    make('body-match', '设备指南', `${identifier} 调试`),
+    make(identifier, '设备工具', '调试流程', 'project'),
+    { ...make('metadata-match', '连接指南', '调试'), description: identifier },
+    make('title-match', identifier, '调试'),
+    make(identifier, '一篇普通文章', '没有对应的搜索词'),
+  ];
+  assert.deepEqual(
+    searchEntries(rows, identifier).map((row) => row.id),
+    ['title-match', 'metadata-match', identifier, 'body-match'],
+  );
+  assert.equal(searchEntries(rows, `${identifier} 调试`, 'project')[0].id, identifier);
+  assert.equal(searchEntries(rows, identifier, 'life').length, 0);
+});

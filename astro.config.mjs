@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { fileURLToPath } from 'node:url';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
@@ -35,5 +36,12 @@ export default defineConfig({
   devToolbar: { enabled: false },
   // Keep Vite's native tsconfig discovery inside this project, even when a
   // parent download folder contains another unpacked site's tsconfig.json.
-  vite: { tsconfig: 'tsconfig.json', server: { allowedHosts: ['terminal.local'] } },
+  vite: {
+    tsconfig: 'tsconfig.json',
+    // Dependency scanning uses a separate Rolldown config in Vite 8.
+    optimizeDeps: {
+      rolldownOptions: { tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url)) },
+    },
+    server: { allowedHosts: ['terminal.local'] },
+  },
 });

@@ -75,6 +75,22 @@ for (const file of pages) {
   if (/class="[^\"]*katex/.test(html)) mathPages++;
   if (html.includes('astro-code')) highlightedPages++;
   assert(!html.includes('PRIVATE-DRAFT-NEVER-PUBLISH-SENTINEL'), `Draft exposed: ${file}`);
+  for (const trigger of html.matchAll(/<button\b[^>]*\bdata-project-preview-open\b[^>]*>/g)) {
+    const id = trigger[0].match(/\baria-controls="([^"]+)"/)?.[1];
+    assert(id, `Project preview has no target: ${file}`);
+    const dialogs = [...html.matchAll(/<dialog\b[^>]*>/g)].filter(
+      ([tag]) => tag.match(/\bid="([^"]+)"/)?.[1] === id,
+    );
+    assert.equal(dialogs.length, 1, `Project preview target must be unique: ${id} in ${file}`);
+    const titleId = dialogs[0][0].match(/\baria-labelledby="([^"]+)"/)?.[1];
+    assert(titleId, `Project preview has no accessible title: ${id} in ${file}`);
+    assert.equal(
+      [...html.matchAll(/\bid="([^"]+)"/g)].filter((match) => match[1] === titleId).length,
+      1,
+      `Project preview title must exist and be unique: ${titleId} in ${file}`,
+    );
+    assert(/\bhidden(?:\s|>|=)/.test(trigger[0]), `Preview needs a no-JS fallback: ${file}`);
+  }
   for (const match of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
     const raw = match[1].replace(/&amp;/g, '&');
     if (raw.startsWith('#') || /^(?:data:|mailto:|tel:)/i.test(raw)) continue;
