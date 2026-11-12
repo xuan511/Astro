@@ -3,6 +3,7 @@ import {
   changeReadingSize,
   type ReadingPreferences,
 } from '../lib/reading-preferences';
+import { createDialogController } from '../lib/dialog';
 let stop: (() => void) | undefined;
 let preferences: ReadingPreferences = { size: 'normal', wide: false };
 const preferenceKey = () => `shijian:${document.body.dataset.base || '/'}:reading-v1`;
@@ -201,8 +202,10 @@ function initReading() {
   const viewer = document.querySelector<HTMLDialogElement>('#image-viewer');
   const viewerImage = viewer?.querySelector<HTMLImageElement>('[data-viewer-image]');
   const caption = viewer?.querySelector<HTMLElement>('[data-viewer-caption]');
+  const imageModal = createDialogController(viewer, { closeOnSurface: true });
   article.querySelectorAll<HTMLImageElement>('.prose img,img.article-cover').forEach((image) => {
-    if (!image.alt.trim() || image.closest('a,button,[data-no-zoom]')) return;
+    if (!imageModal.supported || !image.alt.trim() || image.closest('a,button,[data-no-zoom]'))
+      return;
     const target = image.closest('picture') || image;
     const button = document.createElement('button');
     button.type = 'button';
@@ -214,20 +217,20 @@ function initReading() {
   article.addEventListener(
     'click',
     (event) => {
-      const image = (event.target as Element).closest('.image-zoom')?.querySelector('img');
+      const trigger = (event.target as Element).closest<HTMLButtonElement>('.image-zoom');
+      const image = trigger?.querySelector('img');
       if (!image || !viewer || !viewerImage || !caption) return;
       viewerImage.src = image.currentSrc || image.src;
       viewerImage.alt = image.alt;
       caption.textContent = image.alt;
-      viewer.showModal();
+      imageModal.open(trigger);
     },
     options,
   );
   viewer?.addEventListener(
     'click',
     (event) => {
-      if (event.target === viewer || (event.target as Element).closest('[data-image-close]'))
-        viewer.close();
+      if ((event.target as Element).closest('[data-image-close]')) imageModal.close();
     },
     options,
   );
@@ -237,7 +240,7 @@ function initReading() {
     resize.disconnect();
     cancelAnimationFrame(frame);
     timers.forEach(clearTimeout);
-    viewer?.close();
+    imageModal.destroy();
   };
 }
 document.addEventListener('astro:after-swap', applyPreferences);

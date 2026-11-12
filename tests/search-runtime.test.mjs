@@ -13,9 +13,15 @@ import {
 } from '../src/lib/search.ts';
 
 // Execute the real client script with only its DOM and scheduling boundaries replaced.
-const script = stripTypeScriptTypes(
-  readFileSync(new URL('../src/scripts/search.ts', import.meta.url), 'utf8'),
-).replace(/^import[\s\S]*?;\r?\n/gm, '');
+const dialogScript = stripTypeScriptTypes(
+  readFileSync(new URL('../src/lib/dialog.ts', import.meta.url), 'utf8'),
+).replace(/^export /gm, '');
+const script =
+  dialogScript +
+  '\n' +
+  stripTypeScriptTypes(
+    readFileSync(new URL('../src/scripts/search.ts', import.meta.url), 'utf8'),
+  ).replace(/^import[\s\S]*?;\r?\n/gm, '');
 const entry = {
   id: 'linux',
   title: 'Linux 调试',

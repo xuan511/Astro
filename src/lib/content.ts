@@ -1,9 +1,9 @@
 import { getCollection } from 'astro:content';
+import { selectPublishedPosts } from './post-query';
+import type { PostKind } from './post-query';
 
-export async function publishedPosts() {
-  return (await getCollection('posts', ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
-  );
+export async function publishedPosts(kind?: PostKind) {
+  return selectPublishedPosts(await getCollection('posts'), kind);
 }
 
 export async function recentNotes(limit?: number) {

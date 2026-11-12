@@ -123,7 +123,10 @@ if (root && audio && playlist.length) {
     });
     each('[data-mini-expand]', (el) => {
       el.setAttribute('aria-expanded', String(expanded));
-      el.setAttribute('aria-label', expanded ? '收起播放进度' : '展开播放进度');
+      el.setAttribute(
+        'aria-label',
+        `${track.title} ${track.artist}，${expanded ? '收起' : '展开'}播放进度`,
+      );
     });
     each<HTMLElement>('[data-play-track]', (el) => {
       const selected = el.dataset.playTrack === track.id;

@@ -3,6 +3,7 @@ import { resolve, relative, join, extname, sep, isAbsolute } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import assert from 'node:assert/strict';
 import { deployment } from './deployment.mjs';
+import { isIndexablePath } from '../src/lib/indexing.mjs';
 
 const root = resolve(process.env.VERIFY_DIST || 'dist');
 const { site, base } = deployment();
@@ -17,6 +18,8 @@ async function walk(dir) {
 }
 const files = await walk(root),
   pages = files.filter((file) => file.endsWith('.html'));
+const indexablePages = new Set();
+const sitemapPages = new Set();
 let links = 0,
   articles = 0,
   sitemapUrls = 0,
@@ -45,8 +48,26 @@ for (const file of pages) {
     .replace(/\\/g, '/')
     .replace(/index\.html$/, '');
   const url = new URL(base + path, site);
+  const noindex = /<meta\b[^>]*name="robots"[^>]*content="[^"]*\bnoindex\b/.test(html);
+  if (!isIndexablePath(url.pathname, base))
+    assert(noindex, `Utility page must declare noindex: ${file}`);
+  if (!noindex) indexablePages.add(url.href);
   assert.match(html, /<html[^>]+lang="zh-CN"/);
   assert.equal((html.match(/<h1(?:\s|>)/g) || []).length, 1, `Expected one h1: ${file}`);
+  const players = [...html.matchAll(/<section\b[^>]*\bid="persistent-player"[^>]*>/g)];
+  assert.equal(players.length, 1, `Expected one persistent player: ${file}`);
+  assert.match(
+    players[0][0],
+    /\bdata-astro-transition-persist="shijian-player"/,
+    `Player persistence missing: ${file}`,
+  );
+  const audios = [...html.matchAll(/<audio\b[^>]*>/g)];
+  assert.equal(audios.length, 1, `Expected one audio element: ${file}`);
+  assert.match(audios[0][0], /\bid="journal-audio"/);
+  assert(
+    !/\bautoplay(?:\s|>|=)/.test(audios[0][0]),
+    `Initial playback must require user action: ${file}`,
+  );
   assert.match(html, /<meta name="description" content="[^"]+"/);
   const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
   assert(canonical, `Missing canonical: ${file}`);
@@ -148,13 +169,17 @@ for (const name of ['sitemap-index.xml', 'sitemap-0.xml']) {
   const xml = await readFile(join(root, name), 'utf8');
   for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
     const url = new URL(match[1].replace(/&amp;/g, '&'));
-    assert(!/\/404(?:\.html|\/)?$/.test(url.pathname), '404 must not be indexed');
-    assert(!url.pathname.includes('/legacy/'), 'Legacy pages must not be indexed');
+    if (name === 'sitemap-0.xml') {
+      assert(isIndexablePath(url.pathname, base), `Utility page must not enter sitemap: ${url}`);
+      assert(indexablePages.has(url.href), `Sitemap target is missing or declares noindex: ${url}`);
+      sitemapPages.add(url.href);
+    }
     await exists(url);
     sitemapUrls++;
   }
 }
 const rss = await readFile(join(root, 'rss.xml'), 'utf8');
+assert.deepEqual(sitemapPages, indexablePages, 'Sitemap must match the indexable HTML pages');
 const feedLinks = [...rss.matchAll(/<link>([^<]+)<\/link>/g)].map((match) =>
   match[1].replace(/&amp;/g, '&'),
 );

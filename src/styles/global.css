@@ -39,6 +39,13 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 35px;
 }
+/* Modal presentation belongs to the shell, independent of which feature loaded it. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+dialog:not([open]) {
+  display: none;
+}
 body {
   margin: 0;
   background: var(--bg);

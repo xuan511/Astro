@@ -6,14 +6,14 @@ import Media from '../../components/Media.astro';
 import ReadingControls from '../../components/ReadingControls.astro';
 import ImageViewer from '../../components/ImageViewer.astro';
 import { publishedPosts } from '../../lib/content';
+import { postsWithNeighbors } from '../../lib/post-query';
 import { site } from '../../config/site';
 import { withBase, postPath, taxonomyPath, formatDate, readingMinutes } from '../../lib/paths';
 import '../../styles/prose.css';
 export async function getStaticPaths() {
-  const all = await publishedPosts();
-  return all.map((post, index) => ({
+  return postsWithNeighbors(await publishedPosts()).map(({ post, previous, next }) => ({
     params: { id: post.id },
-    props: { post, previous: all[index + 1], next: all[index - 1] },
+    props: { post, previous, next },
   }));
 }
 const { post, previous, next } = Astro.props;
@@ -36,7 +36,7 @@ const jsonLd = {
 <Base
   title={data.title}
   description={data.description}
-  image={typeof data.cover === 'string' ? data.cover : undefined}
+  image={data.cover}
   ogType="article"
   section={back}
 >

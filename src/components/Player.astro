@@ -39,7 +39,7 @@ const first = tracks[0];
       type="button"
       data-mini-expand
       aria-expanded="false"
-      aria-label="展开播放进度"
+      aria-label={`${first?.title || ''} ${first?.artist || ''}，展开播放进度`}
     >
       <span data-player-title>{first?.title}</span>
       <small data-player-artist>{first?.artist}</small>

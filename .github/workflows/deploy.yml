@@ -32,6 +32,7 @@ jobs:
           REQUESTED_SITE: ${{ vars.SITE_URL }}
           REQUESTED_BASE: ${{ vars.BASE_PATH }}
       - run: npm run check
+      - run: npm run check:architecture
       - run: npm run format:check
       - run: npm test
       - run: npm run build
@@ -41,9 +42,23 @@ jobs:
         with:
           path: dist
 
+  paths:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run verify:pages -- --repo=${{ github.repository }}
+
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: build
+    needs: [build, paths]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:

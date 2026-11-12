@@ -7,6 +7,7 @@ import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
 import contentAssets from './scripts/rehype-content.mjs';
 import { deployment } from './scripts/deployment.mjs';
+import { isIndexablePath } from './src/lib/indexing.mjs';
 
 const { site, base } = deployment();
 export default defineConfig({
@@ -18,12 +19,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => {
-        const path = new URL(page).pathname;
-        return (
-          ![`${base}404/`, `${base}404.html`].includes(path) && !path.startsWith(`${base}legacy/`)
-        );
-      },
+      filter: (page) => isIndexablePath(new URL(page).pathname, base),
     }),
   ],
   markdown: {

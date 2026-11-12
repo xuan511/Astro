@@ -1,18 +1,15 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import type { Props as SeoProps } from '../components/SeoHead.astro';
+import SeoHead from '../components/SeoHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import QuickSearch from '../components/QuickSearch.astro';
 import { site } from '../config/site';
-import { withBase } from '../lib/paths';
+import { themeBootstrap } from '../lib/theme-preferences';
 import '../styles/global.css';
-interface Props {
-  title?: string;
-  description?: string;
-  noindex?: boolean;
-  image?: string;
-  ogType?: 'website' | 'article';
+interface Props extends SeoProps {
   section?: string;
 }
 const {
@@ -23,14 +20,8 @@ const {
   ogType = 'website',
   section,
 } = Astro.props;
-const pageTitle = title ? `${title} · ${site.title}` : `${site.title} · ${site.description}`;
-const canonical = new URL(
-  Astro.url.pathname === withBase('404/') ? withBase('404.html') : Astro.url.pathname,
-  Astro.site,
-);
 const preferenceKey = `shijian:${import.meta.env.BASE_URL}:theme-v3`;
 const readingKey = `shijian:${import.meta.env.BASE_URL}:reading-v1`;
-const socialImage = new URL(withBase(image || 'images/social.svg'), Astro.site);
 ---
 
 <!doctype html>
@@ -39,37 +30,10 @@ const socialImage = new URL(withBase(image || 'images/social.svg'), Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
-    <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
-    {noindex && <meta name="robots" content="noindex,follow" />}
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={`${site.title} RSS`}
-      href={withBase('rss.xml')}
-    />
-    <meta property="og:type" content={ogType} />
-    <meta property="og:locale" content="zh_CN" />
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={socialImage} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <script is:inline define:vars={{ preferenceKey, readingKey, defaultTheme: site.defaultTheme }}>
-      try {
-        const pref = localStorage.getItem(preferenceKey) || defaultTheme;
-        document.documentElement.dataset.theme =
-          pref === 'system'
-            ? matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light'
-            : pref;
-      } catch {
-        document.documentElement.dataset.theme = defaultTheme === 'dark' ? 'dark' : 'light';
-      }
+    <SeoHead {title} {description} {noindex} {image} {ogType} />
+    <script is:inline set:html={themeBootstrap(preferenceKey, site.defaultTheme)} />
+    <script is:inline define:vars={{ readingKey }}>
       try {
         const reading = JSON.parse(localStorage.getItem(readingKey) || '{}');
         document.documentElement.dataset.readingSize = ['small', 'normal', 'large'].includes(

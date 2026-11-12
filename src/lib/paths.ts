@@ -11,13 +11,7 @@ export const postPath = (id: string) =>
 export const projectPath = (id: string) => withBase(`projects/${encodeURIComponent(id)}/`);
 export const taxonomyPath = (kind: 'tags' | 'categories', name: string) =>
   withBase(`${kind}/${encodeURIComponent(name)}/`);
-export const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'Asia/Shanghai',
-  }).format(date);
+export { formatDate } from './dates.ts';
 
 export function readingMinutes(body = ''): number {
   const plain = body.replace(/```[\s\S]*?```/g, '').replace(/<[^>]+>/g, '');

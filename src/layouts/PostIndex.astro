@@ -4,6 +4,7 @@ import Base from './Base.astro';
 import PageHeading from '../components/PageHeading.astro';
 import PostCard from '../components/PostCard.astro';
 import { taxonomyPath, withBase } from '../lib/paths';
+import { groupPostsByTaxonomy } from '../lib/post-query';
 interface Props {
   title: string;
   eyebrow: string;
@@ -12,8 +13,8 @@ interface Props {
   kind?: 'tech' | 'life';
 }
 const { title, eyebrow, description, posts, kind } = Astro.props;
-const categories = [...new Set(posts.map((post) => post.data.category))];
-const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+const categories = groupPostsByTaxonomy(posts, 'category');
+const tags = groupPostsByTaxonomy(posts, 'tags');
 ---
 
 <Base title={title} description={description}>
@@ -25,9 +26,9 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
           <a class="pill" href={withBase('archive/')}>
             全部归档
           </a>
-          {categories.map((category) => (
-            <a class="pill" href={taxonomyPath('categories', category)}>
-              {category}
+          {categories.map(({ name }) => (
+            <a class="pill" href={taxonomyPath('categories', name)}>
+              {name}
             </a>
           ))}
           <span class="count">{posts.length} 篇记录</span>
@@ -45,8 +46,8 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
       <aside class="index-aside">
         <h2 class="aside-title">沿着标签，继续翻翻</h2>
         <nav class="tag-cloud" aria-label="文章标签">
-          {tags.map((tag) => (
-            <a href={taxonomyPath('tags', tag)}>#{tag}</a>
+          {tags.map(({ name }) => (
+            <a href={taxonomyPath('tags', name)}>#{name}</a>
           ))}
         </nav>
         <p class="handwritten">

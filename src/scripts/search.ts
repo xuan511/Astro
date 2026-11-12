@@ -7,6 +7,7 @@ import {
   type SearchEntry,
 } from '../lib/search';
 import { withBase } from '../lib/paths';
+import { createDialogController } from '../lib/dialog';
 
 // All search surfaces share one lazy request, including during client navigation.
 let indexRequest: Promise<SearchEntry[]> | undefined;
@@ -307,30 +308,26 @@ function initSearch() {
 function quickDialog() {
   return document.querySelector<HTMLDialogElement>('#quick-search');
 }
-function openSearch() {
-  const dialog = quickDialog();
-  if (!dialog || document.querySelector('dialog[open]')) return;
-  dialog.showModal();
-  dialog.querySelector<HTMLInputElement>('[data-search-input]')?.focus({ preventScroll: true });
+let modal: ReturnType<typeof createDialogController> | undefined;
+function openSearch(trigger?: HTMLElement | null) {
+  return modal?.open(trigger);
 }
 // Intercept before ClientRouter starts a navigation for the fallback search link.
 document.addEventListener(
   'click',
   (event) => {
     if (!(event.target instanceof Element)) return;
-    const dialog = quickDialog();
     const plain =
       event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
     if (event.target.closest('[data-search-open]') && plain) {
-      event.preventDefault();
-      openSearch();
+      const trigger = event.target.closest<HTMLElement>('[data-search-open]');
+      if (openSearch(trigger)) event.preventDefault();
     }
     if (
       event.target.closest('[data-search-close]') ||
-      event.target === dialog ||
       (plain && event.target.closest('#quick-search a'))
     )
-      dialog?.close();
+      modal?.close();
   },
   { capture: true },
 );
@@ -342,11 +339,17 @@ document.addEventListener('keydown', (event) => {
   const shortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
   const slash = !editable && !event.ctrlKey && !event.metaKey && event.key === '/';
   if ((!shortcut && !slash) || document.querySelector('dialog[open]:not(#quick-search)')) return;
-  event.preventDefault();
-  if (quickDialog()?.open && shortcut) quickDialog()?.close();
-  else openSearch();
+  if (quickDialog()?.open && shortcut) {
+    event.preventDefault();
+    modal?.close();
+  } else if (openSearch()) event.preventDefault();
 });
 function init() {
+  modal?.destroy();
+  const dialog = quickDialog();
+  modal = createDialogController(dialog, {
+    initialFocus: () => dialog?.querySelector<HTMLInputElement>('[data-search-input]'),
+  });
   initSearch();
   document.querySelectorAll('[data-search-shortcut]').forEach((label) => {
     label.textContent = /Macintosh|iPhone|iPad/.test(navigator.userAgent) ? '⌘ K' : 'Ctrl K';
@@ -355,6 +358,7 @@ function init() {
 document.addEventListener('astro:page-load', init);
 document.addEventListener('astro:before-swap', () => {
   dispose?.();
-  quickDialog()?.close();
+  modal?.destroy();
+  modal = undefined;
 });
 init();

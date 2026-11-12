@@ -112,9 +112,6 @@
 .project-preview-actions a {
   min-height: 44px;
 }
-html:has(dialog[data-project-preview][open]) {
-  overflow: hidden;
-}
 @media (max-width: 640px) {
   .project-preview-trigger {
     margin-inline: 25px;

@@ -3,9 +3,10 @@ import Base from '../../layouts/Base.astro';
 import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
 import { publishedPosts } from '../../lib/content';
+import { groupPostsByYear } from '../../lib/post-query';
 import { postPath } from '../../lib/paths';
 const posts = await publishedPosts();
-const years = [...new Set(posts.map((post) => post.data.publishedAt.getFullYear()))];
+const years = groupPostsByYear(posts);
 ---
 
 <Base title="归档" description="所有技术博客与生活随笔，按时间慢慢翻阅。">
@@ -15,23 +16,20 @@ const years = [...new Set(posts.map((post) => post.data.publishedAt.getFullYear(
       eyebrow="THE ARCHIVE"
       description={`${posts.length} 篇记录，都是来过的痕迹。`}
     />
-    {years.map((year) => (
+    {years.map(({ year, entries }) => (
       <section class="archive-year">
         <h2>{year}</h2>
         <div>
-          {posts
-            .filter((post) => post.data.publishedAt.getFullYear() === year)
-            .map((post) => (
-              <a class="archive-entry" href={postPath(post.id)}>
-                <time datetime={post.data.publishedAt.toISOString()}>
-                  {String(post.data.publishedAt.getMonth() + 1).padStart(2, '0')} /{' '}
-                  {String(post.data.publishedAt.getDate()).padStart(2, '0')}
-                </time>
-                <h3>{post.data.title}</h3>
-                {post.data.demo && <span class="sample-badge">示例</span>}
-                <Icon name="arrow" size={17} />
-              </a>
-            ))}
+          {entries.map(({ post, date }) => (
+            <a class="archive-entry" href={postPath(post.id)}>
+              <time datetime={post.data.publishedAt.toISOString()}>
+                {date.month} / {date.day}
+              </time>
+              <h3>{post.data.title}</h3>
+              {post.data.demo && <span class="sample-badge">示例</span>}
+              <Icon name="arrow" size={17} />
+            </a>
+          ))}
         </div>
       </section>
     ))}

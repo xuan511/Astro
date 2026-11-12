@@ -5,9 +5,15 @@ import { stripTypeScriptTypes } from 'node:module';
 import { runInNewContext } from 'node:vm';
 
 // Execute the shipped controller; native focus trapping and rendering remain browser checks.
-const script = stripTypeScriptTypes(
-  readFileSync(new URL('../src/scripts/project-preview.ts', import.meta.url), 'utf8'),
-).replace(/^export\s*\{\s*\};?\s*/m, '');
+const dialogScript = stripTypeScriptTypes(
+  readFileSync(new URL('../src/lib/dialog.ts', import.meta.url), 'utf8'),
+).replace(/^export /gm, '');
+const script =
+  dialogScript +
+  '\n' +
+  stripTypeScriptTypes(
+    readFileSync(new URL('../src/scripts/project-preview.ts', import.meta.url), 'utf8'),
+  ).replace(/^import[\s\S]*?;\r?\n/gm, '');
 
 function harness({ supported = true } = {}) {
   class Element {
@@ -66,7 +72,7 @@ function harness({ supported = true } = {}) {
   document.querySelectorAll = () => cards.map(({ dialog }) => dialog);
   document.querySelector = () =>
     anotherDialogOpen ? {} : cards.find(({ dialog }) => dialog.open)?.dialog || null;
-  runInNewContext(script, { document, AbortController });
+  runInNewContext(script, { document, AbortController, HTMLElement: Element });
   return {
     get cards() {
       return cards;

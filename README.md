@@ -15,6 +15,7 @@ npm run dev
 
 ```bash
 npm run check
+npm run check:architecture
 npm test
 npm run build
 npm run test:built
@@ -30,7 +31,7 @@ npm run preview
 1. 下载源码、解压并完成本地检查。
 2. 将完整源码提交推送到 `xuan511/Astro` 的 `main` 分支。
 3. 在 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**。
-4. 在 Actions 中运行 **Check, build and deploy Pages**，分支选 `main`，等待 build、deploy 都成功。
+4. 在 Actions 中运行 **Check, build and deploy Pages**，分支选 `main`，等待 build、paths、deploy 都成功。
 5. 打开 deploy 任务输出的真实网址，按 [上线验收步骤](docs/DEPLOYMENT.md#上线后验收) 检查阅读、搜索和音乐。
 
 只允许 `main` 发布正式站点；PR 和手动选择其他分支时只执行检查。连续提交会等待正在进行的正式部署完成。工作流汇总页提供构建目标和检查结果。
@@ -57,7 +58,7 @@ npm run new:post -- "一些日常" --kind=life --slug=ordinary-days --mdx
 | 域名与子路径                                             | `config/deployment.json` 或环境变量 |
 | 设计变量与样式                                           | `src/styles/`、组件内样式           |
 
-完整说明：[写作指南](docs/WRITING.md)、[音乐管理](docs/MUSIC.md)、[部署与迁移](docs/DEPLOYMENT.md)、[阶段验收](docs/ACCEPTANCE.md)。
+完整说明：[架构与边界](docs/ARCHITECTURE.md)、[开发与交付](CONTRIBUTING.md)、[写作指南](docs/WRITING.md)、[音乐管理](docs/MUSIC.md)、[部署与迁移](docs/DEPLOYMENT.md)、[阶段验收](docs/ACCEPTANCE.md)。
 
 ## 项目结构
 
@@ -102,6 +103,14 @@ legacy/                原版源码、工具与说明
 设计参考、取舍和自行测试步骤见 [体验改进记录](docs/EXPERIENCE.md)。没有增加客户端框架或新依赖；站点仍为可部署至 GitHub Pages 的静态 Astro 项目。
 
 ## 架构选择
+
+### 规则与工程门禁 · 2026-11-12
+
+内容读取、纯查询、页面元信息和客户端状态各有边界。文章的公开过滤、同日稳定顺序、栏目、标签、邻篇与归档使用共享查询；日期显示和归档统一到上海时区。`SeoHead` 与 Sitemap 共用索引政策，搜索和写作工具页可访问，但不进入 Sitemap。
+
+主题控制器区分会话偏好和浏览器存储，存储失败时切页仍保留手动选择；跟随系统时响应系统变化。搜索、图片、项目速览共用原生弹层控制器，统一能力降级、互斥、背景边界和焦点恢复。音频继续由 Base 内的唯一持久播放器持有。
+
+`npm run check:architecture` 使用 TypeScript AST 检查客户端运行时依赖，阻止构建侧内容、配置或 Node API 进入浏览器；具体检查范围和限制见架构文档。`verify` 已包含该门禁。CI 分别执行日常检查与三种部署路径验证，两者通过后才允许部署；成品检查同时校验 Sitemap/noindex 一致和每页单个持久播放器。修改与交付流程见 [CONTRIBUTING](CONTRIBUTING.md)。
 
 ### 项目浏览与搜索条件 · 2026-10-28
 

@@ -1,7 +1,7 @@
 ---
 import PostIndex from '../../layouts/PostIndex.astro';
 import { publishedPosts } from '../../lib/content';
-const posts = (await publishedPosts()).filter((post) => post.data.kind === 'tech');
+const posts = await publishedPosts('tech');
 ---
 
 <PostIndex

@@ -32,9 +32,9 @@
 
 5. 打开仓库 **Settings → Pages → Build and deployment → Source**，选择 **GitHub Actions**。
 6. 打开 **Actions → Check, build and deploy Pages → Run workflow**，选择 `main`。如果首次推送的运行因 Pages 尚未启用而失败，设置完成后重新运行即可。
-7. 等待 build、deploy 两个任务均成功，从 deploy 任务或 Pages 设置中取得真实网址。后续推送到 `main` 会自动重新部署。
+7. 等待 build、paths、deploy 三个任务均成功，从 deploy 任务或 Pages 设置中取得真实网址。后续推送到 `main` 会自动重新部署。
 
-工作流先安装、类型检查、格式检查、运行测试、构建、检查成品，再上传并部署。Actions 汇总页显示目标地址、页面数、资源引用、RSS 和体积估算。构建过程使用只读源码权限；只有部署任务申请 Pages 与身份令牌权限。不需要自建部署 Token。
+工作流的 build 作业先安装、类型检查、架构依赖检查、格式检查、运行测试、构建和检查成品；独立 paths 作业安装相同锁定依赖并验证根路径、项目子路径与自定义域名。deploy 依赖两者成功。Actions 汇总页显示目标地址、页面数、资源引用、RSS 和体积估算。构建过程使用只读源码权限；只有部署任务申请 Pages 与身份令牌权限。不需要自建部署 Token。
 
 PR 只检查；手动运行其他分支也不会发布。只有 `main` 可上传生产产物并部署。PR 检查可以被后续提交替代，已经开始的正式部署会执行完毕。若主分支不叫 `main`，同时修改工作流的 `push.branches` 和两个分支判断。
 

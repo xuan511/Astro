@@ -1,20 +1,4 @@
-export {};
-const themeKey = () => `shijian:${document.body.dataset.base || '/'}:theme-v3`;
-function applyTheme() {
-  let preferred = document.body.dataset.defaultTheme || 'light';
-  try {
-    preferred = localStorage.getItem(themeKey()) || preferred;
-  } catch {
-    /* Reading remains available without storage. */
-  }
-  const dark =
-    preferred === 'dark' ||
-    (preferred === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  document
-    .querySelectorAll('[data-theme-toggle]')
-    .forEach((button) => button.setAttribute('aria-label', dark ? '切换浅色模式' : '切换深色模式'));
-}
+import './theme';
 function closeMenu(restoreFocus = false) {
   const menu = document.getElementById('mobile-navigation');
   const focusedInside = menu?.contains(document.activeElement);
@@ -26,20 +10,6 @@ function closeMenu(restoreFocus = false) {
 }
 document.addEventListener('click', (event) => {
   if (!(event.target instanceof Element)) return;
-  if (event.target.closest('[data-theme-toggle]')) {
-    const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    try {
-      localStorage.setItem(themeKey(), theme);
-    } catch {
-      /* Session theme still works. */
-    }
-    document.documentElement.dataset.theme = theme;
-    document
-      .querySelectorAll('[data-theme-toggle]')
-      .forEach((button) =>
-        button.setAttribute('aria-label', theme === 'dark' ? '切换浅色模式' : '切换深色模式'),
-      );
-  }
   const toggle = event.target.closest('[data-menu-toggle]');
   if (toggle) {
     const menu = document.getElementById('mobile-navigation');
@@ -58,10 +28,6 @@ document.addEventListener('keydown', (event) => {
 matchMedia('(min-width: 641px)').addEventListener('change', (event) => {
   if (event.matches) closeMenu();
 });
-document.addEventListener('astro:after-swap', applyTheme);
-document.addEventListener('astro:page-load', applyTheme);
-applyTheme();
-
 // Keep links from v1/v2 working after the migration to real static pages.
 if (location.hash.startsWith('#/')) {
   const old = location.hash.slice(2);

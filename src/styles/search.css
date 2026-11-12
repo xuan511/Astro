@@ -246,9 +246,6 @@ kbd {
 .search-key-hints kbd {
   margin-right: 4px;
 }
-html:has(dialog[open]) {
-  overflow: hidden;
-}
 @media (max-width: 640px) {
   .search-input-wrap {
     gap: 9px;
