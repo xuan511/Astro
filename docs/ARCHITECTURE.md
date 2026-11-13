@@ -1,6 +1,6 @@
 # 架构与取舍
 
-本文记录 2026-11-12 这轮渐进改造的职责边界、问题依据与开源参考。实际检查结果、浏览器操作和部署状态另见 [阶段验收](ACCEPTANCE.md)，不沿用上一轮的测试数量或性能评分。
+本文记录渐进改造的职责边界、问题依据与开源参考。2026-11-13 的展示层规范见 [设计系统](DESIGN.md)；实际检查结果、浏览器操作和部署状态另见 [阶段验收](ACCEPTANCE.md)，不沿用上一轮的测试数量或性能评分。
 
 ## 总体结构
 
@@ -93,11 +93,17 @@ Astro 客户端导航不会重新启动整个浏览器会话。模块只执行�
 | [antfu.me：WrapperPost](https://github.com/antfu/antfu.me/blob/0be14a9ef6fdad5ccaf72010e8e1fed508920102/src/components/WrapperPost.vue)                                                                                                                                      | 文章阅读职责与全站外壳分开，页面交互依附当前内容节点。       | 参考生命周期边界，继续使用 Astro 页面和原生浏览器能力；不迁移 Vue 或复制其个人页面。                                   |
 | [Astro 官方：客户端导航事件](https://docs.astro.build/en/guides/view-transitions/#lifecycle-events)                                                                                                                                                                          | 页面准备、交换和加载事件有不同用途；持久节点不会随正文替换。 | 以官方生命周期约束主题同步与页面清理，保护持久播放器。                                                                 |
 
-研究只使用公开源码与官方文档，没有请求用户指定参考站的页面、资源、子域或 API。
+以上 2026-11-12 的研究只使用公开源码与官方文档，没有请求此前指定的 SWUST MC 站点页面、资源、子域或 API。2026-11-13 另实际查看了用户新指定的 wdxtub.com，范围和结论见设计系统文档。
 
-## 后续取舍：本轮没有实现
+## 文章展示层 · 2026-11-13
 
-**独立文章布局。** [AstroPaper PostLayout](https://github.com/satnaing/astro-paper/blob/6f61e2dc0e45bbcefc05f4055f293cd7f81bcb03/src/layouts/PostLayout.astro) 和 antfu 的 WrapperPost 都明确了文章层。当前 `src/pages/posts/[...id].astro` 仍负责文章路由与展示；只有需要复用文章壳或继续扩展元数据时，再提取 `PostLayout` 和共享目录组件。贸然搬移模板会增加 DOM 钩子与阅读行为的回归范围，不属于本轮已完成项。
+**独立文章布局已落地。** `src/pages/posts/[...id].astro` 只负责静态路径、内容渲染与布局调用；`src/layouts/PostLayout.astro` 持有文章元信息、阅读壳、邻篇和阅读脚本入口，继续把全站外壳交给 `Base`。`TocLinks.astro` 为桌面和手机输出同一组 h2/h3 目录，保留片段链接编码与原阅读钩子。此前参考的 [AstroPaper PostLayout](https://github.com/satnaing/astro-paper/blob/6f61e2dc0e45bbcefc05f4055f293cd7f81bcb03/src/layouts/PostLayout.astro) 和 antfu WrapperPost 的职责分离原则在本轮适配，而非迁入其框架或模板。
+
+`tokens.css` 定义语义颜色、排版、间距和布局约束；`global.css` 管理基础控件与全站壳，首页、文章卡片、正文、搜索、项目速览和播放器分别拥有自己的样式。首页 CSS 仅从首页导入，卡片通过组件导入样式；搜索摘要不依赖文章卡片的类实现截断。断点按容器关系确定，具体约束见设计文档。
+
+`scripts/verify-presentation.mjs` 检查实际生成的 HTML：文章阅读钩子、唯一标题与 ID、桌面/手机目录顺序和正文目标、列表标题层级、精选封面结构。文章由 BlogPosting 身份进入检查，不能因阅读根节点丢失而逃过验证。合法无封面卡片由夹具覆盖。它不比较 CSS 数值、不证明视觉质量，响应式、焦点与播放仍需浏览器实测。
+
+## 后续取舍：尚未实现
 
 **构建期正文结构。** [AstroPaper 表格包装插件](https://github.com/satnaing/astro-paper/blob/6f61e2dc0e45bbcefc05f4055f293cd7f81bcb03/src/utils/rehypeTableWrapper.js) 与 [目录转换插件](https://github.com/satnaing/astro-paper/blob/6f61e2dc0e45bbcefc05f4055f293cd7f81bcb03/src/utils/rehypeInlineToc.js)、[antfu Markdown 管线](https://github.com/antfu/antfu.me/blob/0be14a9ef6fdad5ccaf72010e8e1fed508920102/vite.config.ts) 展示了构建期转换的可行性。以后可把静态标题锚点和表格滚动包装移入现有 rehype 管线，减少换页时的 DOM 重建并改善无 JavaScript 阅读。本轮仍由阅读脚本增强这些结构，没有宣称已迁移；后续必须覆盖 Markdown 与 MDX、幂等包装、标题无重复播报和移动端溢出。复制按钮、图片查看器等真实交互仍应由客户端增强。
 

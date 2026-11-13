@@ -76,39 +76,44 @@ import '../../styles/prose.css';
 <style>
   .about-layout {
     display: grid;
-    grid-template-columns: 200px minmax(0, 680px);
-    gap: 75px;
-    max-width: 970px;
-    margin: 10px auto;
+    grid-template-columns: var(--layout-toc) minmax(0, 1fr);
+    gap: var(--space-7);
+    max-width: var(--layout-content);
+    margin: var(--space-2) auto;
+    align-items: start;
+  }
+  .about-layout > * {
+    min-width: 0;
   }
   .about-profile {
     text-align: center;
-    padding-top: 20px;
+    padding-top: var(--space-4);
   }
   .about-profile .avatar {
     margin: auto;
   }
   .about-profile h2 {
     font:
-      26px Georgia,
+      var(--text-xl) / var(--leading-title) Georgia,
       var(--serif);
-    margin: 22px 0 15px;
+    margin: var(--space-5) 0 var(--space-4);
   }
   .about-interests {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 6px 13px;
-    font-size: 11px;
+    gap: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
     color: var(--muted);
+    overflow-wrap: anywhere;
   }
   .about-profile nav {
     border-top: 1px solid var(--line);
-    padding-top: 20px;
-    margin-top: 23px;
+    padding-top: var(--space-4);
+    margin-top: var(--space-5);
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: var(--space-3);
     justify-content: center;
   }
   .about-layout .prose > h2:first-child {
@@ -116,38 +121,32 @@ import '../../styles/prose.css';
   }
   .about-timeline {
     list-style: none;
-    padding-left: 20px;
+    padding-left: var(--space-5);
     border-left: 1px solid var(--line);
   }
   .about-timeline li {
-    margin: 25px 0;
+    margin: var(--space-5) 0;
   }
-  @media (max-width: 800px) {
-    .about-layout {
-      gap: 35px;
-      grid-template-columns: 160px minmax(0, 1fr);
-    }
-  }
-  @media (max-width: 640px) {
+  @media (max-width: 56.25rem) {
     .about-layout {
       display: block;
     }
     .about-profile {
-      padding: 0 0 28px;
-      margin-bottom: 30px;
+      padding: 0 0 var(--space-6);
+      margin-bottom: var(--space-6);
       border-bottom: 1px solid var(--line);
     }
     .about-profile .avatar {
-      width: 75px;
-      height: 75px;
+      width: 5rem;
+      height: 5rem;
     }
     .about-profile h2 {
-      margin-top: 15px;
+      margin-top: var(--space-4);
     }
     .about-profile nav {
       border: 0;
-      padding-top: 5px;
-      margin-top: 15px;
+      padding-top: var(--space-1);
+      margin-top: var(--space-4);
     }
   }
 </style>

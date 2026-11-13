@@ -4,6 +4,7 @@ import { gzipSync } from 'node:zlib';
 import assert from 'node:assert/strict';
 import { deployment } from './deployment.mjs';
 import { isIndexablePath } from '../src/lib/indexing.mjs';
+import { verifyPresentation } from './verify-presentation.mjs';
 
 const root = resolve(process.env.VERIFY_DIST || 'dist');
 const { site, base } = deployment();
@@ -76,11 +77,13 @@ for (const file of pages) {
     html.includes(`<meta property="og:url" content="${url.href}"`),
     `Incorrect OG URL: ${file}`,
   );
+  let articlePage = false;
   for (const match of html.matchAll(
     /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g,
   )) {
     const structured = JSON.parse(match[1]);
     if (structured['@type'] === 'BlogPosting') {
+      articlePage = true;
       articles++;
       assert.equal(structured.mainEntityOfPage, url.href, `Incorrect article URL: ${file}`);
       assert(
@@ -93,6 +96,7 @@ for (const file of pages) {
       );
     }
   }
+  verifyPresentation(html, { article: articlePage, label: file });
   if (/class="[^\"]*katex/.test(html)) mathPages++;
   if (html.includes('astro-code')) highlightedPages++;
   assert(!html.includes('PRIVATE-DRAFT-NEVER-PUBLISH-SENTINEL'), `Draft exposed: ${file}`);

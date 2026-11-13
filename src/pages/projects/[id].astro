@@ -44,36 +44,27 @@ const { data } = project;
         <p>{paragraph}</p>
       ))}
     </article>
-    <a class="text-link" href={withBase('projects/')} style="margin-top:35px">
+    <a class="text-link project-detail-return" href={withBase('projects/')}>
       继续看看其他项目 <Icon name="arrow" size={15} />
     </a>
   </div>
 </Base>
 <style>
   .project-detail {
-    max-width: 860px;
+    max-width: var(--layout-reading);
   }
   .project-detail-meta {
     display: flex;
-    gap: 25px;
+    flex-wrap: wrap;
+    gap: var(--space-4) var(--space-5);
     align-items: center;
     justify-content: space-between;
-    margin-top: 25px;
+    margin-top: var(--space-5);
   }
-  .project-detail .page-heading h1 {
+  .project-detail :global(.page-heading h1) {
     overflow-wrap: anywhere;
-    font-family: Georgia, var(--serif);
   }
-  @media (max-width: 640px) {
-    .project-detail .page-heading h1 {
-      font-size: 30px;
-    }
-    .project-detail-meta {
-      gap: 12px;
-    }
-    .project-detail-meta .button {
-      font-size: 11px;
-      padding: 7px 12px;
-    }
+  .project-detail-return {
+    margin-top: var(--space-6);
   }
 </style>

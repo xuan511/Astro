@@ -7,6 +7,7 @@ import { site } from '../config/site';
 import { withBase, formatDate } from '../lib/paths';
 import { publishedPosts, recentNotes } from '../lib/content';
 import { getCollection } from 'astro:content';
+import '../styles/home.css';
 const posts = await publishedPosts();
 const featured = posts.find((post) => post.data.featured) || posts[0];
 const latest = posts.filter((post) => post.id !== featured?.id).slice(0, 4);

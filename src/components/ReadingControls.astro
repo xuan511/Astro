@@ -29,60 +29,77 @@ import Icon from './Icon.astro';
   .reading-controls {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: var(--space-3) var(--space-4);
     flex-wrap: wrap;
     border-bottom: 1px solid var(--line);
-    padding: 10px 0;
-    margin: 0 0 28px;
+    padding: var(--space-3) 0;
+    margin: 0 0 var(--space-6);
     color: var(--muted);
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
   .reading-size-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
   }
   .reading-size-controls > span {
-    margin-right: 3px;
+    margin-right: var(--space-1);
   }
   .reading-controls button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 36px;
-    gap: 7px;
-    border-radius: 6px;
-    padding: 5px 8px;
+    min-height: var(--control-size);
+    gap: var(--space-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-control);
+    padding: var(--space-2);
+    transition:
+      color var(--duration-fast),
+      background-color var(--duration-fast),
+      border-color var(--duration-fast);
   }
-  .reading-controls button:hover,
+  .reading-controls button:hover:not(:disabled),
   .reading-controls button[aria-pressed='true'] {
     background: var(--soft);
     color: var(--accent);
   }
+  .reading-controls button[aria-pressed='true'] {
+    border-color: var(--accent);
+    font-weight: 600;
+  }
   .reading-controls button:disabled {
-    opacity: 0.35;
+    opacity: 0.5;
     cursor: default;
   }
   .reading-size-controls button {
-    font-size: 14px;
-    min-width: 34px;
+    font-size: var(--text-sm);
+    min-width: var(--control-size);
   }
   .reading-size-controls output {
-    min-width: 28px;
+    min-width: 2em;
     text-align: center;
   }
   .reading-share {
     margin-left: auto;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 68rem) {
     .reading-width-control {
       display: none !important;
     }
   }
-  @media (max-width: 640px) {
+  @media (max-width: 40rem) {
     .reading-controls {
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: var(--space-2);
+      margin-bottom: var(--space-5);
+    }
+    .reading-size-controls {
+      gap: var(--space-1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reading-controls button {
+      transition: none;
     }
   }
 </style>

@@ -25,7 +25,7 @@ document.addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closeMenu(true);
 });
-matchMedia('(min-width: 641px)').addEventListener('change', (event) => {
+matchMedia('(min-width: 833px)').addEventListener('change', (event) => {
   if (event.matches) closeMenu();
 });
 // Keep links from v1/v2 working after the migration to real static pages.

@@ -1,0 +1,17 @@
+---
+import type { MarkdownHeading } from 'astro';
+interface Props {
+  headings: readonly MarkdownHeading[];
+}
+const { headings } = Astro.props;
+---
+
+{headings.map((heading) => (
+  <a
+    href={`#${encodeURIComponent(heading.slug)}`}
+    data-toc-link
+    class:list={[{ nested: heading.depth === 3 }]}
+  >
+    {heading.text}
+  </a>
+))}

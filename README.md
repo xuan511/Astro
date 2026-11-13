@@ -58,14 +58,14 @@ npm run new:post -- "一些日常" --kind=life --slug=ordinary-days --mdx
 | 域名与子路径                                             | `config/deployment.json` 或环境变量 |
 | 设计变量与样式                                           | `src/styles/`、组件内样式           |
 
-完整说明：[架构与边界](docs/ARCHITECTURE.md)、[开发与交付](CONTRIBUTING.md)、[写作指南](docs/WRITING.md)、[音乐管理](docs/MUSIC.md)、[部署与迁移](docs/DEPLOYMENT.md)、[阶段验收](docs/ACCEPTANCE.md)。
+完整说明：[架构与边界](docs/ARCHITECTURE.md)、[设计系统](docs/DESIGN.md)、[开发与交付](CONTRIBUTING.md)、[写作指南](docs/WRITING.md)、[音乐管理](docs/MUSIC.md)、[部署与迁移](docs/DEPLOYMENT.md)、[阶段验收](docs/ACCEPTANCE.md)。
 
 ## 项目结构
 
 ```text
 src/
   components/          共享导航、卡片、播放器、图片与组件
-  layouts/             页面外壳与文章列表
+  layouts/             全站外壳、文章展示与文章列表
   pages/               首页、文章、栏目、项目、音乐、搜索、RSS、404
   content/posts/       Markdown / MDX 与草稿
   content.config.ts    文章、项目、随记的类型与校验
@@ -103,6 +103,12 @@ legacy/                原版源码、工具与说明
 设计参考、取舍和自行测试步骤见 [体验改进记录](docs/EXPERIENCE.md)。没有增加客户端框架或新依赖；站点仍为可部署至 GitHub Pages 的静态 Astro 项目。
 
 ## 架构选择
+
+### 展示层与设计系统 · 2026-11-13
+
+参考 wdxtub.com 实际页面的紧凑导航、阅读宽度和内容层级，保留拾间既有配色与内容。`tokens.css` 集中管理布局、字号、间距和控件；首页、文章卡片与全局壳分别拥有样式。文章路由只组装数据，`PostLayout` 负责阅读展示，桌面和手机目录共用 `TocLinks`。
+
+首页、文章、栏目、关于、归档、项目和随记使用统一对齐规则；文章先保证正文宽度，再显示侧目录和宽阅读按钮。播放器与浮层采用 44px 操作区，窄屏换行和错误状态预留空间。成品检查新增阅读结构、目录目标、卡片标题与封面的回归约束，设计依据和维护规则见 [设计系统](docs/DESIGN.md)。
 
 ### 规则与工程门禁 · 2026-11-12
 

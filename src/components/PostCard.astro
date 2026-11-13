@@ -3,15 +3,17 @@ import type { CollectionEntry } from 'astro:content';
 import { postPath, formatDate, readingMinutes } from '../lib/paths';
 import Icon from './Icon.astro';
 import Media from './Media.astro';
+import '../styles/post-card.css';
 interface Props {
   post: CollectionEntry<'posts'>;
   featured?: boolean;
+  heading?: 'h2' | 'h3';
 }
-const { post, featured = false } = Astro.props;
+const { post, featured = false, heading: Heading = 'h3' } = Astro.props;
 const { data } = post;
 ---
 
-<article class:list={['post-card', { featured }]}>
+<article class:list={['post-card', { featured, 'has-cover': featured && Boolean(data.cover) }]}>
   <a class="post-card-link" href={postPath(post.id)}>
     {featured && data.cover && (
       <div class="featured-art">
@@ -25,7 +27,7 @@ const { data } = post;
         <time datetime={data.publishedAt.toISOString()}>{formatDate(data.publishedAt)}</time>
         {data.demo && <span class="sample-badge">示例</span>}
       </div>
-      <h3>{data.title}</h3>
+      <Heading class="post-card-title">{data.title}</Heading>
       <p class="excerpt">{data.description}</p>
       <div class="post-card-tail">
         <span class="tag-line">

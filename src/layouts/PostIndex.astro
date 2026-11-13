@@ -34,7 +34,7 @@ const tags = groupPostsByTaxonomy(posts, 'tags');
           <span class="count">{posts.length} 篇记录</span>
         </nav>
         {posts.map((post) => (
-          <PostCard post={post} />
+          <PostCard post={post} heading="h2" />
         ))}
         {posts.length === 0 && (
           <div class="empty-state">
@@ -62,55 +62,57 @@ const tags = groupPostsByTaxonomy(posts, 'tags');
 <style>
   .index-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
-    gap: 70px;
+    grid-template-columns: minmax(0, 1fr) var(--layout-toc);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .index-layout > * {
+    min-width: 0;
   }
   .tag-cloud {
     display: flex;
-    gap: 10px 15px;
+    gap: var(--space-1) var(--space-3);
     flex-wrap: wrap;
     color: var(--body);
-    font-size: 12px;
+    font-size: var(--text-sm);
+  }
+  .tag-cloud a {
+    min-width: 0;
+    max-width: 100%;
+    min-height: var(--control-size);
+    padding-block: var(--space-2);
+    overflow-wrap: anywhere;
+    transition: color var(--duration-fast);
+  }
+  .tag-cloud a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
   }
   .index-aside {
-    padding-top: 12px;
-  }
-  .life-index {
-    max-width: 1020px;
-  }
-  .life-index :global(.post-card h3) {
-    font-size: 25px;
+    padding-top: var(--space-3);
   }
   .life-index :global(.post-card-link) {
-    padding-block: 35px;
+    padding-block: var(--space-6);
   }
   .life-index :global(.excerpt) {
-    line-height: 2.1;
+    line-height: var(--leading-reading);
     -webkit-line-clamp: 3;
   }
   .life-index :global(.post-mark) {
     background: var(--sand);
   }
-  @media (max-width: 800px) {
-    .index-layout {
-      grid-template-columns: minmax(0, 1fr) 175px;
-      gap: 35px;
-    }
-  }
-  @media (max-width: 640px) {
+  @media (max-width: 56.25rem) {
     .index-layout {
       display: block;
     }
     .index-aside {
-      margin-top: 35px;
+      margin-top: var(--space-7);
       border-top: 1px solid var(--line);
-      padding-top: 25px;
-    }
-    .life-index :global(.post-card h3) {
-      font-size: 22px;
+      padding-top: var(--space-5);
     }
     .life-index :global(.post-card-link) {
-      padding-block: 28px;
+      padding-block: var(--space-5);
     }
   }
 </style>

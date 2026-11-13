@@ -1,0 +1,74 @@
+/* Shared presentation contract. Colors retain Shijian's quiet sage palette. */
+:root {
+  --bg: #f8f8f3;
+  --paper: #fffefa;
+  --text: #273d33;
+  --body: #526056;
+  --muted: #5d6c5f;
+  --line: #dce2d8;
+  --accent: #365d48;
+  --accent-contrast: #fffefa;
+  --soft: #eaf0e3;
+  --sand: #eee4d5;
+  --focus: var(--accent);
+  --selection: #cfdcbd;
+  --selection-text: #1e3e31;
+  --sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  --serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --mono: 'Cascadia Code', 'SFMono-Regular', Consolas, monospace;
+  --layout-page: 68rem;
+  --layout-content: 60rem;
+  --layout-reading: 44rem;
+  --layout-reading-wide: 51rem;
+  --layout-toc: 13rem;
+  --layout-reading-gap: 3rem;
+  --page-gutter: clamp(1.125rem, 3vw, 2rem);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --leading-body: 1.85;
+  --leading-title: 1.4;
+  --leading-reading: 1.95;
+  --radius-sm: 0.375rem;
+  --radius-control: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius: var(--radius-lg);
+  --control-size: 2.75rem;
+  --duration-fast: 140ms;
+  --duration-normal: 220ms;
+  --shadow-float: 0 12px 36px #243d2818;
+  --shadow: var(--shadow-float);
+  --player-clearance: 0px;
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  --bg: #18231e;
+  --paper: #202e26;
+  --text: #e4eadf;
+  --body: #b9c6ba;
+  --muted: #a0b09f;
+  --line: #3a4a3f;
+  --accent: #bfd5af;
+  --accent-contrast: #18231e;
+  --soft: #2b3c30;
+  --sand: #4a4235;
+  --selection: #52654a;
+  --selection-text: #f3f7ef;
+  --shadow-float: 0 12px 36px #0004;
+  color-scheme: dark;
+}
