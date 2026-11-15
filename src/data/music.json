@@ -1,5 +1,21 @@
 [
   {
+    "id": "summer-pockets",
+    "title": "Summer Pockets",
+    "artist": "水月陵",
+    "src": "music/summer-pockets.mp3",
+    "cover": "images/summer-pockets-ost.jpg",
+    "demo": false
+  },
+  {
+    "id": "aoki-konata",
+    "title": "青き此方（青之此方）",
+    "artist": "YURiKA",
+    "src": "music/aoki-konata.mp3",
+    "cover": "images/summer-pockets-rb-vocal.jpg",
+    "demo": false
+  },
+  {
     "id": "paper-light",
     "title": "纸上微光",
     "artist": "拾间 · 原创合成示例",

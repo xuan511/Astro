@@ -21,6 +21,17 @@
 
 `src` 与 `cover` 可以替换为完整 HTTP(S) 地址，以后迁移对象存储无需重写播放器。HTTPS 站点应使用 HTTPS 资源，外部服务还需要允许实际的音频访问与范围请求。远端文件的可用性需要自己保证。
 
+## Summer Pockets 歌曲与封面
+
+2026-11-16 将用户提供的两首音频加入歌单，放在原创示例之前。浏览器版本采用 MP3（LAME VBR，质量档 3），保持完整曲长、原采样率与声道，原始本地文件未修改。
+
+| 曲目                 | 艺术家 | 站内音频                          | 封面来源                                                                                          |
+| -------------------- | ------ | --------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Summer Pockets       | 水月陵 | `public/music/summer-pockets.mp3` | [Key 官方《Summer Pockets Original SoundTrack》](https://key.visualarts.gr.jp/summer/sound.html)  |
+| 青き此方（青之此方） | YURiKA | `public/music/aoki-konata.mp3`    | [Key 官方《アスタロア／青き此方／夏の砂時計》](https://key.visualarts.gr.jp/summer_rb/sound.html) |
+
+封面分别保存为 `public/images/summer-pockets-ost.jpg` 与 `public/images/summer-pockets-rb-vocal.jpg`，使用对应官方专辑图片，不依赖外部图片热链。图片与商业曲目的权利归相应权利人，未标记为本站原创或示例。第二首在播放器中同时保留日文曲名与用户提供的中文译名。
+
 ## 状态与交互
 
 - 首次加载不设置音频地址、不自动播放；由用户按下播放后开始加载。
