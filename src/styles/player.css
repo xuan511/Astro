@@ -472,6 +472,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: capsule-record 18s linear infinite;
+  animation-play-state: paused;
+}
+.player-root.is-playing .capsule-cover img {
+  animation-play-state: running;
+}
+.player-root:not(.is-minimized) .capsule-cover img {
+  animation-play-state: paused;
+}
+@keyframes capsule-record {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .capsule-expand {
   position: relative;

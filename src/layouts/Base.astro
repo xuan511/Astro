@@ -6,6 +6,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import QuickSearch from '../components/QuickSearch.astro';
+import Companion from '../components/Companion.astro';
 import { site } from '../config/site';
 import { themeBootstrap } from '../lib/theme-preferences';
 import '../styles/global.css';
@@ -26,7 +27,7 @@ const pageMotion = {
   old: { name: 'page-leave', duration: '120ms', easing: 'ease-out', fillMode: 'both' },
   new: {
     name: 'page-enter',
-    duration: '220ms',
+    duration: '260ms',
     easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
     fillMode: 'both',
   },
@@ -74,6 +75,7 @@ const pageMotion = {
     <Footer />
     <Player />
     <QuickSearch />
+    <Companion />
     <div id="site-announcement" class="sr-only" role="status" aria-live="polite"></div>
     <script>
       import '../scripts/site';

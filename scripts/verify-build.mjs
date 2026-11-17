@@ -63,6 +63,20 @@ for (const file of pages) {
     `Player persistence missing: ${file}`,
   );
   const audios = [...html.matchAll(/<audio\b[^>]*>/g)];
+  const companions = [...html.matchAll(/<aside\b[^>]*\bid="site-companion"[^>]*>/g)];
+  assert.equal(companions.length, 1, `Expected one companion: ${file}`);
+  assert.match(companions[0][0], /\bdata-astro-transition-persist="shijian-companion"/);
+  assert(/\bhidden(?:\s|>|=)/.test(companions[0][0]), `Companion needs a no-JS fallback: ${file}`);
+  assert.match(html, /\bdata-companion-show\b/);
+  const companionCatalog = html.match(
+    /<script\b[^>]*\bdata-companion-catalog\b[^>]*>([\s\S]*?)<\/script>/,
+  );
+  assert(companionCatalog, `Missing companion catalog: ${file}`);
+  const choices = JSON.parse(companionCatalog[1]);
+  assert(choices.length > 0);
+  assert.equal(new Set(choices.map((item) => item.id)).size, choices.length);
+  assert.equal((html.match(/\bdata-companion-choice=/g) || []).length, choices.length);
+  for (const companion of choices) await exists(new URL(companion.image, site));
   assert.equal(audios.length, 1, `Expected one audio element: ${file}`);
   assert.match(audios[0][0], /\bid="journal-audio"/);
   assert(
