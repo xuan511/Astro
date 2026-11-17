@@ -1,4 +1,5 @@
 @import './tokens.css';
+@import './motion.css';
 @import 'katex/dist/katex.min.css';
 
 * {
@@ -183,7 +184,9 @@ main:focus {
   overflow-wrap: anywhere;
   transition:
     background-color var(--duration-fast),
-    border-color var(--duration-fast);
+    border-color var(--duration-fast),
+    scale var(--duration-fast) var(--ease-out),
+    filter var(--duration-fast);
 }
 .button:hover {
   background: var(--soft);
@@ -204,7 +207,9 @@ main:focus {
   place-items: center;
   border-radius: var(--radius-control);
   flex-shrink: 0;
-  transition: background-color var(--duration-fast);
+  transition:
+    background-color var(--duration-fast),
+    scale var(--duration-fast) var(--ease-out);
 }
 .icon-button:hover {
   background: var(--soft);
@@ -690,6 +695,9 @@ main:focus {
 }
 :root:has(.player-root:not([hidden]) .mini-feedback:not(:empty)) {
   --player-clearance: 320px;
+}
+:root:has(.player-root.is-minimized:not([hidden])) {
+  --player-clearance: 96px;
 }
 @media (prefers-reduced-motion: reduce) {
   html {

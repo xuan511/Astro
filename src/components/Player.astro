@@ -2,6 +2,7 @@
 import { tracks } from '../lib/music';
 import { withBase } from '../lib/paths';
 import Icon from './Icon.astro';
+import PlayerMode from './PlayerMode.astro';
 import '../styles/player.css';
 const first = tracks[0];
 ---
@@ -20,7 +21,9 @@ const first = tracks[0];
     set:html={JSON.stringify(tracks).replace(/</g, '\\u003c')}
   />
   <div
+    id="mini-player-panel"
     class="mini-player"
+    data-player-panel
     data-player-controls
     tabindex="0"
     aria-label="迷你播放器，空格播放，方向键快进快退"
@@ -87,14 +90,7 @@ const first = tracks[0];
         data-player-volume
       />
     </div>
-    <button
-      class="icon-button mini-mode"
-      type="button"
-      data-player-mode
-      aria-label="播放模式：顺序播放"
-    >
-      <Icon name="repeat" size={17} />
-    </button>
+    <PlayerMode id="mini-play-mode" compact />
     <button
       class="icon-button queue-button"
       type="button"
@@ -103,7 +99,63 @@ const first = tracks[0];
     >
       <Icon name="list" size={19} />
     </button>
+    <button
+      class="icon-button minimize-button"
+      type="button"
+      data-player-minimize
+      aria-label="收起播放器"
+      aria-controls="mini-player-panel"
+      title="收起播放器，音乐继续播放"
+    >
+      <Icon name="chevron" size={18} />
+    </button>
     <p class="player-feedback mini-feedback" data-player-feedback role="status"></p>
+  </div>
+  <div
+    class="player-capsule"
+    data-player-capsule
+    hidden
+    inert
+    aria-label="已收起的音乐播放器"
+    aria-describedby="capsule-player-status"
+  >
+    <button
+      class="capsule-cover"
+      type="button"
+      data-player-restore
+      aria-label="展开播放器"
+      aria-controls="mini-player-panel"
+      aria-expanded="false"
+    >
+      <img
+        src={withBase(first?.cover || 'images/avatar.svg')}
+        alt=""
+        width="44"
+        height="44"
+        data-player-cover
+      />
+    </button>
+    <button class="player-play" type="button" data-player-toggle aria-label="播放">
+      <span data-play-icon>
+        <Icon name="play" size={18} />
+      </span>
+      <span data-pause-icon hidden>
+        <Icon name="pause" size={18} />
+      </span>
+    </button>
+    <button
+      class="icon-button capsule-expand"
+      type="button"
+      data-player-restore
+      aria-label="展开播放器"
+      aria-controls="mini-player-panel"
+      aria-expanded="false"
+      title="展开播放器"
+    >
+      <Icon name="chevron" size={18} />
+      <span class="capsule-alert" data-capsule-alert hidden aria-hidden="true"></span>
+    </button>
+    <span class="sr-only" id="capsule-player-status" data-capsule-description></span>
   </div>
   <dialog class="queue-dialog" id="queue-dialog" aria-labelledby="queue-title">
     <div class="queue-heading">
@@ -145,6 +197,7 @@ const first = tracks[0];
       去音乐房间 <Icon name="arrow" size={15} />
     </a>
   </dialog>
+  <span class="sr-only" data-player-announcement role="status" aria-live="polite"></span>
 </section>
 <script>
   import '../scripts/player';

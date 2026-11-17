@@ -6,8 +6,10 @@ import {
   nextIndex,
   playModes,
   modeLabels,
+  modeDescriptions,
   timeLabel,
 } from '../lib/player-state';
+import { createDialogController } from '../lib/dialog';
 
 const root = document.getElementById('persistent-player');
 const audio = root?.querySelector<HTMLAudioElement>('audio');
@@ -20,6 +22,13 @@ try {
   /* Optional persistence. */
 }
 const preference = parsePreference(stored, playlist);
+const minimizedKey = `${key}:minimized`;
+let initialMinimized = false;
+try {
+  initialMinimized = localStorage.getItem(minimizedKey) === 'true';
+} catch {
+  /* The current session still supports minimizing. */
+}
 
 if (root && audio && playlist.length) {
   // This element and its controller persist across every Astro document swap.
@@ -34,15 +43,40 @@ if (root && audio && playlist.length) {
   let pending = false;
   let generation = 0;
   let expanded = false;
+  let minimized = initialMinimized;
+  let seekPreview: number | null = null;
   let feedback = '';
   let dragging: HTMLInputElement | null = null;
   let lastStored = 0;
   let resume = preference.position;
   const history: number[] = [];
   const dialog = root.querySelector<HTMLDialogElement>('dialog');
+  const queue = createDialogController(dialog, {
+    initialFocus: () => dialog?.querySelector<HTMLButtonElement>('[data-queue-close]'),
+  });
   const each = <T extends Element = HTMLElement>(selector: string, fn: (el: T) => void) =>
     document.querySelectorAll<T>(selector).forEach(fn);
   const current = () => playlist[index]!;
+
+  function announce(text: string) {
+    each('[data-player-announcement]', (el) => {
+      el.textContent = text;
+    });
+  }
+  function setMinimized(value: boolean, restoreFocus = true) {
+    minimized = value;
+    render();
+    try {
+      localStorage.setItem(minimizedKey, String(value));
+    } catch {
+      /* Optional UI preference. */
+    }
+    if (restoreFocus)
+      root!
+        .querySelector<HTMLButtonElement>(value ? '.capsule-expand' : '[data-player-minimize]')
+        ?.focus({ preventScroll: true });
+    announce(value ? '播放器已收起，播放状态保持不变。' : '播放器已展开。');
+  }
 
   function remember() {
     const position = loadedId ? audio!.currentTime : resume;
@@ -62,13 +96,14 @@ if (root && audio && playlist.length) {
   }
   function status(text: string) {
     feedback = text;
+    if (text) announce(text);
     each('[data-player-feedback]', (el) => {
       el.textContent = feedback;
     });
   }
   function progress() {
     const duration = audio!.duration;
-    const position = loadedId ? audio!.currentTime : resume;
+    const position = seekPreview ?? (loadedId ? audio!.currentTime : resume);
     each('[data-player-current]', (el) => {
       el.textContent = timeLabel(position);
     });
@@ -91,6 +126,28 @@ if (root && audio && playlist.length) {
     const playing = !audio!.paused && !pending;
     root!.classList.toggle('is-playing', playing);
     root!.classList.toggle('is-expanded', expanded);
+    root!.classList.toggle('is-minimized', minimized);
+    each<HTMLElement>('[data-player-panel]', (el) => {
+      el.hidden = minimized;
+      el.inert = minimized;
+    });
+    each<HTMLElement>('[data-player-capsule]', (el) => {
+      el.hidden = !minimized;
+      el.inert = !minimized;
+    });
+    each<HTMLElement>('[data-capsule-alert]', (el) => {
+      el.hidden = !feedback;
+    });
+    each('[data-capsule-description]', (el) => {
+      el.textContent = `${track.title}，${playing ? '正在播放' : '已暂停'}${feedback ? `。${feedback}` : ''}`;
+    });
+    each('[data-player-restore]', (el) => {
+      el.setAttribute(
+        'aria-label',
+        `${track.title}，展开播放器${feedback ? '，查看播放提示' : ''}`,
+      );
+      el.setAttribute('title', `${track.title} · 展开播放器${feedback ? '，查看播放提示' : ''}`);
+    });
     each('[data-player-title]', (el) => {
       el.textContent = track.title;
     });
@@ -114,12 +171,14 @@ if (root && audio && playlist.length) {
     each<HTMLInputElement>('[data-player-volume]', (el) => {
       el.value = String(audio!.volume);
     });
-    each('[data-player-mode]', (el) => {
-      el.setAttribute('aria-label', `播放模式：${modeLabels[mode]}，点击切换`);
-      el.setAttribute('title', modeLabels[mode]);
+    each<HTMLSelectElement>('[data-player-mode-select]', (el) => {
+      el.value = mode;
     });
-    each('[data-mode-label]', (el) => {
-      el.textContent = modeLabels[mode];
+    each<HTMLElement>('[data-mode-icon]', (el) => {
+      el.hidden = el.dataset.modeIcon !== mode;
+    });
+    each('[data-mode-hint]', (el) => {
+      el.textContent = modeDescriptions[mode];
     });
     each('[data-mini-expand]', (el) => {
       el.setAttribute('aria-expanded', String(expanded));
@@ -155,6 +214,8 @@ if (root && audio && playlist.length) {
   async function play(selected = index, fromHistory = false) {
     if (selected < 0 || selected >= playlist.length) return;
     const token = ++generation;
+    seekPreview = null;
+    dragging = null;
     if (selected !== index) {
       if (!fromHistory) history.push(index);
       resume = 0;
@@ -238,20 +299,17 @@ if (root && audio && playlist.length) {
     if (el.matches('[data-player-toggle]')) toggle();
     if (el.matches('[data-player-next]')) next();
     if (el.matches('[data-player-prev]')) previous();
-    if (el.matches('[data-player-mode]')) {
-      mode = playModes[(playModes.indexOf(mode) + 1) % playModes.length]!;
-      render();
-      remember();
-    }
+    if (el.matches('[data-player-minimize]')) setMinimized(true);
+    if (el.matches('[data-player-restore]')) setMinimized(false);
     if (el.matches('[data-mini-expand]')) {
       expanded = !expanded;
       render();
     }
     if (el.matches('[data-queue-open]')) {
       render();
-      if (!dialog?.open) dialog?.showModal();
+      queue.open(el);
     }
-    if (el.matches('[data-queue-close]')) dialog?.close();
+    if (el.matches('[data-queue-close]')) queue.close();
     if (el.dataset.playTrack) {
       const chosen = playlist.findIndex((track) => track.id === el.dataset.playTrack);
       if (chosen === index && !audio.paused) toggle();
@@ -262,7 +320,12 @@ if (root && audio && playlist.length) {
     const el = event.target;
     if (!(el instanceof HTMLInputElement)) return;
     if (el.matches('[data-player-seek]') && Number.isFinite(audio.duration)) {
-      audio.currentTime = (Number(el.value) / 1000) * audio.duration;
+      const position = Math.max(
+        0,
+        Math.min(audio.duration, (Number(el.value) / 1000) * audio.duration),
+      );
+      if (dragging === el) seekPreview = position;
+      else audio.currentTime = position;
       progress();
     }
     if (el.matches('[data-player-volume]')) {
@@ -273,12 +336,43 @@ if (root && audio && playlist.length) {
       remember();
     }
   });
+  document.addEventListener('change', (event) => {
+    const el = event.target;
+    if (
+      el instanceof HTMLSelectElement &&
+      el.matches('[data-player-mode-select]') &&
+      playModes.includes(el.value as PlayMode)
+    ) {
+      mode = el.value as PlayMode;
+      render();
+      remember();
+      announce(`已切换为${modeLabels[mode]}。${modeDescriptions[mode]}`);
+    }
+    if (
+      el instanceof HTMLInputElement &&
+      el.matches('[data-player-seek]') &&
+      Number.isFinite(audio.duration)
+    ) {
+      audio.currentTime = Math.max(
+        0,
+        Math.min(audio.duration, (Number(el.value) / 1000) * audio.duration),
+      );
+      seekPreview = null;
+      progress();
+      remember();
+    }
+  });
   document.addEventListener('pointerdown', (event) => {
     if (event.target instanceof HTMLInputElement && event.target.matches('[data-player-seek]'))
       dragging = event.target;
   });
   document.addEventListener('pointerup', () => {
     dragging = null;
+  });
+  document.addEventListener('pointercancel', () => {
+    dragging = null;
+    seekPreview = null;
+    progress();
   });
   document.addEventListener('keydown', (event) => {
     if (!(event.target instanceof HTMLElement) || !event.target.matches('[data-player-controls]'))
@@ -293,18 +387,6 @@ if (root && audio && playlist.length) {
         0,
         Math.min(audio.duration, audio.currentTime + (event.key === 'ArrowLeft' ? -5 : 5)),
       );
-    }
-  });
-  dialog?.addEventListener('click', (event) => {
-    if (event.target === dialog) {
-      const r = dialog.getBoundingClientRect();
-      if (
-        event.clientX < r.left ||
-        event.clientX > r.right ||
-        event.clientY < r.top ||
-        event.clientY > r.bottom
-      )
-        dialog.close();
     }
   });
   audio.addEventListener('loadedmetadata', () => {
@@ -328,7 +410,9 @@ if (root && audio && playlist.length) {
   });
   document.addEventListener('astro:page-load', render);
   document.addEventListener('astro:before-swap', () => {
-    dialog?.close();
+    queue.close(false);
+    dragging = null;
+    seekPreview = null;
     remember();
   });
   document.addEventListener('visibilitychange', () => {

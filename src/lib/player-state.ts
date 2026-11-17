@@ -19,6 +19,11 @@ export const modeLabels: Record<PlayMode, string> = {
   'repeat-one': '单曲循环',
   shuffle: '随机播放',
 };
+export const modeDescriptions: Record<PlayMode, string> = {
+  sequence: '按歌单顺序播放，最后一首结束后停止。',
+  'repeat-one': '当前歌曲结束后重新播放；下一首仍可手动切换。',
+  shuffle: '随机选择下一首，多首歌曲时不会连续播放同一首。',
+};
 
 export function parsePreference(
   raw: string | null,

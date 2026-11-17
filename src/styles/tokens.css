@@ -51,6 +51,7 @@
   --control-size: 2.75rem;
   --duration-fast: 140ms;
   --duration-normal: 220ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --shadow-float: 0 12px 36px #243d2818;
   --shadow: var(--shadow-float);
   --player-clearance: 0px;

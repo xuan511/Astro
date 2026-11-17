@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
+import PlayerMode from '../../components/PlayerMode.astro';
 import { tracks } from '../../lib/music';
 import { withBase } from '../../lib/paths';
 const first = tracks[0];
@@ -63,10 +64,7 @@ const first = tracks[0];
             <span data-player-duration>--:--</span>
           </div>
           <div class="full-options">
-            <button type="button" data-player-mode aria-label="播放模式：顺序播放">
-              <Icon name="repeat" size={15} />
-              <span data-mode-label>顺序播放</span>
-            </button>
+            <PlayerMode id="room-play-mode" describedBy="room-mode-hint" />
             <label>
               <Icon name="volume" size={15} />
               音量
@@ -81,6 +79,9 @@ const first = tracks[0];
               />
             </label>
           </div>
+          <p class="mode-hint" id="room-mode-hint" data-mode-hint>
+            按歌单顺序播放，最后一首结束后停止。
+          </p>
           <p class="player-feedback" data-player-feedback role="status"></p>
         </section>
         <section class="music-playlist" aria-labelledby="playlist-title">
