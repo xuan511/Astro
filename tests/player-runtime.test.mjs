@@ -45,7 +45,8 @@ function mount({
   preference,
   failFirstLoad = false,
   tracks,
-  minimized = false,
+  minimized,
+  article = false,
   storageThrows = false,
 } = {}) {
   class InputStub extends ElementStub {
@@ -127,6 +128,7 @@ function mount({
   const document = {
     body: { dataset: { base: '/blog/' } },
     getElementById: () => root,
+    querySelector: (selector) => (selector === '[data-reading-article]' && article ? root : null),
     querySelectorAll: (selector) => elements.get(selector) || [],
     addEventListener(type, handler) {
       const handlers = listeners.get(type) || [];
@@ -137,7 +139,7 @@ function mount({
   const key = 'shijian:/blog/:player-v3';
   const storage = new Map([
     [key, preference ? JSON.stringify(preference) : null],
-    [key + ':minimized', String(minimized)],
+    [key + ':minimized', minimized === undefined ? null : String(minimized)],
   ]);
   runInContext(
     source,
@@ -175,6 +177,9 @@ function mount({
   }
   return {
     audio,
+    setArticle(value) {
+      article = value;
+    },
     feedback,
     panel,
     capsule,
@@ -349,4 +354,20 @@ test('dragging previews the seek position until release, while keyboard seeking 
   await controller.dispatch('input', controller.seek);
   await controller.dispatch('pointercancel', controller.seek);
   assert.equal(controller.audio.currentTime, 45);
+});
+
+test('reading defaults to the capsule until a listener explicitly chooses a layout', async () => {
+  const controller = mount({ article: true });
+  assert.equal(controller.panel.hidden, true);
+  assert.equal(controller.audio.loadCalls, 0);
+  controller.setArticle(false);
+  await controller.dispatch('astro:page-load', null);
+  assert.equal(controller.panel.hidden, false);
+  controller.setArticle(true);
+  await controller.dispatch('astro:page-load', null);
+  assert.equal(controller.panel.hidden, true);
+  await controller.dispatch('click', controller.restore);
+  await controller.dispatch('astro:page-load', null);
+  assert.equal(controller.panel.hidden, false);
+  assert.equal(mount({ minimized: false, article: true }).panel.hidden, false);
 });

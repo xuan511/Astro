@@ -261,6 +261,7 @@
 .compact-search .search-result > a {
   padding: var(--space-4) var(--space-2);
 }
+.compact-search:has([data-search-input]:focus) .search-result:first-child > a,
 .compact-search .search-result > a:focus-visible,
 .compact-search .search-result > a:hover {
   background: var(--paper);

@@ -23,9 +23,10 @@ try {
 }
 const preference = parsePreference(stored, playlist);
 const minimizedKey = `${key}:minimized`;
-let initialMinimized = false;
+let minimizedPreference: boolean | undefined;
 try {
-  initialMinimized = localStorage.getItem(minimizedKey) === 'true';
+  const saved = localStorage.getItem(minimizedKey);
+  if (saved === 'true' || saved === 'false') minimizedPreference = saved === 'true';
 } catch {
   /* The current session still supports minimizing. */
 }
@@ -43,7 +44,9 @@ if (root && audio && playlist.length) {
   let pending = false;
   let generation = 0;
   let expanded = false;
-  let minimized = initialMinimized;
+  const pageMinimized = () =>
+    minimizedPreference ?? Boolean(document.querySelector('[data-reading-article]'));
+  let minimized = pageMinimized();
   let seekPreview: number | null = null;
   let feedback = '';
   let dragging: HTMLInputElement | null = null;
@@ -64,6 +67,7 @@ if (root && audio && playlist.length) {
     });
   }
   function setMinimized(value: boolean, restoreFocus = true) {
+    minimizedPreference = value;
     minimized = value;
     render();
     try {
@@ -408,7 +412,10 @@ if (root && audio && playlist.length) {
       render();
     }
   });
-  document.addEventListener('astro:page-load', render);
+  document.addEventListener('astro:page-load', () => {
+    minimized = pageMinimized();
+    render();
+  });
   document.addEventListener('astro:before-swap', () => {
     queue.close(false);
     dragging = null;
