@@ -7,9 +7,12 @@ import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import QuickSearch from '../components/QuickSearch.astro';
 import Companion from '../components/Companion.astro';
+import Appearance from '../components/Appearance.astro';
+import { appearanceBootstrap } from '../lib/appearance-preferences';
 import { site } from '../config/site';
 import { themeBootstrap } from '../lib/theme-preferences';
 import '../styles/global.css';
+import '../styles/shell.css';
 interface Props extends SeoProps {
   section?: string;
 }
@@ -23,6 +26,7 @@ const {
 } = Astro.props;
 const preferenceKey = `shijian:${import.meta.env.BASE_URL}:theme-v3`;
 const readingKey = `shijian:${import.meta.env.BASE_URL}:reading-v1`;
+const appearanceKey = `shijian:${import.meta.env.BASE_URL}:appearance-v1`;
 const pageMotion = {
   old: { name: 'page-leave', duration: '0ms', easing: 'ease-out', fillMode: 'both' },
   new: {
@@ -43,6 +47,7 @@ const pageMotion = {
     <meta name="color-scheme" content="light dark" />
     <SeoHead {title} {description} {noindex} {image} {ogType} />
     <script is:inline set:html={themeBootstrap(preferenceKey, site.defaultTheme)} />
+    <script is:inline set:html={appearanceBootstrap(appearanceKey)} />
     <script is:inline define:vars={{ readingKey }}>
       try {
         const reading = JSON.parse(localStorage.getItem(readingKey) || '{}');
@@ -76,6 +81,7 @@ const pageMotion = {
     <Player />
     <QuickSearch />
     <Companion />
+    <Appearance />
     <div id="site-announcement" class="sr-only" role="status" aria-live="polite"></div>
     <script>
       import '../scripts/site';

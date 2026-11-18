@@ -63,6 +63,30 @@ for (const file of pages) {
     `Player persistence missing: ${file}`,
   );
   const audios = [...html.matchAll(/<audio\b[^>]*>/g)];
+  const appearance = [...html.matchAll(/<div\b[^>]*\bid="site-appearance"[^>]*>/g)];
+  assert.equal(appearance.length, 1, `Expected one appearance controller: ${file}`);
+  assert.match(appearance[0][0], /\bdata-astro-transition-persist="shijian-appearance"/);
+  assert.equal((html.match(/\bid="appearance-settings"/g) || []).length, 1);
+  if (path === '') {
+    assert.equal(
+      (html.match(/\bdata-home-player(?:\s|>|=)/g) || []).length,
+      1,
+      'Home music card missing',
+    );
+    assert.match(html, /\bdata-home-dashboard\b/);
+    const slides = [...html.matchAll(/<article\b[^>]*\bdata-spotlight-slide\b[^>]*>/g)];
+    if (slides.length) {
+      assert.equal(
+        slides.filter(([tag]) => !/\bhidden(?:\s|>|=)/.test(tag)).length,
+        1,
+        'Only one spotlight may be initially visible',
+      );
+      assert.equal(
+        (html.match(/\bdata-spotlight-index=/g) || []).length,
+        slides.length > 1 ? slides.length : 0,
+      );
+    }
+  }
   const companions = [...html.matchAll(/<aside\b[^>]*\bid="site-companion"[^>]*>/g)];
   assert.equal(companions.length, 1, `Expected one companion: ${file}`);
   assert.match(companions[0][0], /\bdata-astro-transition-persist="shijian-companion"/);

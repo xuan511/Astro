@@ -99,7 +99,9 @@ Astro 客户端导航不会重新启动整个浏览器会话。模块只执行�
 
 **独立文章布局已落地。** `src/pages/posts/[...id].astro` 只负责静态路径、内容渲染与布局调用；`src/layouts/PostLayout.astro` 持有文章元信息、阅读壳、邻篇和阅读脚本入口，继续把全站外壳交给 `Base`。`TocLinks.astro` 为桌面和手机输出同一组 h2/h3 目录，保留片段链接编码与原阅读钩子。此前参考的 [AstroPaper PostLayout](https://github.com/satnaing/astro-paper/blob/6f61e2dc0e45bbcefc05f4055f293cd7f81bcb03/src/layouts/PostLayout.astro) 和 antfu WrapperPost 的职责分离原则在本轮适配，而非迁入其框架或模板。
 
-`tokens.css` 定义语义颜色、排版、间距和布局约束；`global.css` 管理基础控件与全站壳，首页、文章卡片、正文、搜索、项目速览和播放器分别拥有自己的样式。首页 CSS 仅从首页导入，卡片通过组件导入样式；搜索摘要不依赖文章卡片的类实现截断。断点按容器关系确定，具体约束见设计文档。
+`tokens.css` 定义语义颜色、排版、间距和布局约束；`global.css` 管理基础控件，`shell.css` 管理全站壳、背景和外观表面；首页、文章卡片、正文、搜索、项目速览和播放器分别拥有自己的样式。首页 CSS 仅从首页导入，卡片通过组件导入样式；搜索摘要不依赖文章卡片的类实现截断。断点按容器关系确定，具体约束见设计文档。
+
+2026-11-18 按 [XHBlogs 参考说明](XHBLOGS-REFERENCE.md) 迁入卡片矩阵与毛玻璃展示。`HomeMusic` 是现有 Player 的另一组控件，`HomeSpotlight` 只负责当前页手动精选切换；`Appearance` 持有一个原生弹层和背景节点，纯偏好校验留在 `lib/appearance-preferences.ts`。原 120ms 转场、搜索缓存、进度节点缓存与唯一音频保留。
 
 `scripts/verify-presentation.mjs` 检查实际生成的 HTML：文章阅读钩子、唯一标题与 ID、桌面/手机目录顺序和正文目标、列表标题层级、精选封面结构。文章由 BlogPosting 身份进入检查，不能因阅读根节点丢失而逃过验证。合法无封面卡片由夹具覆盖。它不比较 CSS 数值、不证明视觉质量，响应式、焦点与播放仍需浏览器实测。
 

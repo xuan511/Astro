@@ -1,0 +1,81 @@
+---
+import Icon from './Icon.astro';
+import { tracks } from '../lib/music';
+import { coverPath } from '../lib/player-state';
+import { withBase } from '../lib/paths';
+const first = tracks[0];
+---
+
+<section class="glass-card home-music" aria-labelledby="home-music-title" data-home-player>
+  <div class="tile-heading">
+    <p class="eyebrow">MUSIC CORNER</p>
+    <a href={withBase('music/')} class="icon-button" aria-label="进入音乐房间">
+      <Icon name="arrow" size={18} />
+    </a>
+  </div>
+  <h2 id="home-music-title">给日常一点背景乐</h2>
+  <div class="home-music-track">
+    <div class="home-record">
+      <img
+        src={withBase(coverPath(first, 'full'))}
+        alt="当前音乐封面"
+        width="144"
+        height="144"
+        data-player-cover="full"
+      />
+    </div>
+    <div class="home-track-info">
+      <p data-player-title>{first?.title || '音乐房间'}</p>
+      <small data-player-artist>{first?.artist}</small>
+      <span>让喜欢的旋律，陪你一会儿。</span>
+    </div>
+  </div>
+  {first ? (
+    <>
+      <div class="home-music-progress">
+        <input
+          type="range"
+          min="0"
+          max="1000"
+          value="0"
+          disabled
+          aria-label="首页播放进度"
+          data-player-seek
+        />
+        <div>
+          <span data-player-current>0:00</span>
+          <span data-player-duration>--:--</span>
+        </div>
+      </div>
+      <div class="home-music-controls">
+        <button class="icon-button" type="button" data-player-prev aria-label="上一首">
+          <Icon name="prev" size={18} />
+        </button>
+        <button class="player-play" type="button" data-player-toggle aria-label="播放">
+          <span data-play-icon>
+            <Icon name="play" size={20} />
+          </span>
+          <span data-pause-icon hidden>
+            <Icon name="pause" size={20} />
+          </span>
+        </button>
+        <button class="icon-button" type="button" data-player-next aria-label="下一首">
+          <Icon name="next" size={18} />
+        </button>
+        <button
+          class="icon-button home-queue"
+          type="button"
+          data-queue-open
+          aria-label="打开播放列表"
+        >
+          <Icon name="list" size={19} />
+        </button>
+      </div>
+      <p class="home-player-feedback" data-player-feedback role="status" aria-live="polite"></p>
+    </>
+  ) : (
+    <a class="text-link" href={withBase('music/')}>
+      去音乐房间看看 <Icon name="arrow" size={15} />
+    </a>
+  )}
+</section>

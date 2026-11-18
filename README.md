@@ -2,6 +2,8 @@
 
 以中文阅读、Markdown 写作和音乐为中心的静态个人网站。使用 Astro 7、TypeScript、Content Collections 与 MDX，支持 GitHub Pages。由原版拾间渐进迁移，保留视觉语言、明确标记的示例内容与旧数据恢复入口。
 
+2026-11-18 参照 [XHBlogs](https://github.com/heiehiehi/XinghuisamaBlogs) 改为毛玻璃卡片首页：个人名片、同步音乐卡、精选切换、随记和背景选择，阅读页保留清晰底色。参考、许可与适配边界见 [改版说明](docs/XHBLOGS-REFERENCE.md)。
+
 ## 开始使用
 
 推荐 Node 24（最低 22.23.4），在项目根目录执行：

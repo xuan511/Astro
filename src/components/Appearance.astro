@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+import { withBase } from '../lib/paths';
+---
+
+<div id="site-appearance" data-appearance-root transition:persist="shijian-appearance">
+  <div class="site-scene" aria-hidden="true">
+    <img
+      src={withBase('images/coastal-summer.webp')}
+      alt=""
+      width="1600"
+      height="900"
+      decoding="async"
+    />
+  </div>
+  <dialog id="appearance-settings" class="appearance-dialog" aria-labelledby="appearance-title">
+    <div class="appearance-heading">
+      <div>
+        <p class="eyebrow">MAKE YOURSELF AT HOME</p>
+        <h2 id="appearance-title">换个心情，继续阅读</h2>
+      </div>
+      <button class="icon-button" type="button" data-appearance-close aria-label="关闭外观设置">
+        <Icon name="close" />
+      </button>
+    </div>
+    <p class="appearance-description">一片海、一点微光，或一页安静的纸。</p>
+    <div class="scene-options" role="group" aria-label="页面背景">
+      <button type="button" data-scene-choice="coast" aria-pressed="true">
+        <span class="scene-swatch scene-swatch-coast" aria-hidden="true"></span>海边夏日
+      </button>
+      <button type="button" data-scene-choice="mist" aria-pressed="false">
+        <span class="scene-swatch scene-swatch-mist" aria-hidden="true"></span>云间微光
+      </button>
+      <button type="button" data-scene-choice="paper" aria-pressed="false">
+        <span class="scene-swatch scene-swatch-paper" aria-hidden="true"></span>专注阅读
+      </button>
+    </div>
+    <label class="surface-option">
+      <input type="checkbox" data-appearance-solid /> 更清晰的卡片，减少背景透出
+    </label>
+    <p class="appearance-hint">外观选择仅保存在当前浏览器。文章正文始终使用清晰的阅读底色。</p>
+  </dialog>
+</div>
+<script>
+  import '../scripts/appearance';
+</script>
