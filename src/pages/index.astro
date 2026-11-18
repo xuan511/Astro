@@ -112,7 +112,11 @@ const featured = [
             </a>
           </div>
           {notes[0] ? (
-            <a href={withBase('notes/')} class="home-note-body">
+            <a
+              href={withBase('notes/')}
+              class="home-note-body"
+              aria-label={`阅读随记：${notes[0].data.body}`}
+            >
               <blockquote>{notes[0].data.body}</blockquote>
               <span>
                 <time datetime={notes[0].data.date.toISOString()}>
