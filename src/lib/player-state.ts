@@ -3,6 +3,9 @@ export interface Track {
   id: string;
   title: string;
   artist: string;
+  album?: string;
+  sourceUrl?: string;
+  preview?: boolean;
   src: string;
   cover?: string;
   thumbnail?: string;

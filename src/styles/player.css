@@ -552,6 +552,45 @@
   border-radius: 0;
   padding: var(--space-4) var(--space-2);
 }
+.playlist-description {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: 0 0 var(--space-3);
+}
+.preview-source {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 var(--space-2) var(--space-3);
+  padding: var(--space-2);
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+.music-credits {
+  margin-top: var(--space-5);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+.music-credits summary {
+  cursor: pointer;
+  padding: var(--space-2);
+}
+.music-credits ul {
+  padding-inline-start: var(--space-5);
+}
+.music-credits li {
+  margin-block: var(--space-3);
+}
+.music-credits li span {
+  display: block;
+  font-size: var(--text-xs);
+}
 .music-playlist .notice {
   margin-top: var(--space-5);
   font-size: var(--text-sm);

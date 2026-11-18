@@ -6,7 +6,9 @@
     "src": "music/summer-pockets.mp3",
     "cover": "images/summer-pockets-ost.webp",
     "thumbnail": "images/summer-pockets-ost-thumb.webp",
-    "demo": false
+    "demo": false,
+    "album": "Summer Pockets Original SoundTrack",
+    "sourceUrl": "https://key.visualarts.gr.jp/summer/sound.html"
   },
   {
     "id": "aoki-konata",
@@ -15,6 +17,77 @@
     "src": "music/aoki-konata.mp3",
     "cover": "images/summer-pockets-rb-vocal.webp",
     "thumbnail": "images/summer-pockets-rb-vocal-thumb.webp",
+    "demo": false,
+    "album": "アスタロア／青き此方／夏の砂時計",
+    "sourceUrl": "https://key.visualarts.gr.jp/summer_rb/sound.html"
+  },
+  {
+    "id": "natsukoi",
+    "title": "夏恋",
+    "artist": "Otokaze",
+    "album": "OTOKAZE",
+    "src": "music/natsukoi.mp3",
+    "cover": "images/otokaze.webp",
+    "thumbnail": "images/otokaze-thumb.webp",
+    "sourceUrl": "https://otokaze-music.bandcamp.com/album/o-t-o-k-a-z-e",
     "demo": false
+  },
+  {
+    "id": "ring-ring-ring",
+    "title": "RING RING RING!",
+    "artist": "Key Sounds Label · 麻枝准",
+    "album": "Little Busters! Original SoundTrack",
+    "src": "music/ring-ring-ring.mp3",
+    "cover": "images/little-busters-ost.webp",
+    "thumbnail": "images/little-busters-ost-thumb.webp",
+    "sourceUrl": "https://key.soundslabel.com/ksl_html/ksl0035/ksl0035.html",
+    "demo": false
+  },
+  {
+    "id": "sea-you-and-me",
+    "title": "Sea, You & Me",
+    "artist": "麻枝准 · VISUAL ARTS / Key",
+    "album": "Summer Pockets Original SoundTrack",
+    "src": "music/sea-you-and-me.mp3",
+    "cover": "images/summer-pockets-ost.webp",
+    "thumbnail": "images/summer-pockets-ost-thumb.webp",
+    "sourceUrl": "https://key.visualarts.gr.jp/summer/sound.html",
+    "demo": false
+  },
+  {
+    "id": "tori-no-uta-preview",
+    "title": "鳥の詩（官方试听）",
+    "artist": "Lia",
+    "album": "AIR Original SoundTrack",
+    "src": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/36/65/1c/36651c60-0eb6-3489-8d72-8ccba5bcf01f/mzaf_12271791617302288749.plus.aac.p.m4a",
+    "cover": "images/air-ost.webp",
+    "thumbnail": "images/air-ost-thumb.webp",
+    "sourceUrl": "https://music.apple.com/jp/album/818439884?i=818439887",
+    "demo": false,
+    "preview": true
+  },
+  {
+    "id": "nagisa-preview",
+    "title": "渚（官方试听）",
+    "artist": "VISUAL ARTS / Key",
+    "album": "CLANNAD Original SoundTrack",
+    "src": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b8/a4/f3/b8a4f3da-92f4-a7ef-622b-e3bde50e892f/mzaf_4684361094922908822.plus.aac.p.m4a",
+    "cover": "images/clannad-ost.webp",
+    "thumbnail": "images/clannad-ost-thumb.webp",
+    "sourceUrl": "https://music.apple.com/jp/album/823583025?i=823583054",
+    "demo": false,
+    "preview": true
+  },
+  {
+    "id": "last-regrets-preview",
+    "title": "Last regrets（官方试听）",
+    "artist": "彩菜",
+    "album": "Kanon Original SoundTrack",
+    "src": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f7/8b/5e/f78b5ec4-8703-8880-b64e-bda564e31c63/mzaf_17907538694958831115.plus.aac.p.m4a",
+    "cover": "images/kanon-ost.webp",
+    "thumbnail": "images/kanon-ost-thumb.webp",
+    "sourceUrl": "https://music.apple.com/jp/album/813627592?i=813627831",
+    "demo": false,
+    "preview": true
   }
 ]

@@ -7,6 +7,7 @@ import { tracks } from '../../lib/music';
 import { coverPath } from '../../lib/player-state';
 import { withBase } from '../../lib/paths';
 const first = tracks[0];
+const previews = tracks.filter((track) => track.preview).length;
 ---
 
 <Base title="音乐房间" description="给日常一点背景乐。选择一首音乐，让时间慢下来。">
@@ -89,30 +90,66 @@ const first = tracks[0];
           <h2 id="playlist-title">
             此刻的歌单 <span class="count">{tracks.length} 首</span>
           </h2>
+          <p class="playlist-description">
+            {tracks.length - previews} 首完整音乐 · {previews} 首官方试听片段
+          </p>
           {tracks.map((track, index) => (
-            <button
-              class="queue-track"
-              type="button"
-              data-play-track={track.id}
-              aria-label={`播放 ${track.title}`}
-            >
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <img
-                src={withBase(coverPath(track, 'thumbnail'))}
-                alt=""
-                width="45"
-                height="45"
-                loading="lazy"
-              />
-              <span>
-                <strong>
-                  {track.title} {track.demo && <span class="sample-badge">示例</span>}
-                </strong>
-                <small>{track.artist}</small>
-              </span>
-              <span data-track-state={track.id}>播放</span>
-            </button>
+            <div class="music-track-row">
+              <button
+                class="queue-track"
+                type="button"
+                data-play-track={track.id}
+                aria-label={`播放 ${track.title}`}
+              >
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <img
+                  src={withBase(coverPath(track, 'thumbnail'))}
+                  alt=""
+                  width="45"
+                  height="45"
+                  loading="lazy"
+                />
+                <span>
+                  <strong>
+                    {track.title} {track.demo && <span class="sample-badge">示例</span>}
+                  </strong>
+                  <small>{track.artist}</small>
+                </span>
+                <span data-track-state={track.id}>播放</span>
+              </button>
+              {track.preview && track.sourceUrl && (
+                <a
+                  class="preview-source"
+                  href={track.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Apple Music Preview · 收听完整版 <Icon name="arrow" size={12} />
+                </a>
+              )}
+            </div>
           ))}
+          <details class="music-credits">
+            <summary>专辑与封面来源</summary>
+            <ul>
+              {tracks.map((track) => (
+                <li>
+                  {track.sourceUrl ? (
+                    <a href={track.sourceUrl} target="_blank" rel="noopener noreferrer">
+                      {track.title}
+                    </a>
+                  ) : (
+                    track.title
+                  )}
+                  <span>{track.album || track.artist}</span>
+                </li>
+              ))}
+            </ul>
+            <p>
+              标注「官方试听」的曲目为 Apple Music Preview 片段，由 Apple
+              远程提供。完整音乐请前往对应收听页。
+            </p>
+          </details>
           <p class="room-note">
             安静也很好。
             <br />
