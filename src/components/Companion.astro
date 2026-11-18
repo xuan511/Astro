@@ -21,21 +21,21 @@ const first = companions[0];
       class="companion-avatar"
       type="button"
       data-companion-greet
-      aria-label={`和${first.name}打招呼；可拖动，方向键移动，Home 复位`}
+      aria-label={`和${first.name}互动`}
       aria-describedby="companion-help"
     >
-      <span class="companion-sparkles" aria-hidden="true">
-        ✧
+      <span class="companion-figure" data-companion-figure>
+        <img
+          src={first.image}
+          alt={first.name}
+          width="256"
+          height="320"
+          draggable="false"
+          decoding="async"
+          data-companion-image
+        />
       </span>
-      <img
-        src={first.image}
-        alt={first.name}
-        width="256"
-        height="320"
-        draggable="false"
-        decoding="async"
-        data-companion-image
-      />
+      <span class="companion-effects" data-companion-effects aria-hidden="true"></span>
     </button>
     <div class="companion-toolbar">
       <button
@@ -47,6 +47,15 @@ const first = companions[0];
         aria-controls="companion-picker"
       >
         <Icon name="sparkles" size={18} />
+      </button>
+      <button
+        class="icon-button"
+        type="button"
+        data-companion-pet
+        aria-label={`摸摸${first.name}的头`}
+        title="摸摸头"
+      >
+        <Icon name="heart" size={18} />
       </button>
       <button class="icon-button" type="button" data-companion-compact aria-label="收起小伙伴">
         <Icon name="chevron" size={18} />
@@ -72,7 +81,7 @@ const first = companions[0];
     <span class="companion-pocket-dot" aria-hidden="true"></span>
   </button>
   <span id="companion-help" class="sr-only">
-    点击角色听一句鼓励。拖动角色可移动位置；键盘方向键移动，Home
+    点击角色会有不同小动作，连续点三下有彩蛋。长按或点爱心可以摸摸头。拖动角色可移动位置；键盘方向键移动，Home
     键复位。星星按钮可换角色、安静陪伴或隐藏。
   </span>
   <script
@@ -90,7 +99,9 @@ const first = companions[0];
         <Icon name="close" />
       </button>
     </div>
-    <p class="companion-picker-note">选一位小伙伴，陪你慢慢读。点击她，会收到一句小小的鼓励。</p>
+    <p class="companion-picker-note">
+      戳一戳、连续点三下，或长按摸摸头。每位小伙伴都有不同的小动作。
+    </p>
     <div class="companion-choices" aria-label="选择陪伴角色">
       {companions.map((item) => (
         <button

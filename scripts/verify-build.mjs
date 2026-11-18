@@ -19,6 +19,10 @@ async function walk(dir) {
 }
 const files = await walk(root),
   pages = files.filter((file) => file.endsWith('.html'));
+assert(
+  !files.some((file) => relative(root, file).split(sep).join('/') === 'music/paper-light.wav'),
+  'Retired demo audio must not be republished in the main music directory',
+);
 const indexablePages = new Set();
 const sitemapPages = new Set();
 let links = 0,

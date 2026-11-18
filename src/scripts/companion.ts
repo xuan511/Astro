@@ -1,4 +1,6 @@
 import { createDialogController } from '../lib/dialog';
+import { advanceTap, reactionFor, type TapMemory } from '../lib/companion-reactions';
+import { createCompanionMotion } from './companion-motion';
 import {
   parseCompanions,
   parseCompanionPreference,
@@ -27,16 +29,25 @@ if (element && catalog.length) {
   const bubble = root.querySelector<HTMLElement>('[data-companion-bubble]')!;
   const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
   const quiet = root.querySelector<HTMLInputElement>('[data-companion-quiet]')!;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const motion = createCompanionMotion(
+    root,
+    root.querySelector<HTMLElement>('[data-companion-figure]')!,
+    root.querySelector<HTMLElement>('[data-companion-effects]')!,
+  );
   const picker = createDialogController(dialog, {
     initialFocus: () => dialog.querySelector<HTMLButtonElement>('[aria-pressed="true"]'),
   });
   let messageTimer = 0;
-  let hopTimer = 0;
+  let holdTimer = 0;
   let frame = 0;
   let current: Point = { x: 16, y: 16 };
-  let drag: { id: number; start: Point; origin: Point; moved: boolean } | null = null;
+  let drag: { id: number; start: Point; origin: Point; moved: boolean; held: boolean } | null =
+    null;
   let suppressClick = false;
   let lineIndex = 0;
+  let reactionStep = 0;
+  let taps: TapMemory | null = null;
 
   const viewport = () => ({ width: document.documentElement.clientWidth, height: innerHeight });
   const size = () => ({ width: root.offsetWidth, height: root.offsetHeight });
@@ -49,8 +60,8 @@ if (element && catalog.length) {
   }
   function dismissMessage() {
     clearTimeout(messageTimer);
-    clearTimeout(hopTimer);
-    root.classList.remove('is-greeting');
+    clearTimeout(holdTimer);
+    motion.stop();
     bubble.hidden = true;
     bubble.textContent = '';
   }
@@ -104,7 +115,8 @@ if (element && catalog.length) {
     full.hidden = state.compact;
     full.inert = state.compact;
     pocket.hidden = !state.compact;
-    avatar.setAttribute('aria-label', `和${item.name}打招呼；可拖动，方向键移动，Home 复位`);
+    avatar.setAttribute('aria-label', `和${item.name}互动`);
+    root.querySelector('[data-companion-pet]')?.setAttribute('aria-label', `摸摸${item.name}的头`);
     pocket.setAttribute('aria-label', `展开小伙伴：${item.name}`);
     root.querySelectorAll<HTMLImageElement>('[data-companion-image]').forEach((img) => {
       if (img.getAttribute('src') !== item.image) img.src = item.image;
@@ -119,13 +131,14 @@ if (element && catalog.length) {
       button.hidden = false;
     });
   }
-  function greet() {
+  function greet(kind: 'tap' | 'pet' = 'tap', countTap = true) {
     dismissMessage();
     const item = catalog.find((entry) => entry.id === state.id)!;
-    bubble.textContent = item.lines[lineIndex++ % item.lines.length];
+    taps = kind === 'tap' && countTap ? advanceTap(taps, performance.now()) : null;
+    const plan = reactionFor(item.id, reactionStep++, kind, taps?.count || 1);
+    bubble.textContent = plan.line || item.lines[lineIndex++ % item.lines.length];
     bubble.hidden = false;
-    root.classList.add('is-greeting');
-    hopTimer = window.setTimeout(() => root.classList.remove('is-greeting'), 650);
+    motion.play(plan, !state.quiet && !reducedMotion.matches && !document.hidden);
     messageTimer = window.setTimeout(dismissMessage, 4500);
   }
   document.addEventListener('click', (event) => {
@@ -142,18 +155,21 @@ if (element && catalog.length) {
     }
     if (!root.contains(button)) return;
     if (button === avatar) {
-      if (!suppressClick) greet();
+      if (!suppressClick || event.detail === 0) greet();
       suppressClick = false;
-    } else if (button.hasAttribute('data-companion-picker')) picker.open(button);
+    } else if (button.hasAttribute('data-companion-pet')) greet('pet');
+    else if (button.hasAttribute('data-companion-picker')) picker.open(button);
     else if (button.hasAttribute('data-companion-close')) picker.close();
     else if (button.dataset.companionChoice) {
       state.id = button.dataset.companionChoice;
       lineIndex = 0;
+      reactionStep = 0;
+      taps = null;
       dismissMessage();
       save();
       render();
       picker.close();
-      greet();
+      greet('tap', false);
     } else if (button.hasAttribute('data-companion-compact')) {
       dismissMessage();
       state.compact = true;
@@ -179,6 +195,7 @@ if (element && catalog.length) {
   });
   quiet.addEventListener('change', () => {
     state.quiet = quiet.checked;
+    if (state.quiet) motion.stop();
     save();
     render();
   });
@@ -190,8 +207,15 @@ if (element && catalog.length) {
       start: { x: event.clientX, y: event.clientY },
       origin: current,
       moved: false,
+      held: false,
     };
     avatar.setPointerCapture(event.pointerId);
+    holdTimer = window.setTimeout(() => {
+      if (drag && !drag.moved) {
+        drag.held = true;
+        greet('pet');
+      }
+    }, 550);
   });
   avatar.addEventListener('pointermove', (event) => {
     if (!drag || drag.id !== event.pointerId) return;
@@ -199,13 +223,15 @@ if (element && catalog.length) {
       dy = event.clientY - drag.start.y;
     if (!drag.moved && Math.hypot(dx, dy) < 6) return;
     drag.moved = true;
+    taps = null;
     dismissMessage();
     root.classList.add('is-dragging');
     position({ x: drag.origin.x + dx, y: drag.origin.y + dy });
   });
   function endDrag() {
     if (!drag) return;
-    suppressClick = drag.moved;
+    clearTimeout(holdTimer);
+    suppressClick = drag.moved || drag.held;
     if (drag.moved) {
       state.position = normalizePosition(current, size(), viewport());
       save();
@@ -217,6 +243,10 @@ if (element && catalog.length) {
   avatar.addEventListener('pointerup', endDrag);
   avatar.addEventListener('pointercancel', endDrag);
   avatar.addEventListener('lostpointercapture', endDrag);
+  avatar.addEventListener('contextmenu', (event) => event.preventDefault());
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) motion.stop();
+  });
   avatar.addEventListener('keydown', (event) => {
     if (event.key === 'Home') {
       event.preventDefault();
@@ -248,6 +278,7 @@ if (element && catalog.length) {
     if (document.hidden) dismissMessage();
   });
   document.addEventListener('astro:before-swap', () => {
+    taps = null;
     dismissMessage();
     endDrag();
     picker.close(false);

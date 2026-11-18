@@ -6,6 +6,8 @@ interface Props {
 }
 const { name, size = 20, class: className = '' } = Astro.props;
 const icons: Record<string, string> = {
+  heart:
+    'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z',
   palette:
     'M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1.5-3.3 1.5 1.5 0 0 1 1.2-2.5H18a3 3 0 0 0 3-3C21 6.5 17 3 12 3ZM7 10h.01M10 6.5h.01M15 6.5h.01M18 10h.01',
   sparkles: 'm12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5ZM20 2v4m-2-2h4M3 18v4m-2-2h4',
