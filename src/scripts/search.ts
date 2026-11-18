@@ -10,12 +10,14 @@ import { withBase } from '../lib/paths';
 import { createDialogController } from '../lib/dialog';
 
 // All search surfaces share one lazy request, including during client navigation.
+let cachedIndex: SearchEntry[] | undefined;
 let indexRequest: Promise<SearchEntry[]> | undefined;
 function loadIndex() {
   return (indexRequest ||= fetch(withBase('search.json'))
     .then(async (response) => {
       if (!response.ok) throw new Error('搜索索引暂时无法载入');
-      return parseSearchIndex(await response.json());
+      cachedIndex = parseSearchIndex(await response.json());
+      return cachedIndex;
     })
     .catch((error) => {
       indexRequest = undefined;
@@ -55,7 +57,6 @@ function initSearch() {
     const compact = root.dataset.compact === 'true';
     const controller = new AbortController();
     const options = { signal: controller.signal };
-    let timer: ReturnType<typeof setTimeout>;
     let page = 1,
       sequence = 0,
       composing = false;
@@ -108,10 +109,13 @@ function initSearch() {
         results.setAttribute('aria-busy', 'false');
         return;
       }
-      results.setAttribute('aria-busy', 'true');
-      status.textContent = '正在翻找…';
+      if (!cachedIndex) {
+        results.replaceChildren();
+        results.setAttribute('aria-busy', 'true');
+        status.textContent = '正在翻找…';
+      }
       try {
-        const entries = await loadIndex();
+        const entries = cachedIndex ?? (await loadIndex());
         if (seq !== sequence || controller.signal.aborted) return;
         const found = searchEntries(entries, query, kind.value);
         results.replaceChildren();
@@ -158,31 +162,13 @@ function initSearch() {
       }
     }
     const changed = () => {
-      clearTimeout(timer);
       page = 1;
       void run();
-    };
-    const invalidate = (statusText: string) => {
-      // Invalidate at the keystroke, before the debounce starts. A pending index
-      // request must not render results for text that is no longer in the input.
-      sequence++;
-      syncFilters();
-      results.replaceChildren();
-      results.setAttribute('aria-busy', 'false');
-      more.hidden = true;
-      retry.hidden = true;
-      if (all) all.hidden = true;
-      if (suggestions) suggestions.hidden = Boolean(input.value.trim());
-      status.textContent = statusText;
     };
     input.addEventListener(
       'input',
       () => {
-        if (composing) return;
-        clearTimeout(timer);
-        page = 1;
-        invalidate(input.value.trim() ? '正在翻找…' : emptyMessage());
-        timer = setTimeout(run, 180);
+        if (!composing) changed();
       },
       options,
     );
@@ -190,8 +176,14 @@ function initSearch() {
       'compositionstart',
       () => {
         composing = true;
-        clearTimeout(timer);
-        invalidate('正在输入…');
+        sequence++;
+        results.replaceChildren();
+        results.setAttribute('aria-busy', 'false');
+        more.hidden = true;
+        retry.hidden = true;
+        if (all) all.hidden = true;
+        if (suggestions) suggestions.hidden = true;
+        status.textContent = '正在输入…';
       },
       options,
     );
@@ -273,8 +265,14 @@ function initSearch() {
     root.addEventListener(
       'keydown',
       (event) => {
-        if (event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (composing || event.isComposing || event.keyCode === 229) return;
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
         const links = [...results.querySelectorAll<HTMLAnchorElement>('a')];
+        if (compact && event.target === input && event.key === 'Enter' && links[0]) {
+          event.preventDefault();
+          links[0].click();
+          return;
+        }
         if (event.target === input && event.key === 'ArrowDown' && links[0]) {
           event.preventDefault();
           links[0].focus();
@@ -295,7 +293,6 @@ function initSearch() {
     );
     cleanup.push(() => {
       sequence++;
-      clearTimeout(timer);
       controller.abort();
     });
     syncFilters();
@@ -349,6 +346,10 @@ function init() {
   const dialog = quickDialog();
   modal = createDialogController(dialog, {
     initialFocus: () => dialog?.querySelector<HTMLInputElement>('[data-search-input]'),
+    onOpen: () => {
+      // A later query can retry if this speculative request fails.
+      void loadIndex().catch(() => {});
+    },
   });
   initSearch();
   document.querySelectorAll('[data-search-shortcut]').forEach((label) => {

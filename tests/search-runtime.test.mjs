@@ -133,8 +133,6 @@ function searchHarness(fetch, { compact = true, search = '', pathname = '/posts/
   document.querySelector = () => null;
   document.createElement = (tagName) => new Element(tagName);
   document.createTextNode = (text) => ({ textContent: text });
-  const timers = new Map();
-  let timerId = 0;
   const queries = [];
   const historyCalls = [];
   runInNewContext(script, {
@@ -161,8 +159,6 @@ function searchHarness(fetch, { compact = true, search = '', pathname = '/posts/
     },
     navigator: { userAgent: 'test' },
     Element,
-    setTimeout: (callback) => (timers.set(++timerId, callback), timerId),
-    clearTimeout: (id) => timers.delete(id),
   });
   return {
     nodes,
@@ -176,27 +172,17 @@ function searchHarness(fetch, { compact = true, search = '', pathname = '/posts/
       nodes.input.value = value;
       nodes.input.emit('input');
     },
-    expireTimers() {
-      const pending = [...timers.values()];
-      timers.clear();
-      pending.forEach((callback) => callback());
-    },
   };
 }
 
-test('typing invalidates a pending query before the next debounce runs', async () => {
+test('only the latest input is rendered when the shared index first arrives', async () => {
   const request = deferred();
   const app = searchHarness(() => request.promise);
   app.input('Linux');
-  app.expireTimers();
   app.input('音乐');
   request.resolve({ ok: true, json: async () => [entry] });
   await setImmediate();
-  assert.deepEqual(app.queries, []);
   assert.equal(app.nodes.results.children.length, 0);
-  assert.equal(app.nodes.status.textContent, '正在翻找…');
-  app.expireTimers();
-  await setImmediate();
   assert.deepEqual(app.queries, ['音乐']);
   assert.match(app.nodes.status.textContent, /没有找到相关内容/);
 });
@@ -208,7 +194,6 @@ test('invalid index data is not cached and retry refetches a usable index', asyn
     json: async () => (++requests === 1 ? { invalid: true } : [entry]),
   }));
   app.input('Linux');
-  app.expireTimers();
   await setImmediate();
   assert.equal(app.nodes.retry.hidden, false);
   assert.match(app.nodes.status.textContent, /搜索索引格式不正确/);
@@ -227,12 +212,10 @@ test('Chinese composition cancels stale work and searches only the committed tex
   const request = deferred();
   const app = searchHarness(() => request.promise);
   app.input('Linux');
-  app.expireTimers();
   app.nodes.input.emit('compositionstart');
   app.input('diao');
   request.resolve({ ok: true, json: async () => [entry] });
   await setImmediate();
-  app.expireTimers();
   assert.deepEqual(app.queries, []);
   app.nodes.input.value = '调试';
   app.nodes.input.emit('compositionend');
@@ -241,16 +224,14 @@ test('Chinese composition cancels stale work and searches only the committed tex
   assert.equal(app.nodes.results.children.length, 1);
 });
 
-test('leaving the page cancels timers and prevents a pending request from rendering', async () => {
+test('leaving the page prevents a pending request from rendering', async () => {
   const request = deferred();
   const app = searchHarness(() => request.promise);
   app.input('Linux');
-  app.expireTimers();
   app.input('调试');
   app.document.emit('astro:before-swap');
   request.resolve({ ok: true, json: async () => [entry] });
   await setImmediate();
-  app.expireTimers();
   assert.deepEqual(app.queries, []);
   assert.equal(app.nodes.results.children.length, 0);
 });
@@ -267,7 +248,6 @@ test('scope buttons and removable conditions keep filtering, pressed states and 
   assert.equal(app.nodes['kind-fallback'].hidden, true);
   assert.equal(app.nodes.scopes.hidden, false);
   app.input('Linux');
-  app.expireTimers();
   await setImmediate();
   assert.equal(app.nodes.results.children.length, 2);
   app.scopes.project.emit('click');
@@ -289,7 +269,6 @@ test('scope buttons and removable conditions keep filtering, pressed states and 
   assert.equal(app.nodes.status.textContent, '输入关键词，在项目中查找。');
 
   app.input('Linux');
-  app.expireTimers();
   await setImmediate();
   app.nodes['remove-kind'].emit('click');
   await setImmediate();
@@ -337,7 +316,6 @@ test('standalone search restores URL filters and updates the URL when each condi
 test('keyboard result selection still works with the enhanced filter controls', async () => {
   const app = searchHarness(async () => ({ ok: true, json: async () => [entry] }));
   app.input('Linux');
-  app.expireTimers();
   await setImmediate();
   const [link] = app.nodes.results.querySelectorAll('a');
   let prevented = false;
@@ -352,4 +330,31 @@ test('keyboard result selection still works with the enhanced filter controls', 
   assert.equal(app.document.activeElement, link);
   app.root.emit('keydown', { target: link, key: 'ArrowUp' });
   assert.equal(app.document.activeElement, app.nodes.input);
+});
+
+test('quick Enter activates the current first result, except during IME or standalone search', async () => {
+  for (const compact of [true, false]) {
+    let requests = 0;
+    const app = searchHarness(
+      async () => {
+        requests++;
+        return { ok: true, json: async () => [entry, project] };
+      },
+      { compact },
+    );
+    app.input('Linux');
+    await setImmediate();
+    app.input('设备管理工具');
+    const [link] = app.nodes.results.querySelectorAll('a');
+    assert.equal(link.href, project.url, 'warm filtering is synchronous');
+    assert.equal(requests, 1);
+    let clicks = 0;
+    link.click = () => clicks++;
+    const enter = { target: app.nodes.input, key: 'Enter' };
+    app.root.emit('keydown', { ...enter, isComposing: true });
+    app.root.emit('keydown', { ...enter, keyCode: 229 });
+    assert.equal(clicks, 0);
+    app.root.emit('keydown', enter);
+    assert.equal(clicks, compact ? 1 : 0);
+  }
 });

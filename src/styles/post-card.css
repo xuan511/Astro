@@ -81,6 +81,10 @@
     translate: 0 -2px;
   }
 }
+.post-card-link:active {
+  background: var(--soft);
+  transition-duration: 0s;
+}
 .post-mark.sand {
   background: var(--sand);
 }

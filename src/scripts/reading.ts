@@ -117,6 +117,7 @@ function initReading() {
   const headings = [...body.querySelectorAll<HTMLHeadingElement>('h2,h3')];
   const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
   const current = article.querySelector<HTMLElement>('[data-current-heading]');
+  let activeHeading: HTMLHeadingElement | undefined;
   const update = () => {
     if (frame) return;
     frame = requestAnimationFrame(() => {
@@ -134,13 +135,16 @@ function initReading() {
         if (heading.getBoundingClientRect().top <= 110) active = heading;
         else break;
       }
-      for (const link of links) {
-        if (active && decodeURIComponent(link.hash.slice(1)) === active.id)
-          link.setAttribute('aria-current', 'location');
-        else link.removeAttribute('aria-current');
+      if (active !== activeHeading) {
+        activeHeading = active;
+        for (const link of links) {
+          if (active && decodeURIComponent(link.hash.slice(1)) === active.id)
+            link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        }
+        if (current && active)
+          current.textContent = active.textContent?.replace(/#$/, '') || '在这篇记录里';
       }
-      if (current && active)
-        current.textContent = active.textContent?.replace(/#$/, '') || '在这篇记录里';
       frame = 0;
     });
   };
