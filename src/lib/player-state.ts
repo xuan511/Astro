@@ -5,8 +5,14 @@ export interface Track {
   artist: string;
   src: string;
   cover?: string;
+  thumbnail?: string;
   demo: boolean;
 }
+export function coverPath(track: Track | undefined, size: 'thumbnail' | 'full') {
+  if (size === 'thumbnail' && track?.thumbnail) return track.thumbnail;
+  return track?.cover || 'images/avatar.svg';
+}
+
 export interface PlayerPreference {
   id: string;
   position: number;

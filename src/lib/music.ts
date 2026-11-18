@@ -17,6 +17,7 @@ const schema = z.array(
     artist: z.string().min(1),
     src: asset,
     cover: asset.optional(),
+    thumbnail: asset.optional(),
     demo: z.boolean().default(false),
   }),
 );

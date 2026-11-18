@@ -8,6 +8,7 @@ import {
   modeLabels,
   modeDescriptions,
   timeLabel,
+  coverPath,
 } from '../lib/player-state';
 import { createDialogController } from '../lib/dialog';
 
@@ -105,20 +106,34 @@ if (root && audio && playlist.length) {
       el.textContent = feedback;
     });
   }
+  function findProgressControls() {
+    return {
+      current: document.querySelectorAll<HTMLElement>('[data-player-current]'),
+      duration: document.querySelectorAll<HTMLElement>('[data-player-duration]'),
+      seek: document.querySelectorAll<HTMLInputElement>('[data-player-seek]'),
+    };
+  }
+  let progressControls = findProgressControls();
+
   function progress() {
     const duration = audio!.duration;
     const position = seekPreview ?? (loadedId ? audio!.currentTime : resume);
-    each('[data-player-current]', (el) => {
-      el.textContent = timeLabel(position);
+    const elapsed = timeLabel(position);
+    const total = timeLabel(duration);
+    progressControls.current.forEach((el) => {
+      if (el.textContent !== elapsed) el.textContent = elapsed;
     });
-    each('[data-player-duration]', (el) => {
-      el.textContent = timeLabel(duration);
+    progressControls.duration.forEach((el) => {
+      if (el.textContent !== total) el.textContent = total;
     });
-    each<HTMLInputElement>('[data-player-seek]', (input) => {
-      input.disabled = !Number.isFinite(duration) || duration <= 0;
+    const disabled = !Number.isFinite(duration) || duration <= 0;
+    const valueText = `${elapsed} / ${total}`;
+    progressControls.seek.forEach((input) => {
+      if (input.disabled !== disabled) input.disabled = disabled;
       if (input !== dragging)
         input.value = duration > 0 ? String((position / duration) * 1000) : '0';
-      input.setAttribute('aria-valuetext', `${timeLabel(position)} / ${timeLabel(duration)}`);
+      if (input.getAttribute('aria-valuetext') !== valueText)
+        input.setAttribute('aria-valuetext', valueText);
     });
     if (Date.now() - lastStored > 5000 && loadedId) {
       remember();
@@ -159,7 +174,8 @@ if (root && audio && playlist.length) {
       el.textContent = track.artist;
     });
     each<HTMLImageElement>('[data-player-cover]', (el) => {
-      const src = withBase(track.cover || 'images/avatar.svg');
+      const size = el.dataset.playerCover === 'thumbnail' ? 'thumbnail' : 'full';
+      const src = withBase(coverPath(track, size));
       if (el.getAttribute('src') !== src) el.src = src;
     });
     each('[data-player-toggle]', (el) => {
@@ -413,6 +429,7 @@ if (root && audio && playlist.length) {
     }
   });
   document.addEventListener('astro:page-load', () => {
+    progressControls = findProgressControls();
     minimized = pageMinimized();
     render();
   });
