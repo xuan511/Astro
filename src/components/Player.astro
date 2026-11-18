@@ -1,5 +1,6 @@
 ---
 import { tracks } from '../lib/music';
+import { coverPath } from '../lib/player-state';
 import { withBase } from '../lib/paths';
 import Icon from './Icon.astro';
 import PlayerMode from './PlayerMode.astro';
@@ -30,11 +31,11 @@ const first = tracks[0];
   >
     <button class="mini-cover" type="button" data-queue-open aria-label="打开播放列表">
       <img
-        src={withBase(first?.cover || 'images/avatar.svg')}
+        src={withBase(coverPath(first, 'thumbnail'))}
         alt=""
         width="44"
         height="44"
-        data-player-cover
+        data-player-cover="thumbnail"
       />
     </button>
     <button
@@ -128,11 +129,11 @@ const first = tracks[0];
       aria-expanded="false"
     >
       <img
-        src={withBase(first?.cover || 'images/avatar.svg')}
+        src={withBase(coverPath(first, 'thumbnail'))}
         alt=""
         width="44"
         height="44"
-        data-player-cover
+        data-player-cover="thumbnail"
       />
     </button>
     <button class="player-play" type="button" data-player-toggle aria-label="播放">
@@ -178,7 +179,7 @@ const first = tracks[0];
         >
           <span>{String(index + 1).padStart(2, '0')}</span>
           <img
-            src={withBase(track.cover || 'images/avatar.svg')}
+            src={withBase(coverPath(track, 'thumbnail'))}
             width="42"
             height="42"
             alt=""

@@ -4,6 +4,7 @@ import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
 import PlayerMode from '../../components/PlayerMode.astro';
 import { tracks } from '../../lib/music';
+import { coverPath } from '../../lib/player-state';
 import { withBase } from '../../lib/paths';
 const first = tracks[0];
 ---
@@ -25,8 +26,8 @@ const first = tracks[0];
         >
           <div class="record-art">
             <img
-              data-player-cover
-              src={withBase(first.cover || 'images/avatar.svg')}
+              data-player-cover="full"
+              src={withBase(coverPath(first, 'full'))}
               alt="当前音乐封面"
               width="200"
               height="200"
@@ -97,7 +98,7 @@ const first = tracks[0];
             >
               <span>{String(index + 1).padStart(2, '0')}</span>
               <img
-                src={withBase(track.cover || 'images/avatar.svg')}
+                src={withBase(coverPath(track, 'thumbnail'))}
                 alt=""
                 width="45"
                 height="45"

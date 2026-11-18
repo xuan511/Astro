@@ -33,6 +33,9 @@ class ElementStub {
   matches(selector) {
     return this.selector === selector;
   }
+  getAttribute(name) {
+    return this.attributes.get(name) ?? null;
+  }
   setAttribute(name, value) {
     this.attributes.set(name, value);
   }
@@ -100,7 +103,12 @@ function mount({
   const hint = new ElementStub('[data-mode-hint]');
   const announcement = new ElementStub('[data-player-announcement]');
   const seek = new InputStub('[data-player-seek]');
+  const thumb = new ElementStub();
+  thumb.dataset.playerCover = 'thumbnail';
+  const full = new ElementStub();
+  full.dataset.playerCover = 'full';
   const elements = new Map([
+    ['[data-player-cover]', [thumb, full]],
     ['[data-player-feedback]', [feedback]],
     ['[data-player-panel]', [panel]],
     ['[data-player-capsule]', [capsule]],
@@ -125,11 +133,15 @@ function mount({
     return null;
   };
   const listeners = new Map();
+  let queries = 0;
   const document = {
     body: { dataset: { base: '/blog/' } },
     getElementById: () => root,
     querySelector: (selector) => (selector === '[data-reading-article]' && article ? root : null),
-    querySelectorAll: (selector) => elements.get(selector) || [],
+    querySelectorAll(selector) {
+      queries++;
+      return elements.get(selector) || [];
+    },
     addEventListener(type, handler) {
       const handlers = listeners.get(type) || [];
       handlers.push(handler);
@@ -177,6 +189,14 @@ function mount({
   }
   return {
     audio,
+    thumb,
+    full,
+    getQueries: () => queries,
+    replaceSeek() {
+      const replacement = new InputStub('[data-player-seek]');
+      elements.set('[data-player-seek]', [replacement]);
+      return replacement;
+    },
     setArticle(value) {
       article = value;
     },
@@ -370,4 +390,31 @@ test('reading defaults to the capsule until a listener explicitly chooses a layo
   await controller.dispatch('astro:page-load', null);
   assert.equal(controller.panel.hidden, false);
   assert.equal(mount({ minimized: false, article: true }).panel.hidden, false);
+});
+
+test('small and large covers follow track changes and support cover-only entries', async () => {
+  const first = { id: 'a', title: 'A', artist: 'A', src: 'music/a.mp3', cover: 'images/a.webp' };
+  const second = { ...first, id: 'b', cover: 'images/b.webp' };
+  const app = mount({ tracks: [{ ...first, thumbnail: 'images/a-small.webp' }, second] });
+  assert.equal(app.thumb.src, '/blog/images/a-small.webp');
+  assert.equal(app.full.src, '/blog/images/a.webp');
+  await app.dispatch('click', new ElementStub('[data-player-next]'));
+  assert.equal(app.thumb.src, '/blog/images/b.webp');
+  assert.equal(app.full.src, '/blog/images/b.webp');
+});
+
+test('playback ticks reuse page controls and bind new ones after navigation', async () => {
+  const app = mount();
+  await app.toggle();
+  const before = app.getQueries();
+  app.audio.currentTime = 12;
+  app.audio.dispatchEvent(new Event('timeupdate'));
+  assert.equal(app.getQueries(), before);
+  assert.equal(app.seek.value, '200');
+  const replacement = app.replaceSeek();
+  await app.dispatch('astro:page-load', null);
+  app.audio.currentTime = 30;
+  app.audio.dispatchEvent(new Event('timeupdate'));
+  assert.equal(replacement.value, '500');
+  assert.equal(app.seek.value, '200');
 });

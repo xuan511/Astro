@@ -4,7 +4,8 @@
     "title": "Summer Pockets",
     "artist": "水月陵",
     "src": "music/summer-pockets.mp3",
-    "cover": "images/summer-pockets-ost.jpg",
+    "cover": "images/summer-pockets-ost.webp",
+    "thumbnail": "images/summer-pockets-ost-thumb.webp",
     "demo": false
   },
   {
@@ -12,7 +13,8 @@
     "title": "青き此方（青之此方）",
     "artist": "YURiKA",
     "src": "music/aoki-konata.mp3",
-    "cover": "images/summer-pockets-rb-vocal.jpg",
+    "cover": "images/summer-pockets-rb-vocal.webp",
+    "thumbnail": "images/summer-pockets-rb-vocal-thumb.webp",
     "demo": false
   },
   {
