@@ -114,3 +114,5 @@ npx --yes lighthouse@13.5.0 http://localhost:4173/ --output=html --output-path=.
 2026-10-27 已在 Windows 的本机 Chrome 上用 Lighthouse 13.5.0 对生产预览的首页、技术文章和音乐页执行单次手机模拟审计（412×823、模拟节流）。结果见 [阶段验收](ACCEPTANCE.md)。这是本地实验结果，尚未在真实 GitHub Pages 域名测试，也不是多次运行的中位数。构建体积与链接检查不能替代这些指标，实验分数也不代表所有设备的体验。
 
 参考：[Astro 官方 GitHub Pages 部署说明](https://docs.astro.build/en/guides/deploy/github/)、[Astro 客户端导航与状态保持](https://docs.astro.build/en/guides/view-transitions/)。
+
+文章互动使用独立运行的 Django 服务，配置和上线步骤见[评论与点赞部署说明](COMMUNITY.md)。

@@ -4,7 +4,7 @@
 
 ## 总体结构
 
-拾间继续使用 Astro、TypeScript、Content Collections 和 Markdown / MDX，在构建时生成静态 HTML。站内导航使用 Astro ClientRouter；浏览器脚本只负责搜索、主题、阅读辅助、项目速览和音乐。没有新增客户端框架、状态管理库、数据库或 CMS。
+拾间继续使用 Astro、TypeScript、Content Collections 和 Markdown / MDX，在构建时生成静态 HTML。站内导航使用 Astro ClientRouter；浏览器脚本负责搜索、主题、阅读辅助、项目速览、音乐以及文章讨论。文章正文来自内容集合。交互数据由独立部署的 Django API 和 SQLite 管理，接口与数据同步步骤见[文章讨论](COMMUNITY.md)。
 
 ```text
 仓库内容 / 站点配置
