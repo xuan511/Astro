@@ -5,6 +5,7 @@ import Base from './Base.astro';
 import Icon from '../components/Icon.astro';
 import Media from '../components/Media.astro';
 import ReadingControls from '../components/ReadingControls.astro';
+import Discussion from '../components/Discussion.astro';
 import ImageViewer from '../components/ImageViewer.astro';
 import { site } from '../config/site';
 import { withBase, postPath, taxonomyPath, formatDate, readingMinutes } from '../lib/paths';
@@ -117,6 +118,7 @@ const jsonLd = {
           用 RSS 继续阅读 <Icon name="arrow" size={15} />
         </a>
       </footer>
+      <Discussion article={post.id} />
       <nav class="article-neighbors" aria-label="相邻文章">
         {previous ? (
           <a href={postPath(previous.id)}>

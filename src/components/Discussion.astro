@@ -1,0 +1,154 @@
+---
+interface Props {
+  article: string;
+}
+const { article } = Astro.props;
+const configured =
+  import.meta.env.PUBLIC_COMMUNITY_API?.trim() ||
+  (import.meta.env.DEV ? 'http://localhost:8000/api/' : '');
+let endpoint = '';
+if (configured) {
+  const url = new URL(configured);
+  if (
+    url.protocol !== 'https:' &&
+    !(url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname))
+  ) {
+    throw new Error('PUBLIC_COMMUNITY_API must use HTTPS or a local development server.');
+  }
+  if (url.search || url.hash || url.username || url.password)
+    throw new Error('Invalid PUBLIC_COMMUNITY_API');
+  endpoint = url.href.replace(/\/?$/, '/');
+}
+---
+
+{endpoint && (
+  <blog-discussion data-api={endpoint} data-article={article}>
+    <h2>文章讨论</h2>
+    <noscript>启用 JavaScript 后可查看评论与点赞。</noscript>
+    <p role="status" data-status></p>
+    <fieldset disabled>
+      <div data-actions hidden>
+        <button type="button" data-like aria-pressed="false">
+          点赞
+        </button>
+        <span data-account></span>
+        <button type="button" data-logout hidden>
+          退出登录
+        </button>
+      </div>
+      <details data-auth hidden>
+        <summary>登录或注册，参与讨论</summary>
+        <form data-login>
+          <label>
+            用户名
+            <input name="username" autocomplete="username" maxlength="150" required />
+          </label>
+          <label>
+            密码
+            <input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              maxlength="256"
+              required
+            />
+          </label>
+          <button type="submit">登录</button>
+          <button type="button" data-switch>
+            注册新账号
+          </button>
+        </form>
+      </details>
+      <form data-compose hidden>
+        <label>
+          写评论<textarea name="body" rows="3" maxlength="2000" required></textarea>
+        </label>
+        <button type="submit">发表评论</button>
+      </form>
+      <ol data-comments aria-label="最新评论"></ol>
+      <button type="button" data-more hidden>
+        更早的评论
+      </button>
+      <button type="button" data-retry hidden>
+        重新加载讨论
+      </button>
+    </fieldset>
+  </blog-discussion>
+)}
+
+<script>
+  import '../scripts/discussion';
+</script>
+
+<style>
+  blog-discussion {
+    display: block;
+    margin-block: var(--space-7);
+    color: var(--text);
+  }
+  fieldset {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  [data-actions],
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-3);
+    margin-block: var(--space-3);
+  }
+  label {
+    display: grid;
+    gap: 0.25rem;
+    max-width: 100%;
+  }
+  [data-compose] label {
+    width: 100%;
+  }
+  input,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    padding: 0.45rem 0.75rem;
+    background: var(--paper);
+    max-width: 100%;
+  }
+  textarea {
+    resize: vertical;
+  }
+  button,
+  summary {
+    cursor: pointer;
+  }
+  button[aria-pressed='true'],
+  button[type='submit'] {
+    color: var(--accent-contrast);
+    background: var(--accent);
+  }
+  ol {
+    list-style: none;
+    padding: 0;
+  }
+  ol :global(li) {
+    padding-block: 0.75rem;
+    border-top: 1px solid var(--line);
+    overflow-wrap: anywhere;
+  }
+  ol :global(small),
+  [role='status'] {
+    color: var(--muted);
+  }
+  ol :global(p) {
+    white-space: pre-wrap;
+    margin: 0.25rem 0;
+  }
+</style>
