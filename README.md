@@ -24,7 +24,7 @@ npm run test:built
 npm run preview
 ```
 
-一次执行日常检查：`npm run verify`。首次发布或修改路径逻辑后，再执行 `npm run verify:pages -- --repo=xuan511/Astro`，分别构建根目录、项目子目录与自定义域名，检查链接、字体、SEO、RSS、歌单与草稿隔离；临时成品在同盘的 `.astro/` 中生成并自动清理，现有 `dist/` 保持不变。
+一次执行日常检查：`npm run verify`（类型与内容、架构、测试、构建、成品）。格式检查独立提供建议，不阻断发布；文章目录不交给 Prettier 重排。可选 `npm run format:check` 或 `npm run verify:strict`。首次发布或修改路径逻辑后，再执行 `npm run verify:pages -- --repo=xuan511/Astro`，分别构建根目录、项目子目录与自定义域名，检查链接、字体、SEO、RSS、歌单与草稿隔离；临时成品在同盘的 `.astro/` 中生成并自动清理，现有 `dist/` 保持不变。
 
 ## 发布到 GitHub Pages
 
@@ -140,7 +140,7 @@ legacy/                原版源码、工具与说明
 
 ## 内容与迁移
 
-四篇原有示例文章、三条示例随记都明确标记为示例。一份未发布草稿用于验证隔离，不生成页面。正式歌单现有 5 首用户提供的完整音乐，以及 AIR《鳥の詩》、CLANNAD《渚》、Kanon《Last regrets》3 首明确标注的官方试听片段；专辑封面与来源见 [音乐管理](docs/MUSIC.md)。原合成示例已移除。
+2026-11-22 新增三篇项目实践文章与一篇音乐随笔，并保留用户在 GitHub 新增的《日志1》。四篇原有示例文章、三条示例随记都明确标记为示例。一份未发布草稿用于验证隔离，不生成页面。正式歌单现有 5 首用户提供的完整音乐，以及 AIR《鳥の詩》、CLANNAD《渚》、Kanon《Last regrets》3 首明确标注的官方试听片段；专辑封面与来源见 [音乐管理](docs/MUSIC.md)。原合成示例已移除。
 
 项目资料来自 xuan511/linux-device-manager 和 xuan511/ESP32-S31-Embedded-Device-Console 的公开 README。后者保留“待真机验证”状态。没有填入虚构的成长经历、联系方式或截图。
 

@@ -16,7 +16,8 @@
     "format:check": "prettier --check .",
     "test": "node --test tests/*.test.mjs",
     "test:built": "node scripts/verify-build.mjs",
-    "verify": "npm run check && npm run check:architecture && npm run format:check && npm test && npm run build && npm run test:built",
+    "verify": "npm run check && npm run check:architecture && npm test && npm run build && npm run test:built",
+    "verify:strict": "npm run format:check && npm run verify",
     "verify:pages": "node scripts/check-pages.mjs",
     "new:post": "node scripts/new-post.mjs",
     "import:backup": "node scripts/import-backup.mjs"

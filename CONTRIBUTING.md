@@ -33,7 +33,9 @@ npm run verify
 npm run verify:pages -- --repo=xuan511/Astro
 ```
 
-第一条依次执行类型、架构、格式、行为测试、生产构建与成品检查；第二条构建并检查根路径、`/Astro/` 和自定义域名三种情况。格式失败时，先对实际修改的文件执行 `npm exec prettier -- --write 文件路径`，避免无关全仓格式化。构建错误、失败测试或缺失资源应修复后再交付。
+第一条依次执行类型与内容校验、架构检查、行为测试、生产构建与成品检查；第二条构建并检查根路径、`/Astro/` 和自定义域名三种情况。构建错误、失败测试或缺失资源应修复后再交付。
+
+格式整理是可选建议，不再阻断发布。`src/content/` 不参与 Prettier 检查或写入；文章的引号、段落换行、列表与表格排版由作者决定，内容仍需符合 Markdown/MDX 语法和集合 schema。代码和配置可单独运行 `npm run format:check`；希望把代码排版作为自己的额外本地要求时，运行 `npm run verify:strict`。需要整理时仅对实际修改的代码执行 `npm exec prettier -- --write 文件路径`，避免无关全仓格式化。`endOfLine: auto` 保留各文件现有行尾类型，`proseWrap: preserve` 保留文档正文换行，不代表整份 Markdown 不会重排。
 
 客户端交互修改还需在 `npm run preview` 的生产预览中检查：手机与桌面导航、中文搜索和键盘、弹层关闭与焦点返回、主题与阅读设置、主动播放后的音频实例和时间推进。刷新后不能自行播放。自动测试覆盖逻辑与模拟运行时，不能替代原生焦点、音频和真机体验检查。
 
@@ -41,7 +43,9 @@ npm run verify:pages -- --repo=xuan511/Astro
 
 ## CI 与发布
 
-PR 和 `main` 推送会运行 `build` 与 `paths` 两个作业。`build` 执行日常门禁并产出正式页面；`paths` 独立执行三种部署路径检查。只有 `main` 且两个作业成功，`deploy` 才会继续。工作流只在部署作业申请 Pages 写权限，不需要自建部署令牌。
+PR 和 `main` 推送会运行 `build`、`paths` 和独立的 `format` 作业。`build` 调用与本地相同的 `npm run verify` 并产出正式页面；`paths` 验证三种部署路径。`format` 只提供代码排版建议：Prettier 步骤容错，失败时根据原始 `outcome` 写入 Notice 与作业摘要，不修改文件、不自动提交。格式工具安装或网络故障仍会显示在独立作业中。
+
+只有 `main` 且 `build`、`paths` 成功，`deploy` 才会继续；部署不依赖 `format`，关键验证步骤没有容错。PR 不部署，main 分支限制、部署并发策略与最小权限保留。工作流只在部署作业申请 Pages 写权限，不需要自建部署令牌。
 
 仓库管理员可按团队流程把 `build`、`paths` 设为分支保护的必需检查；仓库保护是服务端设置，源码中的工作流本身不能阻止管理员直接推送。当前是否设置应以仓库实际状态为准。
 

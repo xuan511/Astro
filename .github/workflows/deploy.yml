@@ -31,16 +31,44 @@ jobs:
         env:
           REQUESTED_SITE: ${{ vars.SITE_URL }}
           REQUESTED_BASE: ${{ vars.BASE_PATH }}
-      - run: npm run check
-      - run: npm run check:architecture
-      - run: npm run format:check
-      - run: npm test
-      - run: npm run build
-      - run: npm run test:built
+      - name: Validate types, architecture, tests and built pages
+        run: npm run verify
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         with:
           path: dist
+
+  format:
+    name: Formatting advice
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Check code formatting (advisory only)
+        id: prettier
+        continue-on-error: true
+        run: npm run format:check
+      - name: Explain formatting advice
+        if: steps.prettier.outcome == 'failure'
+        shell: bash
+        run: |
+          echo '::notice title=Formatting advice::Formatting differences do not block Pages deployment. Article content is excluded. Run Prettier on edited code files when convenient.'
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          ### Formatting advice
+
+          Prettier found code formatting differences or could not finish its check.
+          This advice does **not** block the build or Pages deployment.
+          Article content in `src/content/` is excluded from formatting checks.
+          Review the formatting log, then optionally run `npm exec prettier -- --write <edited-code-file>`.
+          Types, content validation, architecture, tests and built pages remain required.
+          SUMMARY
 
   paths:
     runs-on: ubuntu-latest
