@@ -373,6 +373,10 @@
   max-width: 100%;
   overscroll-behavior-x: contain;
 }
+[data-score-article] .prose pre {
+  font-size: var(--text-base);
+  line-height: 1.9;
+}
 .code-language {
   position: absolute;
   top: var(--space-3);
