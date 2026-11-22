@@ -2,6 +2,7 @@
 title: 给音乐房间留一点安静
 description: 关于夏日旋律、视觉小说配乐，以及一个不会替你按下播放键的音乐房间。
 publishedAt: 2026-11-22
+updatedAt: 2026-11-23
 kind: life
 category: 音乐
 tags: [音乐, Summer Pockets, 日常]
@@ -31,13 +32,13 @@ tone: sand
 
 同一段旋律可以是写字时的背景，也可以值得停下来单独听一遍。页面只提供一个入口，把怎样聆听留给打开它的人。
 
-## 试听与完整曲目，分别标明
+## 只保留完整的旋律
 
-房间里还放了《鳥の詩》《渚》和《Last regrets》的官方试听。它们是 Apple Music 提供的短片段，标题明确带有“官方试听”，旁边可以进入完整版收听页。
+音乐台现在只保留红叶清雨提供的五首完整曲目。之前添加的试听片段已经移除，不再混入播放队列。
 
-短片段适合确认“是不是这首”，却不等于完整听过一首歌。尤其是配乐，情绪可能藏在反复、停顿与后半段的变化里。
+配乐的情绪常常藏在反复、停顿与后半段的变化里。把一首歌完整留在歌单中，想听时就从自己的位置继续，不必担心片段突然结束。
 
-如果一段试听让人愿意继续找下去，这个小入口就已经有了用处。[AIR 官方专辑](https://key.soundslabel.com/ksl_html/ksl0005/ksl0005.html)、[CLANNAD 官方专辑](https://key.soundslabel.com/ksl_html/ksl0014/ksl0014.html)、[Kanon 官方专辑](https://key.soundslabel.com/ksl_html/ksl0006/ksl0006.html)
+另有一份《Summer Pockets》半音阶口琴谱，收在[口琴谱目录](../../music/scores/)里。听旋律，也可以把它翻成一份可以慢慢练习的记录。
 
 ## 把开始和停止都留在手边
 

@@ -58,6 +58,10 @@ for (const file of pages) {
     assert(noindex, `Utility page must declare noindex: ${file}`);
   if (!noindex) indexablePages.add(url.href);
   assert.match(html, /<html[^>]+lang="zh-CN"/);
+  const directories = [...html.matchAll(/<details\b[^>]*\bdata-site-directory\b[^>]*>/g)];
+  assert.equal(directories.length, 1, `Expected one shared site directory: ${file}`);
+  assert(!/\bopen(?:\s|>|=)/.test(directories[0][0]), `Site directory must start closed: ${file}`);
+  assert(!html.includes('id="mobile-navigation"'), `Duplicate mobile navigation: ${file}`);
   assert.equal((html.match(/<h1(?:\s|>)/g) || []).length, 1, `Expected one h1: ${file}`);
   const players = [...html.matchAll(/<section\b[^>]*\bid="persistent-player"[^>]*>/g)];
   assert.equal(players.length, 1, `Expected one persistent player: ${file}`);

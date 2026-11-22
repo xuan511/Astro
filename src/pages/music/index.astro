@@ -4,10 +4,11 @@ import PageHeading from '../../components/PageHeading.astro';
 import Icon from '../../components/Icon.astro';
 import PlayerMode from '../../components/PlayerMode.astro';
 import { tracks } from '../../lib/music';
+import { publishedScores } from '../../lib/content';
 import { coverPath } from '../../lib/player-state';
-import { withBase } from '../../lib/paths';
+import { withBase, postPath } from '../../lib/paths';
 const first = tracks[0];
-const previews = tracks.filter((track) => track.preview).length;
+const scores = await publishedScores();
 ---
 
 <Base title="音乐房间" description="给日常一点背景乐。选择一首音乐，让时间慢下来。">
@@ -90,9 +91,7 @@ const previews = tracks.filter((track) => track.preview).length;
           <h2 id="playlist-title">
             此刻的歌单 <span class="count">{tracks.length} 首</span>
           </h2>
-          <p class="playlist-description">
-            {tracks.length - previews} 首完整音乐 · {previews} 首官方试听片段
-          </p>
+          <p class="playlist-description">{tracks.length} 首完整音乐</p>
           {tracks.map((track, index) => (
             <div class="music-track-row">
               <button
@@ -117,16 +116,6 @@ const previews = tracks.filter((track) => track.preview).length;
                 </span>
                 <span data-track-state={track.id}>播放</span>
               </button>
-              {track.preview && track.sourceUrl && (
-                <a
-                  class="preview-source"
-                  href={track.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Apple Music Preview · 收听完整版 <Icon name="arrow" size={12} />
-                </a>
-              )}
             </div>
           ))}
           <details class="music-credits">
@@ -145,10 +134,6 @@ const previews = tracks.filter((track) => track.preview).length;
                 </li>
               ))}
             </ul>
-            <p>
-              标注「官方试听」的曲目为 Apple Music Preview 片段，由 Apple
-              远程提供。完整音乐请前往对应收听页。
-            </p>
           </details>
           <p class="room-note">
             安静也很好。
@@ -163,6 +148,24 @@ const previews = tracks.filter((track) => track.preview).length;
         <h2>歌单还很安静。</h2>
         <p>新的旋律，会在以后慢慢加入。</p>
       </div>
+    )}
+    {scores.length > 0 && (
+      <section class="music-scores" aria-labelledby="scores-title">
+        <div class="music-scores-heading">
+          <h2 id="scores-title">我的口琴谱</h2>
+          <a class="text-link" href={withBase('music/scores/')}>
+            全部琴谱
+          </a>
+        </div>
+        <p>把喜欢的旋律，留成可以随时翻开的谱子。</p>
+        <ul>
+          {scores.map((score) => (
+            <li>
+              <a href={postPath(score.id)}>{score.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
     )}
   </div>
 </Base>

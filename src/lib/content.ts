@@ -6,6 +6,10 @@ export async function publishedPosts(kind?: PostKind) {
   return selectPublishedPosts(await getCollection('posts'), kind);
 }
 
+export async function publishedScores() {
+  return (await publishedPosts()).filter((post) => post.data.format === 'score');
+}
+
 export async function recentNotes(limit?: number) {
   const notes = (await getCollection('notes')).sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime(),

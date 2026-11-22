@@ -30,6 +30,12 @@ demo: false
 
 文章目录 `src/content/` 不参与 Prettier 检查或自动整理。引号、段落与表格排版由作者决定，无需为格式工具反复修改；Markdown/MDX 语法与内容 schema 仍然验证。`publishedAt` 当前只用于日期与排序，不是定时发布开关；需要暂不发布时请保留 `draft: true`。
 
+## 上传琴谱
+
+琴谱使用同一文章集合，在 frontmatter 中增加 `format: score`（默认是 article）。正文以 text 文本块保存原始符号和分行，category/tags 负责展示分类，不承担琴谱类型识别。`publishedScores()` 只从已发布集合派生琴谱，自动进入 `/music/scores/` 与音乐台；搜索、RSS 和草稿隔离沿用文章规则。
+
+需要下载版本时将相同原文放入 `public/scores/`，文章使用相对链接引用，以兼容部署子路径。不要根据没有说明的原稿擅自补写调性、节拍或孔位。第一份谱子来自用户提供的《Summer Pockets》，对应文本有 21 行。
+
 ## 图片与封面
 
 推荐为每篇文章建立独立的图片目录：

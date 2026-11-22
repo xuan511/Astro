@@ -11,13 +11,14 @@ interface Props {
   description: string;
   posts: CollectionEntry<'posts'>[];
   kind?: 'tech' | 'life';
+  section?: string;
 }
-const { title, eyebrow, description, posts, kind } = Astro.props;
+const { title, eyebrow, description, posts, kind, section } = Astro.props;
 const categories = groupPostsByTaxonomy(posts, 'category');
 const tags = groupPostsByTaxonomy(posts, 'tags');
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} section={section}>
   <div class:list={['shell', 'post-index', { 'life-index': kind === 'life' }]}>
     <PageHeading title={title} eyebrow={eyebrow} description={description} />
     <div class="index-layout">

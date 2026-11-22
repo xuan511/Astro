@@ -44,6 +44,20 @@ const { data } = project;
         <p>{paragraph}</p>
       ))}
     </article>
+    {data.resources.length > 0 && (
+      <section class="project-resources" aria-labelledby="project-resources-title">
+        <h2 id="project-resources-title">项目文档</h2>
+        <ul>
+          {data.resources.map((resource) => (
+            <li>
+              <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                {resource.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
     <a class="text-link project-detail-return" href={withBase('projects/')}>
       继续看看其他项目 <Icon name="arrow" size={15} />
     </a>
@@ -66,5 +80,13 @@ const { data } = project;
   }
   .project-detail-return {
     margin-top: var(--space-6);
+  }
+  .project-resources {
+    margin-top: var(--space-6);
+  }
+  .project-resources a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-size);
   }
 </style>

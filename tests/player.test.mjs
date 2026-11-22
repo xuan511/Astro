@@ -3,18 +3,22 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { nextIndex, parsePreference, timeLabel } from '../src/lib/player-state.ts';
 
-test('the retired demo cannot return through a saved playback preference', async () => {
+test('removed demos and previews cannot return through a saved playback preference', async () => {
   const tracks = JSON.parse(
     await readFile(new URL('../src/data/music.json', import.meta.url), 'utf8'),
   );
-  assert(!tracks.some((track) => track.id === 'paper-light'));
-  assert.deepEqual(
-    parsePreference(
-      JSON.stringify({ id: 'paper-light', position: 22, volume: 0.4, mode: 'shuffle' }),
-      tracks,
-    ),
-    { id: '', position: 0, volume: 0.4, mode: 'shuffle' },
-  );
+  for (const id of [
+    'paper-light',
+    'tori-no-uta-preview',
+    'nagisa-preview',
+    'last-regrets-preview',
+  ]) {
+    assert(!tracks.some((track) => track.id === id));
+    assert.deepEqual(
+      parsePreference(JSON.stringify({ id, position: 22, volume: 0.4, mode: 'shuffle' }), tracks),
+      { id: '', position: 0, volume: 0.4, mode: 'shuffle' },
+    );
+  }
 });
 
 test('sequence ends at the last track; manual next still allows wrap-around', () => {

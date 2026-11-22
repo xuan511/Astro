@@ -15,18 +15,32 @@
     ]
   },
   {
-    "id": "embedded-console",
-    "name": "Embedded Device Console",
-    "description": "用带触摸屏的 ESP32 终端管理 STM32，把设备状态、日志和故障处理放到可交互的界面中。",
-    "stack": ["ESP-IDF", "FreeRTOS", "LVGL", "STM32"],
+    "id": "embedded-smart-home",
+    "name": "Embedded Smart Home · 智能家居",
+    "description": "基于 ESP32-S31-Korvo-1 的智能家居环境监测与控制原型，整合触摸屏、按键、串口与阈值联动，支持模拟采集并预留真实传感器和低压负载接口。",
+    "stack": ["C", "ESP-IDF", "FreeRTOS", "LVGL 9", "ESP32-S31"],
     "status": "待真机验证",
-    "github": "https://github.com/xuan511/ESP32-S31-Embedded-Device-Console",
+    "github": "https://github.com/xuan511/embedded-smart-home",
     "featured": true,
     "details": [
-      "ESP32-S31-Korvo-1 通过 USB Host、CH340 与 STM32F103 连接，承担设备运维终端的角色。",
-      "功能包含 LVGL 页面、设备状态、日志、命令调度，以及 CRC、请求超时和断线后的恢复。",
-      "公开 README 明确说明：代码框架和主机单元测试已完成，ESP-IDF 编译、烧录及真实硬件联调仍待验证。这里保留这一限制。",
-      "接线与运行步骤请阅读仓库文档。本页不将概念配图当作真实设备截图。"
+      "将手动/自动模式、阈值滞回和数据失效保护封装为独立纯 C 核心，触摸、按键与串口通过有界消息队列复用控制流程；控制任务统一写入状态。",
+      "默认明确标记模拟温湿度与光照；可选接入 SHT3x、BH1750 与 MCP23017，实现真实采集和低压灯光、风扇输出。风扇的 ON 软件命令不等于实际负载已经工作。",
+      "使用 LVGL 9 展示环境数据、阈值与命令状态，支持 NVS 阈值保存，以及按需启用的 SD 日志、I2C、PSRAM、音频和 Wi-Fi 扫描自检；当前未提供 Web 或 MQTT 控制。",
+      "仓库 2026-10-26 验证记录列出纯 C 测试、ASan/UBSan 与默认、外设两种固件编译通过；实物烧录、屏幕及外设行为、长时间运行仍待上板验收。这是仓库记录，不代表本站本轮重新执行了固件验证。"
+    ],
+    "resources": [
+      {
+        "label": "项目说明与运行方式",
+        "url": "https://github.com/xuan511/embedded-smart-home/blob/main/README.md"
+      },
+      {
+        "label": "架构与任务边界",
+        "url": "https://github.com/xuan511/embedded-smart-home/blob/main/docs/ARCHITECTURE.md"
+      },
+      {
+        "label": "已验证范围与待验收项目",
+        "url": "https://github.com/xuan511/embedded-smart-home/blob/main/docs/VALIDATION.md"
+      }
     ]
   }
 ]

@@ -12,6 +12,7 @@ test('indexing excludes utility/recovery routes beneath every deployment base', 
       '404.html',
       'legacy/',
       'legacy/recover/',
+      'projects/embedded-console/',
     ])
       assert.equal(isIndexablePath(base + path, base), false, base + path);
     for (const path of ['', 'about/', 'posts/search/', 'tags/writing/', 'projects/legacy-console/'])

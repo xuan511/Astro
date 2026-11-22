@@ -17,7 +17,6 @@ const schema = z.array(
     artist: z.string().min(1),
     album: z.string().min(1).optional(),
     sourceUrl: z.url({ protocol: /^https$/ }).optional(),
-    preview: z.boolean().default(false),
     src: asset,
     cover: asset.optional(),
     thumbnail: asset.optional(),

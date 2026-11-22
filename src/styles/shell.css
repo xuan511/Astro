@@ -93,32 +93,77 @@ body {
   display: block;
   margin-top: 3px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: var(--text-xs);
   letter-spacing: 0.09em;
 }
-.desktop-nav {
+.directory-toggle {
   display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-left: auto;
-}
-.desktop-nav a {
-  position: relative;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 44px;
+  gap: var(--space-2);
   padding-inline: var(--space-3);
+  border: 1px solid var(--line);
   border-radius: 999px;
-  font-size: var(--text-sm);
+  cursor: pointer;
+  list-style: none;
+  font-size: 1rem;
   color: var(--body);
-  white-space: nowrap;
+}
+.directory-toggle::-webkit-details-marker {
+  display: none;
+}
+.site-directory[open] > summary,
+.directory-toggle:hover {
+  background: var(--soft);
+  color: var(--accent);
+}
+.directory-panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  width: min(620px, calc(100vw - 2 * var(--page-gutter)));
+  max-height: calc(100dvh - 120px);
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+}
+.site-directory:not([open]) > .directory-panel {
+  display: none;
+}
+.directory-group {
+  min-width: 0;
+}
+.directory-group p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+  margin: var(--space-2);
+}
+.directory-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.directory-panel a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  color: var(--body);
   transition:
     background var(--duration-fast),
     color var(--duration-fast);
 }
-.desktop-nav a:hover,
-.desktop-nav a[aria-current] {
+.directory-panel a:hover,
+.directory-panel a[aria-current] {
   color: var(--accent);
   background: var(--soft);
 }
@@ -126,6 +171,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  margin-left: auto;
   border-left: 1px solid var(--line);
   padding-left: var(--space-3);
 }
@@ -152,9 +198,20 @@ body {
 :root[data-theme='dark'] .header-tools .theme-moon {
   display: none;
 }
-.mobile-menu-toggle,
-.mobile-nav {
-  display: none;
+@media (prefers-reduced-motion: no-preference) {
+  .site-directory[open] .directory-panel {
+    animation: directory-enter 160ms var(--ease-out);
+  }
+}
+@keyframes directory-enter {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 .site-footer {
   display: flex;
@@ -312,9 +369,6 @@ main > .shell:not(.home-dashboard):not(.article-layout) {
   }
 }
 @media (max-width: 60rem) {
-  .desktop-nav a {
-    padding-inline: var(--space-2);
-  }
   .header-tools .search-trigger kbd {
     display: none;
   }
@@ -333,9 +387,6 @@ main > .shell:not(.home-dashboard):not(.article-layout) {
     min-height: 64px;
     gap: var(--space-2);
     padding-inline: var(--space-3);
-  }
-  .desktop-nav {
-    display: none;
   }
   .header-tools {
     margin-left: auto;
@@ -357,28 +408,9 @@ main > .shell:not(.home-dashboard):not(.article-layout) {
     height: 30px;
     border-radius: 10px 10px 10px 3px;
   }
-  .mobile-menu-toggle {
-    display: inline-grid;
-  }
-  .mobile-nav:not([hidden]) {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    padding: var(--space-2) var(--space-3) var(--space-3);
+  .directory-panel {
+    padding: var(--space-3);
     gap: var(--space-2);
-  }
-  .mobile-nav a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    border-radius: 12px;
-    color: var(--body);
-    font-size: var(--text-sm);
-  }
-  .mobile-nav a:hover,
-  .mobile-nav a[aria-current] {
-    background: var(--soft);
-    color: var(--accent);
   }
 }
 @media (max-width: 40rem) {
@@ -399,6 +431,10 @@ main > .shell:not(.home-dashboard):not(.article-layout) {
   }
 }
 @media (max-width: 360px) {
+  .directory-toggle {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
+  }
   .header-tools .icon-button {
     width: 40px;
   }

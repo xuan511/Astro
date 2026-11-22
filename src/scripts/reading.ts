@@ -162,34 +162,37 @@ function initReading() {
     options,
   );
   body.querySelectorAll('pre').forEach((pre, index) => {
+    const score = article.hasAttribute('data-score-article');
+    const blockLabel = score ? '琴谱' : '代码块';
+    const copyLabel = score ? '复制谱子' : '复制代码';
     pre.querySelectorAll('.copy-code,.code-language').forEach((node) => node.remove());
     pre.tabIndex = 0;
-    pre.setAttribute('aria-label', `代码块 ${index + 1}，可左右滚动`);
+    pre.setAttribute('aria-label', `${blockLabel} ${index + 1}，可左右滚动`);
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'copy-code';
-    button.textContent = '复制代码';
-    button.setAttribute('aria-label', `复制代码，第 ${index + 1} 个代码块`);
+    button.textContent = copyLabel;
+    button.setAttribute('aria-label', `${copyLabel}，第 ${index + 1} 个${blockLabel}`);
     button.addEventListener(
       'click',
       async () => {
         try {
           await navigator.clipboard.writeText(pre.querySelector('code')?.textContent || '');
           button.textContent = '已复制';
-          if (feedback) feedback.textContent = `第 ${index + 1} 个代码块已复制`;
+          if (feedback) feedback.textContent = `第 ${index + 1} 个${blockLabel}已复制`;
         } catch {
           button.textContent = '复制失败，请手动选择';
-          if (feedback) feedback.textContent = '代码复制失败，请手动选择代码';
+          if (feedback) feedback.textContent = `${blockLabel}复制失败，请手动选择原文`;
         }
         later(() => {
-          if (button.isConnected) button.textContent = '复制代码';
+          if (button.isConnected) button.textContent = copyLabel;
         });
       },
       options,
     );
     const language = document.createElement('span');
     language.className = 'code-language';
-    language.textContent = pre.dataset.language || '代码';
+    language.textContent = score ? '简谱原稿' : pre.dataset.language || '代码';
     language.setAttribute('aria-hidden', 'true');
     pre.append(language, button);
   });

@@ -1,33 +1,25 @@
 import './theme';
-function closeMenu(restoreFocus = false) {
-  const menu = document.getElementById('mobile-navigation');
+function closeDirectory(restoreFocus = false) {
+  const menu = document.querySelector<HTMLDetailsElement>('[data-site-directory]');
   const focusedInside = menu?.contains(document.activeElement);
-  if (menu) menu.hidden = true;
-  document.querySelector('[data-menu-toggle]')?.setAttribute('aria-expanded', 'false');
-  document.querySelector('[data-menu-toggle]')?.setAttribute('aria-label', '展开导航');
+  if (menu) menu.open = false;
   if (restoreFocus && focusedInside)
-    document.querySelector<HTMLButtonElement>('[data-menu-toggle]')?.focus();
+    menu?.querySelector<HTMLElement>('summary')?.focus({ preventScroll: true });
 }
 document.addEventListener('click', (event) => {
   if (!(event.target instanceof Element)) return;
-  const toggle = event.target.closest('[data-menu-toggle]');
-  if (toggle) {
-    const menu = document.getElementById('mobile-navigation');
-    if (menu) {
-      menu.hidden = !menu.hidden;
-      toggle.setAttribute('aria-expanded', String(!menu.hidden));
-      toggle.setAttribute('aria-label', menu.hidden ? '展开导航' : '收起导航');
-    }
-  }
-  if (event.target.closest('.mobile-nav a')) closeMenu();
-  if (!event.target.closest('#mobile-navigation,[data-menu-toggle]')) closeMenu();
+  if (event.target.closest('.directory-panel a')) closeDirectory();
+  if (!event.target.closest('[data-site-directory]')) closeDirectory();
 });
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') closeMenu(true);
+  if (event.key === 'Escape') closeDirectory(true);
 });
-matchMedia('(min-width: 833px)').addEventListener('change', (event) => {
-  if (event.matches) closeMenu();
+document.addEventListener('focusin', (event) => {
+  if (event.target instanceof Element && !event.target.closest('[data-site-directory]'))
+    closeDirectory();
 });
+document.addEventListener('astro:before-preparation', () => closeDirectory());
+document.addEventListener('astro:before-swap', () => closeDirectory());
 // Keep links from v1/v2 working after the migration to real static pages.
 if (location.hash.startsWith('#/')) {
   const old = location.hash.slice(2);

@@ -5,7 +5,8 @@ export function isIndexablePath(pathname, base = '/') {
   if (!pathname.startsWith(root)) return false;
   const path = pathname.slice(root.length).replace(/\/+$/, '');
   return (
-    !['404', '404.html', 'search', 'writing', 'legacy'].includes(path) &&
-    !path.startsWith('legacy/')
+    !['404', '404.html', 'search', 'writing', 'legacy', 'projects/embedded-console'].includes(
+      path,
+    ) && !path.startsWith('legacy/')
   );
 }

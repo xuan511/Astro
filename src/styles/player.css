@@ -557,16 +557,29 @@
   font-size: var(--text-sm);
   margin: 0 0 var(--space-3);
 }
-.preview-source {
+.music-scores {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+}
+.music-scores-heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1);
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 var(--space-2) var(--space-3);
-  padding: var(--space-2);
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.music-scores h2 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+.music-scores > p {
   color: var(--muted);
-  font-size: var(--text-xs);
+}
+.music-scores a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-size);
 }
 .music-credits {
   margin-top: var(--space-5);

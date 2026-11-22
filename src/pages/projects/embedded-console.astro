@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import { withBase } from '../../lib/paths';
+---
+
+<Base title="项目入口已更新" noindex section="projects/">
+  <div class="shell">
+    <PageHeading
+      title="项目入口已更新"
+      eyebrow="PROJECT JOURNAL"
+      description="最新的嵌入式项目展示已更新为 Embedded Smart Home。"
+    />
+    <a class="button" href={withBase('projects/embedded-smart-home/')}>
+      查看智能家居项目
+    </a>
+  </div>
+</Base>
