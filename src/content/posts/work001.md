@@ -5,7 +5,7 @@ publishedAt: 2026-11-26
 kind: tech
 category: 嵌入式
 tags: [STM32, ESP32, UART]
-draft: true
+draft: false
 featured: false
 ---
 
