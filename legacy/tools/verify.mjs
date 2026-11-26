@@ -5,12 +5,11 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const content=await fs.readFile(path.join(root,'dist/content.js'),'utf8');
-const scripts=await Promise.all(['storage.js','core.js','content.js','network.js','transfer.js','github.js','publish.js'].map(n=>fs.readFile(path.join(root,'src',n),'utf8')));
+const scripts=await Promise.all(['storage.js','core.js','content.js','network.js','transfer.js'].map(n=>fs.readFile(path.join(root,'src',n),'utf8')));
 function memory(){const map=new Map();return{getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,String(v)),removeItem:k=>map.delete(k),dump:()=>JSON.stringify([...map])};}
 function element(value=''){return{value,disabled:false,innerHTML:'',textContent:'',classList:{toggle(){}},handlers:{},addEventListener(n,f){this.handlers[n]=f;}};}
-async function setup({conflict=false,branchMoved=false,uncertain=false,editDuringUpload=false}={}){
- const elements=Object.fromEntries(['gh-owner','gh-repo','gh-branch','gh-folder','gh-token','github-form','github-publish','connection-status','publish-log'].map(k=>['#'+k,element()]));
- elements['#gh-owner'].value='xuan511';elements['#gh-repo'].value='blog';elements['#gh-branch'].value='main';elements['#gh-token'].value='dummy-token-only-in-test-memory';
+async function setup(){
+ const elements={};
  const ctx=vm.createContext({window:{},document:{querySelector:q=>elements[q]||null,querySelectorAll:()=>[],addEventListener(){}},localStorage:memory(),sessionStorage:memory(),structuredClone,Blob,File,TextEncoder,TextDecoder,URL,Intl,Date,Map,Uint8Array,DataView,crypto:globalThis.crypto,btoa,atob,location:{protocol:'https:',href:'https://example.test/blog/#/studio'},setTimeout,clearTimeout,AbortController});
  vm.runInContext(content,ctx);ctx.window.BLOG_DATA=ctx.window.BLOG_DATA;
  vm.runInContext(scripts[0],ctx);vm.runInContext(scripts[1],ctx);ctx.Blog=ctx.window.Blog;
@@ -21,28 +20,16 @@ async function setup({conflict=false,branchMoved=false,uncertain=false,editDurin
  B.state.workspace.posts[0].body+='\n\n![example](local:exampleimage)';
  B.state.workspace.posts.push({...structuredClone(orig.posts[0]),id:'private-draft',title:'PRIVATE-DRAFT-SENTINEL',body:'PRIVATE-BODY-SENTINEL ![draft](local:unavailabledraftmedia)',status:'draft'});
  B.state.workspace.tracks.push({id:'localmusic',title:'My Music',artist:'Test',src:'local:exampleaudio',color:'sage'});
- const calls=[];let refReads=0,patched=false;
- ctx.fetch=async(url,options={})=>{
-  const u=new URL(url),method=options.method||'GET',body=options.body?JSON.parse(options.body):null;calls.push({url:u.href,method,body});
+ ctx.fetch=async(url)=>{
+  const u=new URL(url);
   if(u.origin==='https://example.test'){
    const name=u.pathname.replace('/blog/','');
    try{const bytes=await fs.readFile(path.join(root,'dist',name));return{ok:true,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};}catch{return{ok:false,status:404};}
   }
-  assert.equal(u.origin,'https://api.github.com');
-  assert.equal(options.headers.Authorization,'Bearer dummy-token-only-in-test-memory');
-  let response;
-  if(u.pathname.includes('/contents/'))response={sha:conflict&&u.searchParams.get('ref')==='head-123'?'new-sha':'original-sha',encoding:'base64',content:Buffer.from(content).toString('base64')};
-  else if(u.pathname.endsWith('/git/ref/heads/main')){refReads++;response={object:{sha:patched?'new-commit':branchMoved&&refReads>1?'other-head':'head-123'}};}
-  else if(u.pathname.endsWith('/git/commits/head-123'))response={tree:{sha:'original-tree'}};
-  else if(u.pathname.endsWith('/git/blobs')){if(editDuringUpload&&!calls.some(c=>c._edited)){calls.at(-1)._edited=true;B.state.workspace.posts[0].body+=' LATE-EDIT-SENTINEL';}response={sha:'blob-'+calls.length};}
-  else if(u.pathname.endsWith('/git/trees')){assert.equal(body.base_tree,'original-tree');response={sha:'new-tree'};}
-  else if(u.pathname.endsWith('/git/commits')){assert.equal(body.tree,'new-tree');assert.deepEqual(body.parents,['head-123']);response={sha:'new-commit'};}
-  else if(u.pathname.endsWith('/git/refs/heads/main')){assert.equal(body.force,false);assert.equal(body.sha,'new-commit');patched=true;if(uncertain)throw Error('transport timeout after accepted write');response={};}
-  else throw Error('Unexpected request '+u.href);
-  return{ok:true,status:200,json:async()=>response};
+  throw Error('Unexpected request '+u.href);
  };
  for(const script of scripts.slice(2))vm.runInContext(script,ctx);
- return{B,ctx,elements,calls,errors,media};
+ return{B,ctx,elements,errors,media};
 }
 {
  const {B,ctx}=await setup();
@@ -54,24 +41,9 @@ async function setup({conflict=false,branchMoved=false,uncertain=false,editDurin
  let capture;B.download=(name,blob)=>capture={name,blob};await B.actions['export-site'](element());assert(capture.blob instanceof Blob);
  await fs.writeFile(path.join(root,'tools/verified-browser-format.zip'),new Uint8Array(await capture.blob.arrayBuffer()));
  const assets=B._test.collectAssetPaths({...prepared.data,site:{...prepared.data.site,avatar:'assets/uploads/old-avatar.png'}});assert(assets.includes('assets/uploads/old-avatar.png'));
- assert(!ctx.localStorage.dump().includes('dummy-token'));
+ assert.equal(B.actions['github-publish'],undefined);
  console.log('PASS: Markdown escapes unsafe HTML/URLs; public exports exclude drafts and include local media.');
 }
-for(const mode of ['normal','content-conflict','branch-conflict','uncertain-write','edit-during-upload']){
- const {B,ctx,elements,calls,errors}=await setup({conflict:mode==='content-conflict',branchMoved:mode==='branch-conflict',uncertain:mode==='uncertain-write',editDuringUpload:mode==='edit-during-upload'});
- B.bindPublish();await elements['#github-form'].handlers.submit({preventDefault(){},submitter:element()});
- assert.equal(elements['#github-publish'].disabled,false);
- await B.actions['github-publish'](elements['#github-publish']);
- const updates=calls.filter(c=>c.method==='PATCH');
- assert.equal(updates.length,['normal','uncertain-write','edit-during-upload'].includes(mode)?1:0);
- const bodies=JSON.stringify(calls.filter(c=>c.method==='POST').map(c=>c.body));assert(!bodies.includes('PRIVATE-DRAFT-SENTINEL'));assert(!bodies.includes('PRIVATE-BODY-SENTINEL'));
- assert(!ctx.localStorage.dump().includes('dummy-token'));assert(!JSON.stringify(B.state.workspace).includes('dummy-token'));
- if(mode==='content-conflict')assert.equal(calls.filter(c=>c.method==='POST').length,0);
- assert.equal(errors.length,['normal','uncertain-write','edit-during-upload'].includes(mode)?0:1);
- if(mode==='edit-during-upload'){assert(B.state.workspace.posts[0].body.includes('LATE-EDIT-SENTINEL'));assert(!B.state.original.posts[0].body.includes('LATE-EDIT-SENTINEL'));}
- console.log(`PASS: GitHub ${mode}; atomic commit preserves unrelated files, rejects stale versions and never stores token.`);
-}
-
 {
  const {B,ctx,elements,errors,media}=await setup();
  media.set('local:unavailabledraftmedia',new File([new Uint8Array([5,6,7])],'draft.png',{type:'image/png'}));

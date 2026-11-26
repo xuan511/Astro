@@ -472,14 +472,14 @@ window.Blog = (() => {
   const B=Blog,{$,$$,escape:e,icon:i,state:S}=B;
   const field=(name,label,value='',type='text',extra='')=>`<div class="field"><label for="${name}">${label}</label><input id="${name}" name="${name}" type="${type}" value="${e(value)}" ${extra}></div>`;
   const textarea=(name,label,value='',rows=3)=>`<div class="field"><label for="${name}">${label}</label><textarea id="${name}" name="${name}" rows="${rows}">${e(value)}</textarea></div>`;
-  const tabs=[['posts','file','文章'],['notes','edit','随记'],['music','music','音乐'],['settings','settings','外观资料'],['publish','cloud','发布上线'],['backup','download','数据备份'],['trash','trash','回收站']];
-  B.renderStudio=()=>`<div class="container studio"><header class="studio-header"><div><div class="eyebrow">YOUR WRITING ROOM</div><h1>给想法，一个落脚点。</h1><p>写作、整理、听首歌。让这里慢慢变成你的样子。</p></div><div class="button-row"><a class="button" href="#/">${i('eye')} 预览博客</a><span class="save-status" id="workspace-save-status" role="status"></span><button class="button primary" data-action="studio-tab" data-tab="publish">${i('upload')} 发布</button></div></header><div id="storage-notice"></div><div class="studio-layout"><nav class="studio-nav" aria-label="写作台">${tabs.map(([key,ic,name])=>`<button class="studio-tab ${S.studioTab===key?'active':''}" data-action="studio-tab" data-tab="${key}">${i(ic)}${name}</button>`).join('')}</nav><section class="studio-content">${S.studioTab==='posts'?(S.editor?editor():postManager()):S.studioTab==='notes'?noteManager():S.studioTab==='music'?musicManager():S.studioTab==='settings'?settings():S.studioTab==='publish'?B.renderPublish():S.studioTab==='trash'?B.renderTrash():backup()}</section></div></div>`;
+  const tabs=[['posts','file','文章'],['notes','edit','随记'],['music','music','音乐'],['settings','settings','外观资料'],['backup','download','数据备份'],['trash','trash','回收站']];
+  B.renderStudio=()=>`<div class="container studio"><header class="studio-header"><div><div class="eyebrow">YOUR WRITING ROOM</div><h1>给想法，一个落脚点。</h1><p>写作、整理、听首歌。让这里慢慢变成你的样子。</p></div><div class="button-row"><a class="button" href="#/">${i('eye')} 预览博客</a><span class="save-status" id="workspace-save-status" role="status"></span></div></header><div id="storage-notice"></div><div class="studio-layout"><nav class="studio-nav" aria-label="写作台">${tabs.map(([key,ic,name])=>`<button class="studio-tab ${S.studioTab===key?'active':''}" data-action="studio-tab" data-tab="${key}">${i(ic)}${name}</button>`).join('')}</nav><section class="studio-content">${S.studioTab==='posts'?(S.editor?editor():postManager()):S.studioTab==='notes'?noteManager():S.studioTab==='music'?musicManager():S.studioTab==='settings'?settings():S.studioTab==='trash'?B.renderTrash():backup()}</section></div></div>`;
   function postManager(){const all=S.workspace.posts.slice().sort((a,b)=>b.date.localeCompare(a.date));return `${S.workspace.updatedAt!==S.original.updatedAt?'<div class="notice"><strong>线上内容有更新。</strong> 本地内容与草稿仍保留，发布前请先核对。<button class="button small" data-action="reload-workspace">载入线上内容</button></div>':''}<div class="notice"><strong>这里是你的本地写作空间。</strong> 草稿自动保存在此浏览器。文章设为公开后，可在「发布上线」同步到 GitHub，或导出整站上传；刷新页面不会丢失本地修改。公开站点的访客可以体验编辑，但无法修改线上内容。</div><div class="panel"><div class="panel-header"><h2>我的文章 <span class="hint">${all.length} 篇</span></h2><button class="button primary small" data-action="new-post">${i('plus')} 写文章</button></div><input type="search" class="search-inline" id="studio-post-search" placeholder="查找文章或草稿…" aria-label="查找文章"><div id="studio-posts">${all.length?all.map(p=>`<div class="studio-post" data-post-title="${e(p.title.toLowerCase())}"><div class="studio-post-info"><h3>${p.featured?i('pin'):''} ${e(p.title)}</h3><p><span class="status ${p.status==='draft'?'draft':''}">${p.status==='draft'?'草稿':JSON.stringify(S.original.posts.find(q=>q.id===p.id))===JSON.stringify(p)?'公开':'公开 · 待同步'}</span><span>${e(p.date)}</span><span>${e(p.category)}</span>${p.demo?'<span class="demo-mark">示例</span>':''}</p></div><div class="studio-actions"><button class="icon-button" data-action="edit-post" data-id="${e(p.id)}" aria-label="编辑 ${e(p.title)}">${i('edit')}</button><button class="icon-button" data-action="delete-post" data-id="${e(p.id)}" aria-label="删除 ${e(p.title)}">${i('trash')}</button></div></div>`).join(''):B.ui.empty('第一篇，从现在开始','不必准备好所有想法，先写第一行。')}</div></div>`;}
   function editor(){const p=S.editor;return `<div class="editor-top"><button class="text-link" data-action="editor-back">${i('back')} 返回文章</button><div class="button-row"><button class="button" data-action="save-post" data-status="draft">保存草稿</button><button class="button primary" data-action="save-post" data-status="published">${i('check')} 设为公开</button></div></div><div class="panel"><form id="article-form"><input class="title-input" id="article-title" aria-label="文章标题" placeholder="给这段记录起个名字…" value="${e(p.title)}" maxlength="150"><div class="editor-meta">${field('article-date','日期',p.date,'date','required')}${field('article-category','分类',p.category,'text','list="category-options" maxlength="30"')}${field('article-tags','标签（逗号分隔）',p.tags.join(', '))}</div><datalist id="category-options">${[...new Set(S.workspace.posts.map(p=>p.category))].map(c=>`<option value="${e(c)}">`).join('')}</datalist>${textarea('article-excerpt','摘要（选填，留空自动截取）',p.excerpt,2)}<div class="field-row"><div class="field"><label for="article-cover">封面色调</label><select id="article-cover">${[['sage','鼠尾草'],['sand','暖沙'],['night','暮色'],['lavender','浅紫']].map(([c,l])=>`<option value="${c}" ${p.cover===c?'selected':''}>${l}</option>`).join('')}</select></div><label class="check-field"><input type="checkbox" id="article-featured" ${p.featured?'checked':''}>置顶为首页精选</label></div><div class="editor-toolbar" aria-label="Markdown 工具栏"><button type="button" data-action="md-insert" data-kind="bold"><b>B</b></button><button type="button" data-action="md-insert" data-kind="italic"><em>I</em></button><button type="button" data-action="md-insert" data-kind="heading">H2</button><button type="button" data-action="md-insert" data-kind="quote">引用</button><button type="button" data-action="md-insert" data-kind="list">列表</button><button type="button" data-action="md-insert" data-kind="code">代码</button><button type="button" data-action="md-insert" data-kind="link">链接</button><button type="button" data-action="insert-image">图片</button><span class="spacer"></span><button type="button" data-action="focus-editor">${S.focusMode?'退出专注':'专注写作'}</button><button type="button" data-action="toggle-preview" aria-pressed="${!!S.editorPreview}">${i('eye')} 预览</button></div><div class="editor-body ${S.editorPreview?'split':''}" id="editor-body"><textarea id="article-body" aria-label="Markdown 正文" spellcheck="false" placeholder="从一个想法开始。支持 Markdown，也可以直接写文字。">${e(p.body)}</textarea>${S.editorPreview?`<div class="editor-preview prose" id="editor-preview">${B.markdown(p.body).html}</div>`:''}</div><div class="editor-stats"><span id="editor-save-status" role="status">正在检查保存状态…</span><span id="editor-word-count">${p.body.length} 字 · 约 ${B.readingTime(p.body)} 分钟</span></div></form></div><p class="hint">「设为公开」会把文章纳入下次发布；上线请点击右上角「发布」。Ctrl / ⌘ + S 可随时保存。正文中的原始 HTML 会作为文字显示。</p>`;}
   function noteManager(){return `<div class="panel"><div class="panel-header"><h2>随手记下</h2><button class="button primary small" data-action="edit-note">${i('plus')} 写随记</button></div><p class="panel-description">短短几句话，也可以装下一个很好的瞬间。</p>${S.workspace.notes.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(n=>`<div class="studio-post"><div class="studio-post-info"><h3>${e(n.body.slice(0,55))}</h3><p>${e(n.date)}${n.demo?' · 示例':''}</p></div><div class="studio-actions"><button class="icon-button" data-action="edit-note" data-id="${e(n.id)}" aria-label="编辑随记">${i('edit')}</button><button class="icon-button" data-action="delete-note" data-id="${e(n.id)}" aria-label="删除随记">${i('trash')}</button></div></div>`).join('')||B.ui.empty('写下一点小事','今天，有什么想留下来的？')}</div>`;}
   function musicManager(){return `<div class="panel"><div class="panel-header"><h2>给日常，配一首歌</h2><button class="button small" data-action="add-track-url">${i('link')} 添加直链</button></div><p class="panel-description">支持 MP3、WAV、OGG、M4A、FLAC。播放能力取决于访客的浏览器。</p><label class="drop-zone" style="display:block" for="audio-upload">${i('music')}<p>点击选择音乐文件</p><small>每首最大 20 MB · 随整站导出与 GitHub 同步</small><input id="audio-upload" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" multiple hidden></label><p class="hint" id="media-upload-state" role="status"></p><div>${S.workspace.tracks.map((t,idx)=>`<div class="music-studio-item"><div class="vinyl"></div><div class="track-details"><h3>${e(t.title)}</h3><p>${e(t.artist)} · ${t.src.startsWith('local:')?'本地文件，发布时一起上传':t.src.startsWith('http')?'音乐直链':'站内音乐'}</p></div><div class="studio-actions">${idx>0?`<button class="icon-button" data-action="track-up" data-id="${e(t.id)}" aria-label="向前移动音乐">${i('upload')}</button>`:''}<button class="icon-button" data-action="edit-track" data-id="${e(t.id)}" aria-label="编辑音乐信息">${i('edit')}</button><button class="icon-button" data-action="remove-track" data-id="${e(t.id)}" aria-label="移除音乐">${i('trash')}</button></div></div>`).join('')}</div><div class="notice" style="margin:23px 0 0">音乐默认不自动播放。直链需要指向实际音频文件；网易云、QQ 音乐的歌曲分享页通常不能直接播放。请使用自己拥有或获准使用的音乐。</div></div>`;}
   function settings(){const s=S.workspace.site;return `<div class="panel"><h2>把这里，变成你的样子</h2><p class="panel-description">名字、介绍和配色，都可以慢慢调整。</p><form id="settings-form"><div class="field-row">${field('site-name','博客名字',s.name,'text','maxlength="20" required')}${field('site-author','你的名字',s.author,'text','maxlength="40" required')}</div>${field('site-tagline','一句话介绍',s.tagline,'text','maxlength="150"')}${textarea('site-heroTitle','首页标题（回车换行）',s.heroTitle,2)}${textarea('site-heroDescription','首页说明',s.heroDescription,3)}${textarea('site-bio','侧栏个人简介',s.bio,3)}<div class="field"><label for="avatar-upload">头像</label><div style="display:flex;align-items:center;gap:20px">${B.ui.avatar()}<label class="button small upload-label" for="avatar-upload">选择图片</label><input type="file" id="avatar-upload" accept="image/png,image/jpeg,image/webp,image/gif" hidden><button type="button" class="button small" data-action="remove-avatar">使用文字头像</button></div><small>PNG、JPG、WebP、GIF · 最大 3 MB</small></div><div class="field-row">${field('site-github','GitHub 地址',s.github,'url','placeholder="https://github.com/你的用户名"')}${field('site-email','公开联系邮箱（选填）',s.email,'email')}</div><div class="form-section-title">喜欢什么颜色？</div><div class="color-options">${[['forest','林间绿','#315c4c'],['ink','雾霭蓝','#4d657d'],['clay','陶土棕','#9e6650']].map(([k,l,c])=>`<label class="color-option ${s.accent===k?'active':''}"><input type="radio" name="accent" value="${k}" ${s.accent===k?'checked':''}><span class="color-dot" style="background:${c}"></span>${l}</label>`).join('')}</div><div class="content-divider"></div>${textarea('site-about','关于页面（支持 Markdown）',s.about,10)}${field('site-footer','页脚的一句话',s.footer,'text','maxlength="100"')}<div class="button-row"><button type="submit" class="button primary">${i('check')} 保存资料</button></div></form></div>`;}
-  function backup(){return `<div class="panel"><h2>给文字，留一个备份</h2><p class="panel-description">数据属于你。导出后可以换浏览器、换设备，也可以迁移到自己的服务器。</p><div class="backup-buttons"><button class="button primary" data-action="export-backup">${i('download')} 完整备份 JSON</button><button class="button" data-action="import-backup">${i('upload')} 导入备份</button><button class="button" data-action="export-markdown">${i('file')} 导出 Markdown</button></div><div class="notice" style="margin-top:25px"><strong>完整备份包含草稿与已上传媒体。</strong> 请妥善保存。整站部署包与 GitHub 发布只包含公开文章、随记、资料及其引用的媒体，草稿不会上传。</div></div><div class="panel"><h2>清空示例，从你开始</h2><p class="panel-description">一键移除标有「示例」的文章与随记。你自己写的内容会保留。</p><button class="button danger" data-action="clear-demos">${i('trash')} 移除示例内容</button></div>`;}
+  function backup(){return `<div class="panel"><h2>给文字，留一个备份</h2><p class="panel-description">数据属于你。导出后可以换浏览器、换设备，也可以迁移到自己的服务器。</p><div class="backup-buttons"><button class="button primary" data-action="export-backup">${i('download')} 完整备份 JSON</button><button class="button" data-action="import-backup">${i('upload')} 导入备份</button><button class="button" data-action="export-markdown">${i('file')} 导出 Markdown</button><button class="button" data-action="export-site">导出整站 ZIP</button></div><div class="notice" style="margin-top:25px"><strong>完整备份包含草稿与已上传媒体。</strong> 请妥善保存。整站 ZIP 包含公开文章、随记、资料及其引用的媒体。</div></div><div class="panel"><h2>清空示例，从你开始</h2><p class="panel-description">一键移除标有「示例」的文章与随记。你自己写的内容会保留。</p><button class="button danger" data-action="clear-demos">${i('trash')} 移除示例内容</button></div>`;}
   B.formField=field;B.formTextarea=textarea;
 })();
 
@@ -590,7 +590,6 @@ window.Blog = (() => {
         if(!await B.persist())return;count++;
       }B.render({scroll:false});B.toast(`已添加 ${count} 首音乐`);}catch(error){B.render({scroll:false});B.toast(error.message,'error');}finally{input.value='';}
     });
-    B.bindPublish?.();
   };
 })();
 
@@ -723,7 +722,7 @@ window.Blog = (() => {
     const centralSize=directory.reduce((n,b)=>n+b.length,0),end=new Uint8Array(22),ev=new DataView(end.buffer);ev.setUint32(0,0x06054b50,true);ev.setUint16(8,files.length,true);ev.setUint16(10,files.length,true);ev.setUint32(12,centralSize,true);ev.setUint32(16,offset,true);return new Blob([...pieces,...directory,end],{type:'application/zip'});
   }
   B.zip=zip;
-  const readme=`# 拾间 · 个人博客\n\n零依赖静态网站，支持 Markdown 编辑、草稿、图片、随记、音乐、明暗主题、回收站和专注写作。\n\n## GitHub Pages\n1. 创建公开仓库，推荐 xuan511.github.io，也支持任意仓库名。\n2. 把本压缩包内文件上传到仓库根目录（不要再包一层目录）。\n3. Settings → Pages → Deploy from a branch → main → /(root) → Save。\n4. 等待 Pages 完成部署后，通过仓库 Settings → Pages 显示的链接访问。\n\n## 写作与更新\n页面底部 → 写作台。内容先保存在浏览器，公开更新有两种方式：\n- 发布上线 → 导出整站 ZIP → 上传替换仓库中的文件。\n- 发布上线 → 连接已有 GitHub 仓库 → 同步公开内容。令牌仅在当前页面内存中使用，不写入本地存储或导出文件。\n\nGitHub 在线同步需要 fine-grained Personal Access Token，仅选择博客仓库，Contents: Read and write。令牌过期后重新输入。请勿把令牌写入 content.js 或文章正文。\n\n文章点击「设为公开」之后才会进入发布包。JSON 完整备份包含草稿、回收站和已引用的站内媒体；Markdown 导出包含正文图片。部署包不含草稿和回收站。写作数据主要存于 IndexedDB，会迁移旧版数据。不同站点子目录分别保存；多标签页版本冲突时会停止覆盖并提示备份。定期导出备份，浏览器清理数据会删除本地工作区与未同步媒体。\n\n本地预览：在此目录执行 python -m http.server 8000，然后访问 http://localhost:8000。可直接打开 index.html 阅读；整站导出与 GitHub 同步请通过 HTTP/HTTPS 使用。\n\n## 升级已有站点\n先在旧站点导出 JSON 完整备份，再上传新版文件。每次升级请一并替换 index.html 与 assets/blog.js、assets/blog.css；保留自己的 content.js 与 assets/uploads。只同步 GitHub 公开内容不会升级程序文件。写作空间按网址与子目录隔离，更换域名或目录时请导出备份，再到新网址导入。\n\n## 迁移服务器 / 域名\n把整站文件放入 Nginx 等静态服务目录即可；不需要 Node、数据库或构建过程。自定义域名在 GitHub Pages 或你的服务器中配置。\n\n音乐不自动播放；支持本地音频和可公开访问的音频直链。内置「纸上微光」为本项目合成的原创示例，可自由使用与删除。示例文章与随记均可在数据备份页一键移除。\n`;
+  const readme="# 拾间旧版写作台\n\n旧版写作台将编辑内容保存在当前浏览器。在「数据备份」中可以导出完整 JSON、Markdown 或整站 ZIP。完整 JSON 包含草稿、回收站和引用的媒体，请妥善保存。\n\n迁移到 Astro 时，在项目根目录运行 `npm run import:backup -- 备份.json 暂存目录`，检查暂存内容后再提交。当前博客由 GitHub Actions 从 main 分支构建并发布。\n";
   async function fetchBytes(path){return B.request(new URL(path,location.href.split('#')[0]).href,{raw:true});}
   async function siteFiles(prepared){if(location.protocol==='file:')throw Error('整站导出请先用本地服务器打开，具体方法见使用说明');const html=new TextDecoder().decode(await fetchBytes('index.html'));const files=[{name:'index.html',bytes:html},{name:'content.js',bytes:contentScript(prepared.data)},{name:'.nojekyll',bytes:''},{name:'README.md',bytes:readme}];const pending=new Set(prepared.media.map(m=>m.name)),included=new Set([...ASSETS,...collectAssetPaths(prepared.data)]);for(const path of included)if(!pending.has(path))files.push({name:path,bytes:await fetchBytes(path)});files.push(...prepared.media);return files;}
   function collectAssetPaths(data){return B.content.references(data).filter(B.content.isAsset);}
@@ -819,138 +818,6 @@ window.Blog = (() => {
     }catch(error){B.toast('导入失败：'+error.message,'error');}};input.click();
   };
   B.backup={fileForReference,normalizeTrash};
-})();
-
-/* GitHub transport: one atomic tree/commit update, never a forced branch overwrite. */
-(() => {
-  'use strict';
-  const B=Blog;
-  function client(config,token) {
-    const root='https://api.github.com/repos/'+encodeURIComponent(config.owner)+'/'+encodeURIComponent(config.repo);
-    const path=(config.folder?config.folder+'/':'')+'content.js';
-    const encodedPath=value=>value.split('/').map(encodeURIComponent).join('/');
-    const branch=encodeURIComponent(config.branch);
-    const api=(suffix,{signal,method='GET',body,raw=false}={})=>B.request(root+suffix,{method,body,signal,raw,headers:{Accept:raw?'application/vnd.github.raw+json':'application/vnd.github+json',Authorization:'Bearer '+token,'X-GitHub-Api-Version':'2026-03-10',...(body?{'Content-Type':'application/json'}:{})}});
-    async function read(ref=config.branch,signal) {
-      const suffix='/contents/'+encodedPath(path)+'?ref='+encodeURIComponent(ref),file=await api(suffix,{signal});
-      if(file.type&&file.type!=='file')throw Error('站点目录不正确，content.js 必须是文件');
-      let bytes;
-      if(file.content&&file.encoding==='base64')bytes=B.transfer.unbase64(file.content.replace(/\s/g,''));
-      else {
-        if(file.size>20*1024*1024)throw Error('内容文件超过 20 MB，请先拆分文章后再同步');
-        bytes=await api(suffix,{signal,raw:true});
-      }
-      return {sha:file.sha,data:B.transfer.decodeContent(new TextDecoder().decode(bytes))};
-    }
-    async function publish(prepared,{expectedSha,signal,onProgress=()=>{}}) {
-      onProgress('检查远端版本…');
-      const ref=await api('/git/ref/heads/'+branch,{signal}),head=ref.object.sha;
-      const current=await read(head,signal);
-      if(current.sha!==expectedSha)throw Error('远端内容已有更新，已停止同步。请先保留备份，再载入最新版本。');
-      const parent=await api('/git/commits/'+head,{signal}),tree=[],prefix=config.folder?config.folder+'/':'';
-      for(let index=0;index<prepared.media.length;index++){
-        const asset=prepared.media[index];onProgress(`上传媒体 ${index+1}/${prepared.media.length}…`);
-        const blob=await api('/git/blobs',{signal,method:'POST',body:{content:B.transfer.base64(asset.bytes),encoding:'base64'}});
-        tree.push({path:prefix+asset.name,mode:'100644',type:'blob',sha:blob.sha});
-      }
-      onProgress('创建公开内容提交…');
-      const script=await api('/git/blobs',{signal,method:'POST',body:{content:B.transfer.contentScript(prepared.data),encoding:'utf-8'}});
-      tree.push({path,mode:'100644',type:'blob',sha:script.sha});
-      const newTree=await api('/git/trees',{signal,method:'POST',body:{base_tree:parent.tree.sha,tree}});
-      const commit=await api('/git/commits',{signal,method:'POST',body:{message:'blog: publish stories, notes and music',tree:newTree.sha,parents:[head]}});
-      onProgress('同步分支…');
-      const latest=await api('/git/ref/heads/'+branch,{signal});
-      if(latest.object.sha!==head)throw Error('发布期间分支有新提交，本次同步已停止，请重新检查连接。');
-      try {
-        await api('/git/refs/heads/'+branch,{signal,method:'PATCH',body:{sha:commit.sha,force:false}});
-      }catch(error) {
-        // A timeout can occur after GitHub accepted the write. Reconcile, never blindly retry PATCH.
-        onProgress('正在确认提交结果…');let actual;
-        try{actual=await api('/git/ref/heads/'+branch);}catch{throw Error('提交结果暂时无法确认，请到仓库核对提交 '+commit.sha.slice(0,7)+' 后再操作。');}
-        if(actual.object.sha!==commit.sha)throw error;
-      }
-      return {commitSha:commit.sha,contentSha:script.sha};
-    }
-    return {config,path,read,publish};
-  }
-  B.github={client};
-})();
-
-(() => {
-  'use strict';
-  const B=Blog,{$,escape:e,icon:i,state:S}=B;
-  const {publicData,contentScript,decodeContent,preparePublic,base64,unbase64}=B.transfer;
-  let githubToken='',connection=null,publishing=false,publishAbort=null;
-  const progress={message:'',error:false};
-  let ghConfig;try{ghConfig=JSON.parse(B.getPref('github','{}'));}catch{ghConfig={};}
-  ghConfig={owner:ghConfig.owner||'xuan511',repo:ghConfig.repo||'xuan511.github.io',branch:ghConfig.branch||'main',folder:ghConfig.folder||''};
-  B.renderPublish=()=>`<div class="panel"><h2>让文字，去到更远的地方</h2><p class="panel-description">公开内容会随站点发布，草稿留在你手里。</p><div class="publish-summary"><div><b>${S.workspace.posts.filter(p=>p.status==='published').length}</b><span>公开文章</span></div><div><b>${S.workspace.notes.length}</b><span>条随记</span></div><div><b>${S.workspace.tracks.length}</b><span>首音乐</span></div><div><b>${S.workspace.posts.filter(p=>p.status==='draft').length}</b><span>篇草稿，不上传</span></div></div><div class="panel-header"><h2 style="font-size:18px">第一次上线</h2><button class="button primary small" data-action="export-site">${i('download')} 导出整站 ZIP</button></div><div class="publish-step"><span class="step-number">1</span><div><h3>创建你的博客仓库</h3><p>推荐公开仓库 <code>xuan511.github.io</code>，也可以用其他名字。<a href="https://github.com/new?name=xuan511.github.io&description=My+personal+blog&visibility=public" target="_blank" rel="noopener noreferrer" style="text-decoration:underline">去 GitHub 创建 →</a></p></div></div><div class="publish-step"><span class="step-number">2</span><div><h3>解压整站包，把里面的文件上传到仓库</h3><p>让 <code>index.html</code> 直接位于仓库根目录，保留 <code>assets</code> 文件夹。</p></div></div><div class="publish-step"><span class="step-number">3</span><div><h3>开启 GitHub Pages</h3><p>Settings → Pages → Deploy from a branch → main → /(root) → Save。部署完成后即可访问；也可以把这些文件放到自己的服务器。</p></div></div></div><div class="panel"><h2>以后，在这里直接发布</h2><p class="panel-description">已经部署好博客？连接仓库后，一次同步文章、随记、资料与新增媒体。</p><div class="notice">在 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">GitHub 创建 fine-grained token</a>，仅选择博客仓库，授予 <strong>Contents: Read and write</strong>。令牌只在当前页面内存中使用，刷新后清除，不写入备份。<br>写作台是本地编辑器；访问者没有你的令牌，无法修改线上内容。</div>${changeSummary()}<form id="github-form"><div class="field-row">${input('gh-owner','GitHub 用户名',ghConfig.owner)}${input('gh-repo','仓库名',ghConfig.repo)}</div><div class="field-row">${input('gh-branch','分支',ghConfig.branch)}${input('gh-folder','站点子目录（根目录留空）',ghConfig.folder)}</div><div class="field"><label for="gh-token">Personal Access Token</label><input id="gh-token" ${publishing?'disabled':''} type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…" ${githubToken?'data-present="1"':''}><small>${githubToken?'本页面已有令牌；留空可继续使用，刷新页面会清除。':'令牌只用于向 api.github.com 发起请求。'}</small></div><div class="button-row"><button type="submit" class="button">${i('link')} 检查连接</button><button type="button" id="github-publish" class="button primary" data-action="github-publish" ${connection&&!publishing?'':'disabled'}>${i('cloud')} ${publishing?'发布中…':'同步公开内容'}</button>${connection&&!publishing?'<button type="button" class="button small" data-action="github-disconnect">断开</button>':''}${publishing?'<button type="button" class="button" data-action="github-cancel">取消同步</button>':''}</div><div id="connection-status" class="connection-status">${e(progress.message||(connection?'已连接 '+connection.config.owner+'/'+connection.config.repo+'，同步会生成一次提交。':''))}</div><div id="publish-log" class="publish-log" role="status" aria-live="polite"></div></form></div>`;
-  function changeSummary() {
-    const changes=B.content.pendingChanges(S.original,S.workspace);
-    const other=[changes.settings?'个人资料':null,changes.notes?'随记':null,changes.music?'歌单':null].filter(Boolean);
-    return `<div class="notice"><strong>本次公开更新</strong><br>新增 ${changes.added} 篇 · 修改 ${changes.updated} 篇 · 移除 ${changes.removed} 篇${other.length?' · 更新'+other.join('、'):''}。草稿与回收站不会上传。</div>`;
-  }
-  function input(id,label,value){return `<div class="field"><label for="${id}">${label}</label><input id="${id}" value="${e(value)}" autocomplete="off" ${publishing?'disabled':''} ${id==='gh-folder'?'':'required'}></div>`;}
-  function currentConfig() {
-    const owner=$('#gh-owner').value.trim(),repo=$('#gh-repo').value.trim(),branch=$('#gh-branch').value.trim(),folder=$('#gh-folder').value.trim().replace(/^\/+|\/+$/g,'');
-    if(!/^[a-z\d-]+$/i.test(owner)||!/^\.?[a-z\d_.-]+$/i.test(repo)||!branch||branch.includes('..')||/[\s~^:?*\[\\]/.test(branch)||folder&&(!/^[a-z\d_./-]+$/i.test(folder)||folder.includes('..')))throw Error('仓库信息格式不正确');
-    return {owner,repo,branch,folder};
-  }
-  function status(message,error=false) {
-    progress.message=message;progress.error=error;
-    if($('#connection-status')){$('#connection-status').textContent=message;$('#connection-status').classList.toggle('error',error);}
-  }
-  B.bindPublish=()=>{
-    const form=$('#github-form');if(!form)return;
-    form.addEventListener('input',event=>{
-      if(publishing)return;
-      if(['gh-owner','gh-repo','gh-branch','gh-folder','gh-token'].includes(event.target.id)){connection=null;$('#github-publish').disabled=true;status('信息已改变，请重新检查连接。');}
-    });
-    form.addEventListener('submit',async event=>{
-      event.preventDefault();if(publishing)return;
-      const button=event.submitter;button.disabled=true;connection=null;$('#github-publish').disabled=true;
-      try {
-        await B.whenSaved();
-        if(location.protocol==='file:')throw Error('请通过 HTTPS 或本地服务器使用 GitHub 同步');
-        if(S.workspace.updatedAt!==S.original.updatedAt)throw Error('线上版本已更新，请先核对本地与线上内容；本地修改可先导出备份。');
-        const config=currentConfig(),token=$('#gh-token').value.trim();if(token)githubToken=token;
-        if(!githubToken)throw Error('先输入仅授权此博客仓库的 GitHub 令牌');
-        status('正在检查仓库与文件…');
-        const api=B.github.client(config,githubToken),remote=await api.read();
-        if(B.canonical(remote.data)!==B.canonical(S.original))throw Error('云端内容与本页版本不同。请先备份，再从实际博客网址载入最新版本。');
-        connection={config,api,sha:remote.sha};ghConfig=config;B.setPref('github',JSON.stringify(config));
-        $('#gh-token').value='';$('#github-publish').disabled=false;
-        status(`已连接 ${config.owner}/${config.repo}，分支 ${config.branch}。同步将更新公开内容与新增媒体。`);
-      }catch(error){status(error.message,true);B.toast(error.message,'error');}
-      finally{button.disabled=false;}
-    });
-  };
-  B.actions['github-disconnect']=()=>{githubToken='';connection=null;progress.message='';B.render({scroll:false});B.toast('已断开，令牌已从页面内存清除');};
-  B.actions['github-cancel']=()=>{publishAbort?.abort();status('正在停止同步，并核对已发出的提交…');};
-  B.actions['github-publish']=async element=>{
-    if(publishing||!connection)return;
-    const config=currentConfig();if(JSON.stringify(config)!==JSON.stringify(connection.config))throw Error('仓库信息已改变，请重新检查连接');
-    await B.whenSaved();
-    if(!B.content.pendingChanges(S.original,S.workspace).changed){B.toast('公开内容没有变化');return;}
-    publishing=true;publishAbort=new AbortController();const selected=connection;
-    B.render({scroll:false});
-    try {
-      status('正在整理本次发布内容…');
-      // preparePublic clones synchronously before awaiting binary reads. Later edits remain in the workspace.
-      const prepared=await B.transfer.preparePublic();
-      const result=await selected.api.publish(prepared,{expectedSha:selected.sha,signal:publishAbort.signal,onProgress:message=>status(message)});
-      S.original=structuredClone(prepared.data);
-      S.workspace=B.normalize(B.content.transform(S.workspace,prepared.map||{}));S.workspace.updatedAt=prepared.data.updatedAt;
-      const saved=await B.persist();
-      connection={...selected,sha:result.contentSha};
-      status(`已提交 ${result.commitSha.slice(0,7)}。GitHub Pages 部署完成后访客可见。${saved?'':'本地保存失败，请立即导出备份。'}`,!saved);
-      B.toast(saved?'公开内容已同步到 GitHub':'GitHub 已提交，但本地保存失败，请先备份',saved?'success':'error');
-    }catch(error){status(error.message,true);B.toast(error.message,'error');}
-    finally {
-      publishing=false;publishAbort=null;
-      if(location.hash==='#/studio'&&S.studioTab==='publish')B.render({scroll:false});
-    }
-  };
 })();
 
 /* Player state survives navigation; only text and attributes are patched. */

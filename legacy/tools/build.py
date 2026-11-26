@@ -8,7 +8,7 @@ template = (source / 'index.html').read_text()
 css = (source / 'style.css').read_text()
 scripts = ['storage.js', 'core.js', 'workspace.js', 'content.js', 'network.js',
            'app.js', 'studio.js', 'studio-actions.js', 'editor.js', 'transfer.js',
-           'backup.js', 'github.js', 'publish.js', 'player.js', 'bootstrap.js']
+           'backup.js', 'player.js', 'bootstrap.js']
 code = '\n'.join((source / filename).read_text() for filename in scripts)
 css_version = hashlib.sha256(css.encode()).hexdigest()[:12]
 js_version = hashlib.sha256(code.encode()).hexdigest()[:12]

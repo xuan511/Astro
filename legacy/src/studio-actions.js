@@ -105,6 +105,5 @@
         if(!await B.persist())return;count++;
       }B.render({scroll:false});B.toast(`已添加 ${count} 首音乐`);}catch(error){B.render({scroll:false});B.toast(error.message,'error');}finally{input.value='';}
     });
-    B.bindPublish?.();
   };
 })();
