@@ -7,7 +7,7 @@ export async function createPost(
   { kind = 'tech', slug, mdx = false, root = process.cwd() } = {},
 ) {
   if (!title?.trim()) throw new Error('请提供文章标题。');
-  if (!['tech', 'life'].includes(kind)) throw new Error('--kind 只能是 tech 或 life。');
+  if (!['tech', 'life', 'log'].includes(kind)) throw new Error('--kind 只能是 tech、life 或 log。');
   const date = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai' }).format(new Date());
   const id =
     slug ||
@@ -24,7 +24,7 @@ export async function createPost(
     description: '写一段简短摘要。',
     publishedAt: date,
     kind,
-    category: kind === 'tech' ? '学习笔记' : '日常',
+    category: { tech: '学习笔记', life: '日常', log: '日志' }[kind],
     tags: [],
     draft: true,
     featured: false,

@@ -24,7 +24,7 @@ demo: false
 ---
 ```
 
-`kind` 只能为 `tech` 或 `life`；分类与标签可自由增加。`updatedAt` 可以省略，但不能早于发布时间。`featured: true` 会进入首页精选。文章文件名决定 URL，请尽量保持稳定；子目录也会成为 URL 的一部分。示例文章使用 `demo: true` 明确标记。
+`kind` 支持 `tech`（技术）、`life`（生活）和 `log`（日志）。也可以运行 `npm run new:post -- "一篇日志" --kind=log --slug=my-log` 新建日志草稿。发布后的日志也会进入全站归档。分类与标签可自由增加。`updatedAt` 可以省略，但不能早于发布时间。`featured: true` 会进入首页精选。文章文件名决定 URL，请尽量保持稳定；子目录也会成为 URL 的一部分。示例文章使用 `demo: true` 明确标记。
 
 `draft: true` 只控制是否生成公开网页，不提供仓库保密。如果源码仓库公开，别人仍能查看草稿源文件；私密记录请保存在仓库外。
 

@@ -11,7 +11,7 @@ const posts = defineCollection({
         description: z.string().min(1).max(300),
         publishedAt: z.coerce.date(),
         updatedAt: z.coerce.date().optional(),
-        kind: z.enum(['tech', 'life']),
+        kind: z.enum(['tech', 'life', 'log']),
         format: z.enum(['article', 'score']).default('article'),
         category: z.string().min(1),
         tags: z.array(z.string().min(1)).default([]),

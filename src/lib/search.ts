@@ -4,7 +4,7 @@ export interface SearchEntry {
   description: string;
   body: string;
   url: string;
-  kind: 'tech' | 'life' | 'project';
+  kind: 'tech' | 'life' | 'log' | 'project';
   category: string;
   tags: string[];
   date: string;
@@ -15,6 +15,7 @@ export const searchScopes = {
   all: '所有内容',
   tech: '技术博客',
   life: '生活随笔',
+  log: '日志',
   project: '项目',
 } as const;
 
@@ -27,7 +28,7 @@ export function parseSearchIndex(value: unknown): SearchEntry[] {
       if (!row || typeof row !== 'object' || Array.isArray(row)) return false;
       return (
         strings.every((field) => typeof row[field] === 'string') &&
-        ['tech', 'life', 'project'].includes(row.kind) &&
+        ['tech', 'life', 'log', 'project'].includes(row.kind) &&
         Array.isArray(row.tags) &&
         row.tags.every((tag: unknown) => typeof tag === 'string') &&
         typeof row.demo === 'boolean' &&

@@ -21,7 +21,11 @@ const { post, previous, next, headings } = Astro.props;
 const outline = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const { data } = post;
 const isScore = data.format === 'score';
-const back = isScore ? 'music/scores/' : data.kind === 'tech' ? 'tech/' : 'life/';
+const back = isScore ? 'music/scores/' : `${data.kind}/`;
+const sectionLabel = isScore
+  ? '口琴谱'
+  : { tech: '技术记录', life: '生活记录', log: '日志' }[data.kind];
+const articleLabel = !isScore && data.kind === 'life' ? '生活随笔' : sectionLabel;
 const url = new URL(postPath(post.id), Astro.site);
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -61,13 +65,13 @@ const jsonLd = {
     <article data-reading-article data-score-article={isScore || undefined}>
       <a class="text-link article-back" href={withBase(back)}>
         <Icon name="arrow" size={15} class="reverse" />
-        回到{isScore ? '口琴谱' : data.kind === 'tech' ? '技术记录' : '生活记录'}
+        回到{sectionLabel}
       </a>
       <header class="article-heading">
         <div class="post-meta">
           <a href={taxonomyPath('categories', data.category)}>{data.category}</a>
           <span class="meta-dot"></span>
-          <span>{isScore ? '口琴谱' : data.kind === 'tech' ? '技术记录' : '生活随笔'}</span>
+          <span>{articleLabel}</span>
           {data.demo && <span class="sample-badge">示例文章</span>}
         </div>
         <h1 id="article-title">{data.title}</h1>

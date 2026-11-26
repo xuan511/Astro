@@ -28,7 +28,8 @@ export const site: SiteConfig = {
       label: '阅读',
       items: [
         { label: '技术', path: 'tech/' },
-        { label: '日志', path: 'archive/' },
+        { label: '日志', path: 'log/' },
+        { label: '归档', path: 'archive/' },
         { label: '生活', path: 'life/' },
         { label: '随记', path: 'notes/' },
       ],

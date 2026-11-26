@@ -1,7 +1,7 @@
 const { readFileSync } = require('node:fs');
 // Choose real published content so removing the bundled examples remains safe.
 const article = JSON.parse(readFileSync('./dist/search.json', 'utf8')).find(
-  (entry) => entry.kind === 'tech' || entry.kind === 'life',
+  (entry) => entry.kind !== 'project',
 );
 module.exports = {
   ci: {

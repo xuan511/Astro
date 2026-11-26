@@ -126,7 +126,7 @@ function initSearch() {
           link.href = row.url;
           const meta = document.createElement('p');
           meta.className = 'post-meta';
-          const section = row.kind === 'project' ? '项目' : row.kind === 'life' ? '生活' : '技术';
+          const section = { tech: '技术', life: '生活', log: '日志', project: '项目' }[row.kind];
           meta.textContent = `${section}${row.category === section ? '' : ' · ' + row.category}${row.demo ? ' · 示例' : ''}`;
           const heading = document.createElement('h2');
           highlight(heading, row.title, query);
