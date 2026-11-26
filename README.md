@@ -62,9 +62,9 @@ npm run new:post -- "串口联调笔记" --kind=tech --slug=uart-notes
 
 ### 2. 填写文章信息和正文
 
-下面是一篇可完整复制的草稿。将第一组 `---` 放在文件首行，两个分隔线之间填写 YAML 文章信息（frontmatter），第二组分隔线下方留一行，再写 Markdown 正文。
+下面是一篇可完整复制的草稿。将开头的 `---` 放在文件首行，两个分隔线之间填写 YAML 文章信息（frontmatter），结束分隔线下方留一行，再写 Markdown 正文。
 
-````markdown
+`````markdown
 ---
 title: '串口联调笔记'
 description: '记录 STM32 与 ESP32 串口联调时检查的参数和会话流程。'
@@ -91,7 +91,7 @@ featured: false
 STM32 → ESP32: HELLO
 ESP32 → STM32: READY
 ```
-````
+`````
 
 | 字段 | 填法 |
 | --- | --- |
