@@ -1,12 +1,22 @@
 ---
 import Icon from './Icon.astro';
 import { withBase } from '../lib/paths';
+import { presentation, appearanceDefaults } from '../config/presentation';
+const config = {
+  defaults: appearanceDefaults,
+  fonts: presentation.fonts.map(({ id, label, family }) => ({ id, label, family })),
+};
 ---
 
 <div id="site-appearance" data-appearance-root transition:persist="shijian-appearance">
+  <script
+    type="application/json"
+    data-display-config
+    set:html={JSON.stringify(config).replaceAll('<', '\\u003c')}
+  />
   <div class="site-scene" aria-hidden="true">
     <img
-      src={withBase('images/coastal-summer.webp')}
+      src={withBase(presentation.wallpaper.image)}
       alt=""
       width="1600"
       height="900"
@@ -16,29 +26,129 @@ import { withBase } from '../lib/paths';
   <dialog id="appearance-settings" class="appearance-dialog" aria-labelledby="appearance-title">
     <div class="appearance-heading">
       <div>
-        <p class="eyebrow">MAKE YOURSELF AT HOME</p>
-        <h2 id="appearance-title">换个心情，继续阅读</h2>
+        <p class="eyebrow">YOUR READING SPACE</p>
+        <h2 id="appearance-title">外观与布局</h2>
       </div>
       <button class="icon-button" type="button" data-appearance-close aria-label="关闭外观设置">
         <Icon name="close" />
       </button>
     </div>
-    <p class="appearance-description">一片海、一点微光，或一页安静的纸。</p>
-    <div class="scene-options" role="group" aria-label="页面背景">
-      <button type="button" data-scene-choice="coast" aria-pressed="true">
-        <span class="scene-swatch scene-swatch-coast" aria-hidden="true"></span>海边夏日
+    <p class="appearance-description">按你的习惯，布置这片阅读空间。</p>
+    <fieldset class="appearance-section">
+      <legend>页面布局</legend>
+      <div class="settings-grid">
+        <label>
+          侧边栏
+          <span class="select-wrap">
+            <select data-display-select="sidebar">
+              <option value="both">双侧边栏</option>
+              <option value="left">仅左侧栏</option>
+              <option value="right">仅右侧栏</option>
+              <option value="none">专注内容</option>
+            </select>
+          </span>
+        </label>
+        <label>
+          文章布局
+          <span class="select-wrap">
+            <select data-display-select="layout">
+              <option value="grid">自适应网格</option>
+              <option value="list">单列列表</option>
+              <option value="masonry">瀑布流</option>
+            </select>
+          </span>
+        </label>
+      </div>
+      <p class="appearance-hint">宽屏展示完整布局；平板收为单侧，手机专注正文。</p>
+    </fieldset>
+    <fieldset class="appearance-section">
+      <legend>配色</legend>
+      <div class="theme-options" role="group" aria-label="亮暗色模式">
+        <button type="button" data-theme-choice="light" aria-pressed="false">
+          亮色
+        </button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false">
+          暗色
+        </button>
+        <button type="button" data-theme-choice="system" aria-pressed="false">
+          跟随系统
+        </button>
+      </div>
+      <label class="hue-label" for="theme-hue">
+        主题色相{' '}
+        <output data-hue-label for="theme-hue">
+          165°
+        </output>
+      </label>
+      <input
+        class="hue-slider"
+        id="theme-hue"
+        type="range"
+        min="0"
+        max="359"
+        step="1"
+        data-display-hue
+        aria-label="主题色相"
+      />
+    </fieldset>
+    <fieldset class="appearance-section">
+      <legend>字体</legend>
+      <label class="font-label">
+        页面字体
+        <span class="select-wrap">
+          <select data-display-select="font">
+            {presentation.fonts.map((font) => (
+              <option value={font.id}>{font.label}</option>
+            ))}
+          </select>
+        </span>
+      </label>
+      <p class="font-preview">
+        记录，是生活的另一种回声。
+        <br />
+        <span>A little space for thoughts, 0123456789.</span>
+      </p>
+      <p class="appearance-hint">
+        内置字体使用设备字库；缺少的字体会自动回退。自定义 WOFF2 字体可在仓库配置中添加。
+      </p>
+    </fieldset>
+    <fieldset class="appearance-section">
+      <legend>背景</legend>
+      <label>
+        壁纸模式
+        <span class="select-wrap">
+          <select data-display-select="wallpaper">
+            <option value="banner">横幅壁纸</option>
+            <option value="fullscreen">全屏壁纸</option>
+            <option value="transparent">全屏透明壁纸</option>
+            <option value="solid">纯色背景</option>
+          </select>
+        </span>
+      </label>
+      <div class="scene-options" role="group" aria-label="背景画面">
+        <button type="button" data-scene-choice="coast" aria-pressed="true">
+          <span class="scene-swatch scene-swatch-coast" aria-hidden="true"></span>海边夏日
+        </button>
+        <button type="button" data-scene-choice="mist" aria-pressed="false">
+          <span class="scene-swatch scene-swatch-mist" aria-hidden="true"></span>云间微光
+        </button>
+        <button type="button" data-scene-choice="paper" aria-pressed="false">
+          <span class="scene-swatch scene-swatch-paper" aria-hidden="true"></span>安静纸页
+        </button>
+      </div>
+      <label class="surface-option">
+        <input type="checkbox" data-appearance-solid /> 使用实色卡片
+      </label>
+    </fieldset>
+    <div class="appearance-actions">
+      <button class="button" type="button" data-display-reset>
+        恢复站点默认
       </button>
-      <button type="button" data-scene-choice="mist" aria-pressed="false">
-        <span class="scene-swatch scene-swatch-mist" aria-hidden="true"></span>云间微光
-      </button>
-      <button type="button" data-scene-choice="paper" aria-pressed="false">
-        <span class="scene-swatch scene-swatch-paper" aria-hidden="true"></span>专注阅读
+      <button class="button primary" type="button" data-appearance-close>
+        完成
       </button>
     </div>
-    <label class="surface-option">
-      <input type="checkbox" data-appearance-solid /> 更清晰的卡片，减少背景透出
-    </label>
-    <p class="appearance-hint">外观选择仅保存在当前浏览器。文章正文始终使用清晰的阅读底色。</p>
+    <p class="appearance-hint">选择自动保存在当前浏览器。文章正文保持清晰底色。</p>
   </dialog>
 </div>
 <script>

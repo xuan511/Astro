@@ -19,6 +19,11 @@ function applyTheme() {
     .forEach((button) =>
       button.setAttribute('aria-label', theme === 'dark' ? '切换浅色模式' : '切换深色模式'),
     );
+  document
+    .querySelectorAll<HTMLElement>('[data-theme-choice]')
+    .forEach((button) =>
+      button.setAttribute('aria-pressed', String(button.dataset.themeChoice === preference)),
+    );
 }
 
 // Inline head scripts can run again during client navigation. Let them reuse
@@ -29,8 +34,14 @@ const session = globalThis as typeof globalThis & {
 session.__shijianTheme = { key, apply: applyTheme };
 
 document.addEventListener('click', (event) => {
-  if (!(event.target instanceof Element) || !event.target.closest('[data-theme-toggle]')) return;
-  preference = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  if (!(event.target instanceof Element)) return;
+  const choice = event.target.closest('[data-display-reset]')
+    ? defaultTheme
+    : event.target.closest<HTMLElement>('[data-theme-choice]')?.dataset.themeChoice;
+  if (choice === 'light' || choice === 'dark' || choice === 'system') preference = choice;
+  else if (event.target.closest('[data-theme-toggle]'))
+    preference = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  else return;
   try {
     localStorage.setItem(key, preference);
   } catch {

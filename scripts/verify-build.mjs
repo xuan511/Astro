@@ -75,25 +75,28 @@ for (const file of pages) {
   assert.equal(appearance.length, 1, `Expected one appearance controller: ${file}`);
   assert.match(appearance[0][0], /\bdata-astro-transition-persist="shijian-appearance"/);
   assert.equal((html.match(/\bid="appearance-settings"/g) || []).length, 1);
+  assert.equal(
+    (html.match(/\bclass="site-layout shell"/g) || []).length,
+    1,
+    `Shared column shell missing: ${file}`,
+  );
+  assert.equal((html.match(/\bclass="layout-sidebar sidebar-left"/g) || []).length, 1);
+  assert.equal((html.match(/\bclass="layout-sidebar sidebar-right"/g) || []).length, 1);
+  const displayConfig = html.match(
+    /<script\b[^>]*\bdata-display-config\b[^>]*>([\s\S]*?)<\/script>/,
+  );
+  assert(displayConfig, `Missing validated display configuration: ${file}`);
+  const display = JSON.parse(displayConfig[1]);
+  assert(['both', 'left', 'right', 'none'].includes(display.defaults.sidebar));
+  assert(['grid', 'list', 'masonry'].includes(display.defaults.layout));
+  assert(display.fonts.some((font) => font.id === display.defaults.font));
   if (path === '') {
     assert.equal(
-      (html.match(/\bdata-home-player(?:\s|>|=)/g) || []).length,
+      (html.match(/\bdata-post-feed(?:\s|>|=)/g) || []).length,
       1,
-      'Home music card missing',
+      'Home shared post feed missing',
     );
     assert.match(html, /\bdata-home-dashboard\b/);
-    const slides = [...html.matchAll(/<article\b[^>]*\bdata-spotlight-slide\b[^>]*>/g)];
-    if (slides.length) {
-      assert.equal(
-        slides.filter(([tag]) => !/\bhidden(?:\s|>|=)/.test(tag)).length,
-        1,
-        'Only one spotlight may be initially visible',
-      );
-      assert.equal(
-        (html.match(/\bdata-spotlight-index=/g) || []).length,
-        slides.length > 1 ? slides.length : 0,
-      );
-    }
   }
   const companions = [...html.matchAll(/<aside\b[^>]*\bid="site-companion"[^>]*>/g)];
   assert.equal(companions.length, 1, `Expected one companion: ${file}`);

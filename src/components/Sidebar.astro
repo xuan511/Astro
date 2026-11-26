@@ -1,0 +1,119 @@
+---
+import { site } from '../config/site';
+import { presentation } from '../config/presentation';
+import { publishedPosts } from '../lib/content';
+import { groupPostsByTaxonomy } from '../lib/post-query';
+import { withBase, postPath, taxonomyPath, formatDate } from '../lib/paths';
+import Icon from './Icon.astro';
+interface Props {
+  side: 'left' | 'right';
+}
+const { side } = Astro.props;
+const posts = await publishedPosts();
+const categories = groupPostsByTaxonomy(posts, 'category');
+const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length - a.posts.length);
+---
+
+{side === 'left' ? (
+  <>
+    <section class="sidebar-card profile-widget">
+      <a href={withBase('about/')}>
+        <img
+          class="avatar"
+          src={withBase(site.avatar)}
+          alt={`${site.author}的头像`}
+          width="76"
+          height="76"
+        />
+      </a>
+      <h2>{site.author}</h2>
+      <p>{site.description}</p>
+      <div class="profile-topics">
+        {site.interests.map((interest) => (
+          <span>{interest}</span>
+        ))}
+      </div>
+      <div class="profile-counts">
+        <a href={withBase('archive/')}>
+          <strong>{posts.length}</strong>篇记录
+        </a>
+        <a href={withBase('projects/')}>
+          <Icon name="code" size={20} />
+          项目
+        </a>
+        <a href={withBase('music/')}>
+          <Icon name="music" size={20} />
+          音乐台
+        </a>
+      </div>
+      <nav class="profile-socials" aria-label="社交链接">
+        {site.social.map((link) => (
+          <a href={link.url} target="_blank" rel="noopener noreferrer">
+            {link.label}
+          </a>
+        ))}
+        <a href={withBase('rss.xml')}>RSS</a>
+      </nav>
+    </section>
+    <section class="sidebar-card browse-widget">
+      <h2>在小站里走走</h2>
+      {presentation.navbar.links.map((group) => (
+        <details class="sidebar-directory">
+          <summary>
+            {group.label}
+            <Icon name="chevron" size={15} />
+          </summary>
+          <nav aria-label={`侧栏${group.label}`}>
+            {group.items.map((item) => (
+              <a
+                href={withBase(item.path)}
+                aria-current={Astro.url.pathname === withBase(item.path) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </details>
+      ))}
+    </section>
+    <a class="sidebar-card sidebar-note" href={withBase('music/scores/')}>
+      <span class="eyebrow">SUMMER POCKETS</span>
+      <strong>给音乐留一点时间</strong>
+      <span>半音阶口琴谱与夏日的旋律。</span>
+      <Icon name="music" size={24} />
+    </a>
+  </>
+) : (
+  <>
+    <section class="sidebar-card">
+      <h2>文章分类</h2>
+      <nav class="category-widget" aria-label="侧栏文章分类">
+        {categories.map((group) => (
+          <a href={taxonomyPath('categories', group.name)}>
+            <span>{group.name}</span>
+            <small>{group.posts.length}</small>
+          </a>
+        ))}
+      </nav>
+    </section>
+    <section class="sidebar-card">
+      <h2>沿着标签继续读</h2>
+      <nav class="tag-widget" aria-label="侧栏文章标签">
+        {tags.slice(0, 12).map((group) => (
+          <a href={taxonomyPath('tags', group.name)}>#{group.name}</a>
+        ))}
+      </nav>
+    </section>
+    <section class="sidebar-card recent-widget">
+      <h2>最近更新</h2>
+      {posts.slice(0, 4).map((post) => (
+        <a href={postPath(post.id)}>
+          <span>{post.data.title}</span>
+          <time datetime={post.data.publishedAt.toISOString()}>
+            {formatDate(post.data.publishedAt)}
+          </time>
+        </a>
+      ))}
+    </section>
+  </>
+)}

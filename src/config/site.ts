@@ -59,6 +59,6 @@ export const site: SiteConfig = {
     '把遇到的问题慢慢弄明白，把不想忘记的片刻写下来。这就是这个小站的起点。',
   ],
   timeline: [],
-  defaultTheme: 'light',
+  defaultTheme: 'system',
   footer: '慢慢记录，认真生活。',
 };

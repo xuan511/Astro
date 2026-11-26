@@ -15,6 +15,11 @@ const { data } = post;
 
 <article class:list={['post-card', { featured, 'has-cover': featured && Boolean(data.cover) }]}>
   <a class="post-card-link" href={postPath(post.id)}>
+    {!featured && data.cover && (
+      <div class="post-cover">
+        <Media src={data.cover} alt={data.coverAlt} width={640} height={360} />
+      </div>
+    )}
     {featured && data.cover && (
       <div class="featured-art">
         <Media src={data.cover} alt={data.coverAlt} width={480} height={360} eager />

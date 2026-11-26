@@ -1,37 +1,48 @@
 ---
 import { site } from '../config/site';
 import { withBase } from '../lib/paths';
+import footerHtml from '../config/footer.html?raw';
+import { presentation } from '../config/presentation';
 ---
 
 <footer class="site-footer shell">
-  <p>
-    © {new Date().getFullYear()} {site.author} · {site.title}
-  </p>
-  <p class="footer-note">{site.footer}</p>
-  <nav aria-label="页脚导航">
-    <a href={withBase('archive/')}>归档</a>
-    <a href={withBase('rss.xml')}>RSS</a>
-    <a href={withBase('writing/')}>写作指南</a>
-    <button class="companion-show" type="button" data-companion-show hidden>
-      小伙伴
-    </button>
-  </nav>
-  <p class="footer-credit">
-    设计灵感：
-    <a
-      href="https://github.com/heiehiehi/XinghuisamaBlogs"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      XingHuiSama · XHBlogs
-    </a>{' '}
-    ·{' '}
-    <a
-      href="https://creativecommons.org/licenses/by-nc/4.0/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      CC BY-NC 4.0
-    </a>
-  </p>
+  {!presentation.footer.replaceDefault && (
+    <>
+      <p>
+        © {new Date().getFullYear()} {site.author} · {site.title}
+      </p>
+      <p class="footer-note">{site.footer}</p>
+      <nav aria-label="页脚导航">
+        <a href={withBase('archive/')}>归档</a>
+        <a href={withBase('rss.xml')}>RSS</a>
+        <a href={withBase('writing/')}>写作指南</a>
+      </nav>
+      <p class="footer-credit">
+        布局参考：
+        <a href="https://github.com/Cuteleaf/Firefly" target="_blank" rel="noopener noreferrer">
+          Firefly
+        </a>{' '}
+        · 设计灵感：
+        <a
+          href="https://github.com/heiehiehi/XinghuisamaBlogs"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          XingHuiSama · XHBlogs
+        </a>{' '}
+        ·{' '}
+        <a
+          href="https://creativecommons.org/licenses/by-nc/4.0/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          CC BY-NC 4.0
+        </a>
+      </p>
+    </>
+  )}
+  <div class="footer-custom" set:html={footerHtml} />
+  <button class="companion-show" type="button" data-companion-show hidden>
+    小伙伴
+  </button>
 </footer>

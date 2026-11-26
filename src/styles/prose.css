@@ -1,5 +1,5 @@
 :root {
-  --reading-font: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', 'SimHei', var(--sans);
+  --reading-font: var(--site-font, var(--sans));
   --reading-font-size: 18px;
 }
 :root[data-reading-size='small'] {
@@ -10,10 +10,9 @@
 }
 .article-layout {
   --article-measure: var(--layout-reading);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: block;
   max-width: var(--article-measure);
-  padding-top: var(--space-7);
+  padding-top: 0;
   align-items: start;
 }
 .article-layout > article {
@@ -97,13 +96,6 @@
   object-fit: cover;
   width: 100%;
 }
-.article-sidebar {
-  display: none;
-  min-width: 0;
-  padding-top: var(--space-6);
-  position: sticky;
-  top: 108px;
-}
 .toc {
   padding: var(--space-5);
   border: 1px solid var(--glass-edge);
@@ -157,7 +149,7 @@
   margin-bottom: var(--space-6);
   font-size: var(--text-sm);
   position: sticky;
-  top: var(--space-2);
+  top: 96px;
   z-index: 10;
   box-shadow: var(--shadow-float);
 }
@@ -512,20 +504,6 @@
   font-style: var(--shiki-dark-font-style) !important;
   font-weight: var(--shiki-dark-font-weight) !important;
   text-decoration: var(--shiki-dark-text-decoration) !important;
-}
-/* Account for page gutters and the scrollbar before adding the 208px outline. */
-@media (min-width: 65.0625rem) {
-  .article-layout--with-toc {
-    max-width: calc(var(--article-measure) + var(--layout-toc) + var(--layout-reading-gap));
-    grid-template-columns: minmax(0, var(--article-measure)) var(--layout-toc);
-    gap: var(--layout-reading-gap);
-  }
-  .article-sidebar {
-    display: block;
-  }
-  .mobile-toc {
-    display: none;
-  }
 }
 /* Offer a wider measure only when it can differ meaningfully from the default. */
 @media (min-width: 68.0625rem) {

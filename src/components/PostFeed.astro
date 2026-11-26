@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from './PostCard.astro';
+import { presentation } from '../config/presentation';
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+  heading?: 'h2' | 'h3';
+}
+const { posts, heading = 'h2' } = Astro.props;
+---
+
+<div class="feed-toolbar">
+  <span class="count">{posts.length} 篇记录</span>
+  <div class="layout-options" role="group" aria-label="文章布局" data-layout-controls hidden>
+    <button
+      type="button"
+      data-layout-choice="list"
+      aria-pressed={(presentation.posts.defaultMode as string) === 'list'}
+    >
+      列表
+    </button>
+    <button
+      type="button"
+      data-layout-choice="grid"
+      aria-pressed={(presentation.posts.defaultMode as string) === 'grid'}
+    >
+      网格
+    </button>
+    <button
+      type="button"
+      data-layout-choice="masonry"
+      aria-pressed={(presentation.posts.defaultMode as string) === 'masonry'}
+    >
+      瀑布流
+    </button>
+  </div>
+</div>
+<div
+  class="post-feed"
+  data-post-feed
+  data-column-width={presentation.posts.columnWidth}
+  data-card-gap={presentation.posts.gap}
+  style={`--card-min: ${presentation.posts.columnWidth}px; --card-gap: ${presentation.posts.gap}px`}
+>
+  {posts.map((post) => (
+    <PostCard post={post} heading={heading} />
+  ))}
+</div>
+<script>
+  import '../scripts/post-feed';
+</script>

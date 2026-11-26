@@ -18,14 +18,22 @@ function harness({
 } = {}) {
   class Element {
     attributes = new Map();
+    dataset;
+    constructor(choice) {
+      this.dataset = choice ? { themeChoice: choice } : {};
+    }
     closest(selector) {
-      return selector === '[data-theme-toggle]' ? this : null;
+      return (selector === '[data-theme-toggle]' && !this.dataset.themeChoice) ||
+        (selector === '[data-theme-choice]' && this.dataset.themeChoice)
+        ? this
+        : null;
     }
     setAttribute(name, value) {
       this.attributes.set(name, value);
     }
   }
   let button = new Element();
+  let choices = ['light', 'dark', 'system'].map((choice) => new Element(choice));
   const listeners = new Map();
   const mediaListeners = new Set();
   const media = {
@@ -38,7 +46,12 @@ function harness({
   const document = {
     body: { dataset: { base: '/Astro/', defaultTheme } },
     documentElement: { dataset: { theme: 'light' } },
-    querySelectorAll: () => [button],
+    querySelectorAll: (selector) =>
+      selector === '[data-theme-toggle]'
+        ? [button]
+        : selector === '[data-theme-choice]'
+          ? choices
+          : [],
     addEventListener(type, listener) {
       const handlers = listeners.get(type) || new Set();
       handlers.add(listener);
@@ -90,10 +103,19 @@ function harness({
     toggle() {
       emit('click', { target: button });
     },
+    choose(value) {
+      emit('click', { target: choices.find((choice) => choice.dataset.themeChoice === value) });
+    },
+    pressed(value) {
+      return choices
+        .find((choice) => choice.dataset.themeChoice === value)
+        .attributes.get('aria-pressed');
+    },
     navigate() {
       // A swapped HTML tree and freshly rendered controls must use session state.
       document.documentElement = { dataset: { theme: 'light' } };
       button = new Element();
+      choices = ['light', 'dark', 'system'].map((choice) => new Element(choice));
       emit('astro:after-swap');
       bootstrap();
       emit('astro:page-load');
@@ -172,4 +194,25 @@ test('a blocked-storage system default still resolves before paint and reacts to
   app.osTheme(false);
   app.navigate();
   assert.equal(app.theme, 'dark');
+});
+
+test('the three explicit theme choices sync selected state, navigate, and return to following the OS', () => {
+  const app = harness({ defaultTheme: 'system' });
+  app.choose('dark');
+  assert.equal(app.theme, 'dark');
+  assert.equal(app.pressed('dark'), 'true');
+  app.choose('light');
+  app.osTheme(true);
+  assert.equal(app.theme, 'light');
+  app.choose('system');
+  assert.equal(app.theme, 'dark');
+  assert.equal(app.pressed('system'), 'true');
+  app.navigate();
+  assert.equal(app.pressed('system'), 'true');
+  app.osTheme(false);
+  assert.equal(app.theme, 'light');
+  assert.deepEqual(
+    app.writes.map((write) => write.value),
+    ['dark', 'light', 'system'],
+  );
 });

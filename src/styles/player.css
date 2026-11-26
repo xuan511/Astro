@@ -300,7 +300,7 @@
 }
 .music-room {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: var(--space-7);
   align-items: start;
 }
@@ -633,7 +633,6 @@
   }
   .music-room {
     gap: var(--space-6);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
   .full-player {
     padding: var(--space-5);

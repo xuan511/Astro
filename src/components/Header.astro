@@ -1,5 +1,6 @@
 ---
 import { site } from '../config/site';
+import { presentation } from '../config/presentation';
 import { withBase } from '../lib/paths';
 import Icon from './Icon.astro';
 const current = Astro.url.pathname;
@@ -19,11 +20,11 @@ function currentSection(path: string) {
   <div class="shell header-inner">
     <a class="brand" href={withBase()} aria-label={`${site.title} 首页`}>
       <span class="brand-mark">
-        <Icon name="book" size={22} />
+        <img src={withBase(presentation.navbar.logo)} alt="" width="36" height="36" />
       </span>
       <span>
-        <span class="brand-name">{site.title}</span>
-        <span class="brand-sub">{site.author}的个人手记</span>
+        <span class="brand-name">{presentation.navbar.title}</span>
+        <span class="brand-sub">{presentation.navbar.subtitle}</span>
       </span>
     </a>
     <div class="header-tools">
@@ -33,7 +34,7 @@ function currentSection(path: string) {
           <span>目录</span>
         </summary>
         <nav class="directory-panel" aria-label="站点目录">
-          {site.navigation.map(({ label, items }) => (
+          {presentation.navbar.links.map(({ label, items }) => (
             <div class="directory-group">
               <p>{label}</p>
               <ul>

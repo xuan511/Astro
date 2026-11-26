@@ -139,20 +139,17 @@ const jsonLd = {
         )}
       </nav>
     </article>
-    {outline.length > 0 && (
-      <aside class="article-sidebar">
+  </div>
+  {outline.length > 0 && (
+    <Fragment slot="sidebar-right">
+      <section class="sidebar-card">
         <nav class="toc" aria-label="文章目录">
           <h2>在这篇记录里</h2>
           <TocLinks headings={outline} />
-          <p class="handwritten">
-            Take your time.
-            <br />
-            Enjoy the reading.
-          </p>
         </nav>
-      </aside>
-    )}
-  </div>
+      </section>
+    </Fragment>
+  )}
   <ImageViewer />
   <script>
     import '../scripts/reading';

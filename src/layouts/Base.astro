@@ -8,11 +8,15 @@ import Player from '../components/Player.astro';
 import QuickSearch from '../components/QuickSearch.astro';
 import Companion from '../components/Companion.astro';
 import Appearance from '../components/Appearance.astro';
-import { appearanceBootstrap } from '../lib/appearance-preferences';
+import { displayBootstrap } from '../lib/layout-preferences';
+import { presentation, appearanceDefaults } from '../config/presentation';
+import { withBase } from '../lib/paths';
+import Sidebar from '../components/Sidebar.astro';
 import { site } from '../config/site';
 import { themeBootstrap } from '../lib/theme-preferences';
 import '../styles/global.css';
 import '../styles/shell.css';
+import '../styles/layout.css';
 interface Props extends SeoProps {
   section?: string;
 }
@@ -27,6 +31,15 @@ const {
 const preferenceKey = `shijian:${import.meta.env.BASE_URL}:theme-v3`;
 const readingKey = `shijian:${import.meta.env.BASE_URL}:reading-v1`;
 const appearanceKey = `shijian:${import.meta.env.BASE_URL}:appearance-v1`;
+const isPost = ogType === 'article';
+const isHome = Astro.url.pathname === withBase();
+const fontCss = presentation.fonts
+  .filter((font) => font.source)
+  .map(
+    (font) =>
+      `@font-face{font-family:${JSON.stringify(font.family)};src:url(${JSON.stringify(withBase(font.source!))}) format('woff2');font-display:swap}`,
+  )
+  .join('');
 const pageMotion = {
   old: { name: 'page-leave', duration: '0ms', easing: 'ease-out', fillMode: 'both' },
   new: {
@@ -39,7 +52,17 @@ const pageMotion = {
 ---
 
 <!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html
+  lang="zh-CN"
+  data-theme="light"
+  data-sidebar={appearanceDefaults.sidebar}
+  data-layout={appearanceDefaults.layout}
+  data-wallpaper={appearanceDefaults.wallpaper}
+  data-scene={appearanceDefaults.scene}
+  data-solid="false"
+  data-font={appearanceDefaults.font}
+  style={`--theme-hue:${appearanceDefaults.hue};--site-font:${presentation.fonts.find((font) => font.id === appearanceDefaults.font)?.family}`}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,7 +70,11 @@ const pageMotion = {
     <meta name="color-scheme" content="light dark" />
     <SeoHead {title} {description} {noindex} {image} {ogType} />
     <script is:inline set:html={themeBootstrap(preferenceKey, site.defaultTheme)} />
-    <script is:inline set:html={appearanceBootstrap(appearanceKey)} />
+    <script
+      is:inline
+      set:html={displayBootstrap(appearanceKey, appearanceDefaults, presentation.fonts)}
+    />
+    <style is:inline set:html={fontCss} />
     <script is:inline define:vars={{ readingKey }}>
       try {
         const reading = JSON.parse(localStorage.getItem(readingKey) || '{}');
@@ -69,14 +96,46 @@ const pageMotion = {
       跳到正文
     </a>
     <Header section={section} />
-    <main
-      id="main"
-      tabindex="-1"
-      transition:name="page-content"
-      transition:animate={{ forwards: pageMotion, backwards: pageMotion }}
+    <div class:list={['wallpaper-banner', 'shell', { 'is-home': isHome }]} aria-hidden="true">
+      <img
+        src={withBase(presentation.wallpaper.image)}
+        alt=""
+        width="1600"
+        height="900"
+        fetchpriority={isHome ? 'high' : 'auto'}
+      />
+      <span>在日常里，收藏微光。</span>
+    </div>
+    <div
+      class="site-layout shell"
+      data-page-kind={isPost ? 'post' : 'page'}
+      data-tablet-sidebar={presentation.sidebar.tablet}
     >
-      <slot />
-    </main>
+      <aside class="layout-sidebar sidebar-left" aria-label="个人资料与小站导航">
+        <div class="sidebar-stack">
+          <Sidebar side="left" />
+        </div>
+      </aside>
+      <main
+        id="main"
+        class="site-main"
+        tabindex="-1"
+        transition:name="page-content"
+        transition:animate={{ forwards: pageMotion, backwards: pageMotion }}
+      >
+        <slot />
+      </main>
+      <aside
+        class="layout-sidebar sidebar-right"
+        aria-label={isPost ? '文章目录与辅助信息' : '分类与最近更新'}
+      >
+        <div class="sidebar-stack">
+          <slot name="sidebar-right">
+            <Sidebar side="right" />
+          </slot>
+        </div>
+      </aside>
+    </div>
     <Footer />
     <Player />
     <QuickSearch />
