@@ -45,6 +45,7 @@ export const site: SiteConfig = {
       items: [
         { label: '首页', path: '' },
         { label: '项目', path: 'projects/' },
+        { label: '资源下载', path: 'resources/' },
         { label: '关于', path: 'about/' },
       ],
     },

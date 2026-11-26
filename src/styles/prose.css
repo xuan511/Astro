@@ -1,4 +1,5 @@
 :root {
+  --reading-font: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', 'SimHei', var(--sans);
   --reading-font-size: 18px;
 }
 :root[data-reading-size='small'] {
@@ -53,6 +54,7 @@
 .article-description {
   font-size: var(--text-base);
   line-height: var(--leading-body);
+  font-family: var(--reading-font);
   color: var(--body);
   margin-bottom: var(--space-5);
   overflow-wrap: anywhere;
@@ -221,6 +223,7 @@
   padding-left: var(--space-5);
 }
 .prose {
+  font-family: var(--reading-font);
   font-size: var(--reading-font-size);
   line-height: var(--leading-reading);
   color: var(--body);
@@ -238,7 +241,6 @@
 .prose h2,
 .prose h3,
 .prose h4 {
-  font-family: var(--serif);
   line-height: var(--leading-title);
   color: var(--text);
   scroll-margin-top: var(--space-7);
@@ -288,7 +290,6 @@
   margin: var(--space-6) 0;
   border-left: 2px solid var(--accent);
   padding: var(--space-2) 0 var(--space-2) var(--space-5);
-  font-family: var(--serif);
   color: var(--text);
 }
 .prose blockquote p {
@@ -490,12 +491,8 @@
   margin-top: var(--space-2);
 }
 .life-article .prose {
-  font-family: var(--serif);
   line-height: calc(var(--leading-reading) + 0.1);
   letter-spacing: 0.015em;
-}
-.life-article .article-description {
-  font-family: var(--serif);
 }
 #reading-progress {
   position: fixed;
