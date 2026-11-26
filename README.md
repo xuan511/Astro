@@ -40,14 +40,115 @@ npm run preview
 
 首次 Git 提交、常见失败与后续域名迁移的详细操作见 [部署说明](docs/DEPLOYMENT.md)。本地配置保留根路径 `/` 便于预览；Actions 会根据 `xuan511/Astro` 自动推导 `/Astro/`，无需改写每个页面。
 
-## 日常修改
+## 写作与发布文章
+
+文章保存在 `src/content/posts/`，日常写作用 UTF-8 编码的 `.md` 文件。文件名会成为文章地址的一部分，例如 `uart-notes.md` 上线后对应 `/Astro/posts/uart-notes/`。建议用小写英文、数字和连字符命名。更新已上线的文章时，编辑原文件以保留访问地址。
+
+### 1. 新建文章
+
+第一次在这台电脑上写作，可以先克隆仓库并安装依赖。已有本地仓库时，在项目根目录开始，先同步 `main` 再编辑。
 
 ```bash
-npm run new:post -- "我的第一篇记录" --kind=tech --slug=my-first-note
-npm run new:post -- "一些日常" --kind=life --slug=ordinary-days --mdx
+git clone https://github.com/xuan511/Astro.git
+cd Astro
+npm ci
 ```
 
-新文件默认是草稿。写好后改成 `draft: false`，检查构建，再提交推送。主站没有在线上传、云端写作或虚构的后台；内容以仓库为准。草稿标记仅控制网页生成，公开仓库仍可查看源文件；私密记录不要提交到公开仓库。
+用 VS Code 打开项目，在项目根目录运行下面的命令生成草稿。生活随笔把 `--kind=tech` 改为 `--kind=life`。也可以手动创建同名文件并使用下一节的模板。
+
+```bash
+npm run new:post -- "串口联调笔记" --kind=tech --slug=uart-notes
+```
+
+### 2. 填写文章信息和正文
+
+下面是一篇可完整复制的草稿。将第一组 `---` 放在文件首行，两个分隔线之间填写 YAML 文章信息（frontmatter），第二组分隔线下方留一行，再写 Markdown 正文。
+
+````markdown
+---
+title: '串口联调笔记'
+description: '记录 STM32 与 ESP32 串口联调时检查的参数和会话流程。'
+publishedAt: 2026-11-26
+kind: tech
+category: 嵌入式
+tags: [STM32, ESP32, UART]
+draft: true
+featured: false
+---
+
+先确认两块板的串口参数一致，再观察启动时的收发日志。
+
+## 检查串口参数
+
+- 检查波特率、数据位和停止位。
+- 检查两块板是否共地。
+
+### 观察会话日志
+
+收到 `READY` 后开始发送后续指令。
+
+```text
+STM32 → ESP32: HELLO
+ESP32 → STM32: READY
+```
+````
+
+| 字段 | 填法 |
+| --- | --- |
+| `title` | 必填，页面标题，最多 150 字。正文可从 `##` 开始。 |
+| `description` | 必填，列表页和搜索引擎使用的摘要，最多 300 字。 |
+| `publishedAt` | 必填，填实际发布日期，格式为 `YYYY-MM-DD`。日期用于显示与排序。 |
+| `kind` | 必填，`tech` 进入技术栏目，`life` 进入生活栏目。 |
+| `category` | 必填，文章的主分类，例如 `嵌入式`。 |
+| `tags` | 可选，用英文方括号和逗号列出标签，例如 `[STM32, UART]`。 |
+| `draft` | `true` 保持草稿，`false` 随部署公开。省略时默认为 `true`。 |
+| `featured` | 设为 `true` 时优先参与首页精选，默认为 `false`。 |
+| `updatedAt` | 可选，用于标记文章更新日期，须晚于或等于 `publishedAt`。 |
+
+YAML 使用英文冒号，冒号后留空格。布尔值写 `true` / `false`，给它们加引号会变成字符串。含冒号的标题或摘要建议用引号包起来。草稿标记只控制站点是否生成页面，公开仓库仍可读取已提交的草稿源码。
+
+### 3. 写 Markdown 和添加图片
+
+| 想显示的内容 | 在正文中输入 |
+| --- | --- |
+| 二级、三级标题 | `## 调试过程`、`### 第一次上电` |
+| 加粗、行内代码 | `**重点**`、`` `READY` `` |
+| 无序列表、有序列表 | 每行用 `- ` 或 `1. ` 开头 |
+| 引用 | 行首写 `> ` |
+| 链接 | `[项目源码](https://github.com/xuan511/embedded-smart-home)` |
+| 图片 | `![串口联调日志](./photos/uart-notes/terminal.png)` |
+| 行内公式、单独成行的公式 | `$E=mc^2$`、`$$E=mc^2$$` |
+
+自然段之间空一行。多行代码用三个反引号围起来，在开头的反引号后加语言名，例如 `c`、`bash` 或 `text`。表格的第二行写列分隔线，例如 `| --- | --- |`。
+
+上表的图片路径相对于文章文件。把图片保存为 `src/content/posts/photos/uart-notes/terminal.png`，与文章一起提交。需要封面时，在 frontmatter 加上 `cover: "./photos/uart-notes/terminal.png"` 和 `coverAlt: "串口联调日志"`。
+
+### 4. 本地检查并发布
+
+1. 写完后把 `draft` 改为 `false`，运行 `npm run dev`，打开终端显示的网址，再进入 `/posts/uart-notes/`。检查标题、图片、代码块和链接。
+2. 结束预览后运行 `npm run verify`。检查通过后提交文章。若添加了图片，也要将图片文件加入同一次提交。
+
+```bash
+npm run verify
+git add -- src/content/posts/uart-notes.md
+# 添加了图片时，再执行下一行
+# git add -- src/content/posts/photos/uart-notes/
+git diff --cached
+git commit -m "发布串口联调笔记"
+git push origin main
+```
+
+3. 打开 [GitHub Actions](https://github.com/xuan511/Astro/actions/workflows/deploy.yml)，找到这次提交的 **Check, build and deploy Pages**，等 `deploy` 任务成功后打开文章网址检查。走 PR 流程时，合并到 `main` 后才会发布。
+
+### 只用 GitHub 网页发布
+
+1. 打开仓库，选择 `main`，进入 [文章目录](https://github.com/xuan511/Astro/tree/main/src/content/posts)。
+2. 已有 `.md` 文件时，点 **Add file → Upload files** 上传。直接在网页写时，点 **Add file → Create new file**，输入文件名（如 `uart-notes.md`），粘贴完整文章。图片按正文引用的路径上传。
+3. 检查 `draft: false`，点 **Commit changes**。有权限时可提交到 `main`，也可以创建分支并开 PR，再合并到 `main`。按上节查看部署结果。[GitHub 添加文件说明](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)
+
+如果部署成功却找不到文章，先核对源码里是否写了 `draft: false`，再检查 URL 的文件名和 `/Astro/` 前缀。构建失败时，打开 Actions 里失败的任务，优先查看报错的文件路径、YAML 字段和图片链接。
+
+## 其他日常修改
 
 | 内容                                                     | 文件                                |
 | -------------------------------------------------------- | ----------------------------------- |
