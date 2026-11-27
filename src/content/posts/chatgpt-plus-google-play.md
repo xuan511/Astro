@@ -12,15 +12,15 @@ draft: false
 
 ## 在中国大陆能直接照做吗？
 
-截至 2026 年 11 月 26 日，中国大陆未列入 OpenAI 公布的 ChatGPT 支持地区。OpenAI 提醒，从支持范围之外访问可能导致账号受限或停用。Google Play 还有自己的地区要求：要设置新的商店地区，你需要实际位于当地，并拥有来自当地的付款方式。仅凭当地 IP 或一张支持外币支付的卡，无法确认满足这两项条件。[OpenAI 支持地区](https://help.openai.com/en/articles/7947663-chatgpt-supported-countries) · [Google Play 地区规则](https://support.google.com/googleplay/answer/7431675?hl=zh-Hans)
+可以，但需要改地区，最好网上找一个便宜点的地区，至少要低于美区的20$才划算点。截至 2026 年 11 月 26 日，中国大陆未列入 OpenAI 公布的 ChatGPT 支持地区。OpenAI 提醒，从支持范围之外访问可能导致账号受限或停用。Google Play 还有自己的地区要求：要设置新的商店地区，你需要实际位于当地，并拥有来自当地的付款方式。实际上仅凭当地 IP 或一张支持外币支付的卡，也可以满足这两项条件（甚至ip的要求不太严格，能访问google应该就行）。[OpenAI 支持地区](https://help.openai.com/en/articles/7947663-chatgpt-supported-countries) · [Google Play 地区规则](https://support.google.com/googleplay/answer/7431675?hl=zh-Hans)
 
-如果你正在考虑专门为 Plus 办卡，先核对**自己实际使用服务的地点**和**打算使用的付款方式**。下面的步骤适用于身处受支持地区、符合 Play 当地付款条件的读者。
+如果你正在考虑专门为 Plus 办卡，先核对**自己实际使用服务的地点**和**打算使用的付款方式**。
 
 ## 一、确认 Google 账号和商店地区
 
 在 Android 手机上打开 **Google Play 商店 → 右上角头像**。如果手机登录了多个 Google 账号，先选以后准备用来查订单、管续费的那个。
 
-进入 **设置 → 常规 → 账号和设备偏好设置 → 国家/地区和个人资料**。当前地区与居住地一致就可以直接去绑卡。如果已经迁居，选择实际居住的新地区，按提示添加当地付款方式。Google 说明地区更新最长可能需要 48 小时；两次改区通常至少间隔 90 天，家庭组成员也无法直接改区。[Google Play 改区说明](https://support.google.com/googleplay/answer/7431675?hl=zh-Hans)
+进入 **设置 → 常规 → 账号和设备偏好设置 → 国家/地区和个人资料**。选择新地区，按提示添加当地付款方式。Google 说明地区更新最长可能需要 48 小时（一般来说审核很快的）；两次改区通常至少间隔 90 天，[Google Play 改区说明](https://support.google.com/googleplay/answer/7431675?hl=zh-Hans)
 
 ## 二、绑定自己的银行卡
 
