@@ -30,6 +30,9 @@ test('display preference validation recovers malformed storage and migrates old 
   assert.equal(parseDisplay('{"hue":-99}').hue, 0);
   assert.equal(parseDisplay('{"hue":900}').hue, 359);
   assert.equal(parseDisplay('{"hue":12.7}').hue, 13);
+  assert.equal(parseDisplay('{"hue":165}').hue, 205);
+  assert.equal(parseDisplay('{"paletteVersion":2,"hue":165}').hue, 165);
+  assert.equal(parseDisplay('{"hue":280}').hue, 280);
   assert.equal(
     parseDisplay(
       '{"font":"book"}',
@@ -89,7 +92,7 @@ test('bootstrap preserves in-memory preferences, tolerates blocked storage and e
     },
   });
   assert.equal(document.documentElement.dataset.sidebar, 'both');
-  assert.equal(properties.get('--theme-hue'), '165');
+  assert.equal(properties.get('--theme-hue'), '205');
 });
 test('masonry packs the shortest available column without overlap, including narrow and empty containers', () => {
   const heights = [160, 300, 120, 220, 180, 400, 250];

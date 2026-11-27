@@ -8,8 +8,12 @@ export const presentation = {
     mode: 'banner' as const,
     scene: 'coast' as const,
     image: 'images/coastal-summer.webp',
+    responsive: {
+      small: 'images/coastal-summer-800.webp',
+      large: 'images/coastal-summer-1280.webp',
+    },
   },
-  hue: 165,
+  hue: 205,
   font: 'system',
   footer: { replaceDefault: false },
   fonts: [
@@ -54,6 +58,7 @@ export const presentation = {
 };
 
 export const appearanceDefaults = {
+  paletteVersion: 2 as const,
   sidebar: presentation.sidebar.position,
   layout: presentation.posts.defaultMode,
   wallpaper: presentation.wallpaper.mode,

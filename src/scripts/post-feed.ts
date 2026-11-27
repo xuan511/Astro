@@ -3,40 +3,49 @@ let dispose = () => {};
 function mountFeeds() {
   dispose();
   const feeds = [...document.querySelectorAll<HTMLElement>('[data-post-feed]')];
-  let frame = 0;
-  let active = true;
-  const reset = (feed: HTMLElement) => {
-    delete feed.dataset.masonryReady;
-    feed.style.removeProperty('height');
-    for (const card of feed.children)
-      if (card instanceof HTMLElement) {
+  if (!feeds.length) {
+    dispose = () => {};
+    return;
+  }
+  const cards = new Map(
+    feeds.map((feed) => [
+      feed,
+      [...feed.children].filter((card): card is HTMLElement => card instanceof HTMLElement),
+    ]),
+  );
+  let active = true,
+    frame = 0;
+  let observer: ResizeObserver | null = null;
+  let observing = false;
+  function reset() {
+    for (const feed of feeds) {
+      if (!feed.dataset.masonryReady) continue;
+      delete feed.dataset.masonryReady;
+      feed.style.removeProperty('height');
+      cards.get(feed)!.forEach((card) => {
         for (const name of ['width', 'left', 'top']) card.style.removeProperty(name);
-      }
-  };
+      });
+    }
+  }
   function layout() {
     frame = 0;
+    if (!active || document.documentElement.dataset.layout !== 'masonry') return;
     for (const feed of feeds) {
-      if (document.documentElement.dataset.layout !== 'masonry') {
-        reset(feed);
-        continue;
-      }
-      const cards = [...feed.children].filter(
-        (card): card is HTMLElement => card instanceof HTMLElement,
-      );
-      const width = feed.clientWidth;
-      const minimum = Number(feed.dataset.columnWidth) || 280;
-      const gap = Number(feed.dataset.cardGap) || 20;
+      const children = cards.get(feed)!;
+      const width = feed.clientWidth,
+        minimum = Number(feed.dataset.columnWidth) || 280,
+        gap = Number(feed.dataset.cardGap) || 20;
       const sizing = masonryPositions(width, minimum, gap, []);
-      cards.forEach((card) => {
+      children.forEach((card) => {
         card.style.width = `${sizing.columnWidth}px`;
       });
       const result = masonryPositions(
         width,
         minimum,
         gap,
-        cards.map((card) => card.offsetHeight),
+        children.map((card) => card.offsetHeight),
       );
-      cards.forEach((card, index) => {
+      children.forEach((card, index) => {
         card.style.left = `${result.items[index].x}px`;
         card.style.top = `${result.items[index].y}px`;
       });
@@ -47,21 +56,40 @@ function mountFeeds() {
   function schedule() {
     if (active && !frame) frame = requestAnimationFrame(layout);
   }
-  const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(schedule) : null;
-  feeds.forEach((feed) => {
-    observer?.observe(feed);
-    [...feed.children].forEach((card) => observer?.observe(card));
+  function configure() {
+    if (document.documentElement.dataset.layout === 'masonry') {
+      if (!observing) {
+        observing = true;
+        if (typeof ResizeObserver === 'function') {
+          observer = new ResizeObserver(schedule);
+          feeds.forEach((feed) => {
+            observer!.observe(feed);
+            cards.get(feed)!.forEach((card) => observer!.observe(card));
+          });
+        } else window.addEventListener('resize', schedule, { passive: true });
+      }
+      schedule();
+    } else {
+      observing = false;
+      observer?.disconnect();
+      observer = null;
+      window.removeEventListener('resize', schedule);
+      cancelAnimationFrame(frame);
+      frame = 0;
+      reset();
+    }
+  }
+  document.addEventListener('shijian:display-change', configure);
+  document.fonts?.ready.then(() => {
+    if (active && observing) schedule();
   });
-  document.addEventListener('shijian:display-change', schedule);
-  window.addEventListener('resize', schedule, { passive: true });
-  document.fonts?.ready.then(schedule);
-  schedule();
+  configure();
   dispose = () => {
     active = false;
     observer?.disconnect();
     cancelAnimationFrame(frame);
-    document.removeEventListener('shijian:display-change', schedule);
     window.removeEventListener('resize', schedule);
+    document.removeEventListener('shijian:display-change', configure);
   };
 }
 document.addEventListener('astro:before-swap', () => dispose());

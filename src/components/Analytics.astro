@@ -1,0 +1,13 @@
+---
+import { analytics } from '../config/analytics';
+const config = { ...analytics, origin: Astro.site?.origin || '', base: import.meta.env.BASE_URL };
+---
+
+<script
+  type="application/json"
+  data-analytics-config
+  set:html={JSON.stringify(config).replaceAll('<', '\\u003c')}
+/>
+<script>
+  import '../scripts/analytics';
+</script>

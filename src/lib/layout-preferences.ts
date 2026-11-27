@@ -3,6 +3,7 @@ export const postModes = ['list', 'grid', 'masonry'] as const;
 export const wallpaperModes = ['banner', 'fullscreen', 'transparent', 'solid'] as const;
 export const sceneModes = ['coast', 'mist', 'paper'] as const;
 export interface DisplayPreference {
+  paletteVersion: 2;
   sidebar: (typeof sidebarModes)[number];
   layout: (typeof postModes)[number];
   wallpaper: (typeof wallpaperModes)[number];
@@ -12,12 +13,13 @@ export interface DisplayPreference {
   font: string;
 }
 export const displayDefaults: DisplayPreference = {
+  paletteVersion: 2,
   sidebar: 'both',
   layout: 'grid',
   wallpaper: 'banner',
   scene: 'coast',
   solid: false,
-  hue: 165,
+  hue: 205,
   font: 'system',
 };
 /** Pure and embedded before paint: storage never supplies CSS, URLs or HTML. */
@@ -35,6 +37,7 @@ export function parseDisplay(
   const choose = <T extends string>(options: readonly T[], candidate: unknown, fallback: T): T =>
     options.includes(candidate as T) ? (candidate as T) : fallback;
   return {
+    paletteVersion: 2,
     sidebar: choose(['left', 'right', 'both', 'none'], value?.sidebar, defaults.sidebar),
     layout: choose(['list', 'grid', 'masonry'], value?.layout, defaults.layout),
     wallpaper: choose(
@@ -45,9 +48,11 @@ export function parseDisplay(
     scene: choose(['coast', 'mist', 'paper'], value?.scene, defaults.scene),
     solid: typeof value?.solid === 'boolean' ? value.solid : defaults.solid,
     hue:
-      typeof value?.hue === 'number' && Number.isFinite(value.hue)
-        ? Math.round(Math.max(0, Math.min(359, value.hue)))
-        : defaults.hue,
+      value?.paletteVersion !== 2 && value?.hue === 165
+        ? defaults.hue
+        : typeof value?.hue === 'number' && Number.isFinite(value.hue)
+          ? Math.round(Math.max(0, Math.min(359, value.hue)))
+          : defaults.hue,
     font: fontIds.includes(value?.font) ? value.font : defaults.font,
   };
 }

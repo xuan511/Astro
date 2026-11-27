@@ -199,7 +199,7 @@
   overscroll-behavior: contain;
 }
 .queue-dialog::backdrop {
-  background: #14241985;
+  background: #102c4885;
   backdrop-filter: blur(4px);
 }
 .queue-heading {
@@ -328,7 +328,7 @@
   inset: 0;
   border: 1px solid var(--line);
   border-radius: 50%;
-  background: repeating-radial-gradient(#2a3e30 0 2px, #344a39 3px 4px);
+  background: repeating-radial-gradient(#172e46 0 2px, #294a68 3px 4px);
   z-index: -1;
 }
 .record-art img {
@@ -339,7 +339,7 @@
   top: 27.5%;
   border-radius: 50%;
   object-fit: cover;
-  border: 10px solid #cfc5a4;
+  border: 10px solid #c8e4f4;
 }
 .full-player h2 {
   font: 500 1.75rem/1.5 var(--serif);

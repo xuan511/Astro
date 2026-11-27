@@ -12,7 +12,7 @@ const first = companions[0];
   class="companion"
   data-companion-root
   transition:persist="shijian-companion"
-  aria-label="页面小伙伴"
+  aria-label="亚托莉陪伴"
   hidden
 >
   <p class="companion-bubble" data-companion-bubble role="status" aria-live="polite" hidden></p>
@@ -21,15 +21,17 @@ const first = companions[0];
       class="companion-avatar"
       type="button"
       data-companion-greet
-      aria-label={`和${first.name}互动`}
+      aria-label="和亚托莉互动"
       aria-describedby="companion-help"
     >
       <span class="companion-figure" data-companion-figure>
         <img
           src={first.image}
-          alt={first.name}
+          alt="亚托莉"
           width="256"
           height="320"
+          loading="lazy"
+          fetchpriority="low"
           draggable="false"
           decoding="async"
           data-companion-image
@@ -42,7 +44,7 @@ const first = companions[0];
         class="icon-button"
         type="button"
         data-companion-picker
-        aria-label="选择小伙伴"
+        aria-label="亚托莉设置"
         aria-haspopup="dialog"
         aria-controls="companion-picker"
       >
@@ -52,7 +54,7 @@ const first = companions[0];
         class="icon-button"
         type="button"
         data-companion-pet
-        aria-label={`摸摸${first.name}的头`}
+        aria-label="摸摸亚托莉的头"
         title="摸摸头"
       >
         <Icon name="heart" size={18} />
@@ -66,7 +68,7 @@ const first = companions[0];
     class="companion-pocket"
     type="button"
     data-companion-expand
-    aria-label={`展开小伙伴：${first.name}`}
+    aria-label="展开小伙伴：亚托莉"
     hidden
   >
     <img
@@ -74,6 +76,8 @@ const first = companions[0];
       alt=""
       width="64"
       height="80"
+      loading="lazy"
+      fetchpriority="low"
       draggable="false"
       decoding="async"
       data-companion-image
@@ -81,8 +85,8 @@ const first = companions[0];
     <span class="companion-pocket-dot" aria-hidden="true"></span>
   </button>
   <span id="companion-help" class="sr-only">
-    点击角色会有不同小动作，连续点三下有彩蛋。长按或点爱心可以摸摸头。拖动角色可移动位置；键盘方向键移动，Home
-    键复位。星星按钮可换角色、安静陪伴或隐藏。
+    点击亚托莉会有不同的小动作，连续点三下有彩蛋。长按或点爱心可以摸摸头。拖动角色可移动位置；键盘方向键移动，Home
+    键复位。星星按钮可设置安静陪伴、位置复位或隐藏。
   </span>
   <script
     type="application/json"
@@ -92,40 +96,34 @@ const first = companions[0];
   <dialog id="companion-picker" class="companion-picker" aria-labelledby="companion-picker-title">
     <div class="companion-picker-heading">
       <div>
-        <p class="eyebrow">A LITTLE COMPANY</p>
-        <h2 id="companion-picker-title">今天想和谁作伴？</h2>
+        <p class="eyebrow">ATRI · MY DEAR MOMENTS</p>
+        <h2 id="companion-picker-title">亚托莉的陪伴设置</h2>
       </div>
-      <button class="icon-button" type="button" data-companion-close aria-label="关闭角色选择">
+      <button class="icon-button" type="button" data-companion-close aria-label="关闭陪伴设置">
         <Icon name="close" />
       </button>
     </div>
-    <p class="companion-picker-note">
-      戳一戳、连续点三下，或长按摸摸头。每位小伙伴都有不同的小动作。
-    </p>
-    <div class="companion-choices" aria-label="选择陪伴角色">
-      {companions.map((item) => (
-        <button
-          class="companion-choice"
-          type="button"
-          data-companion-choice={item.id}
-          aria-pressed={item.id === first.id}
-        >
-          <img src={item.image} alt="" width="120" height="150" loading="lazy" decoding="async" />
-          <strong>{item.name}</strong>
-          <small>{item.work}</small>
-        </button>
-      ))}
+    <div class="atri-identity">
+      <img src={first.image} alt="" width="72" height="90" loading="lazy" decoding="async" />
+      <div>
+        <strong>亚托莉</strong>
+        <p>陪你阅读，也提醒你休息充电。</p>
+      </div>
     </div>
+    <p class="companion-picker-note">
+      戳一戳、连续点三下，或长按摸摸头。小动作只在互动时播放，音乐响起时也会轻轻摇摆。
+    </p>
     <div class="companion-options">
       <label>
-        <input type="checkbox" data-companion-quiet /> 安静陪伴，减少角色动作
+        <input type="checkbox" data-companion-quiet />
+        安静陪伴，减少角色动作
       </label>
-      <p>角色可以拖动；手机默认收起。隐藏后可从页脚「小伙伴」找回来。</p>
+      <p>角色可以拖动；手机默认收起。隐藏后可从页脚「亚托莉」找回来。</p>
       <div>
-        <button class="button secondary" type="button" data-companion-reset>
+        <button class="button" type="button" data-companion-reset>
           位置复位
         </button>
-        <button class="button secondary" type="button" data-companion-hide>
+        <button class="button" type="button" data-companion-hide>
           隐藏小伙伴
         </button>
       </div>

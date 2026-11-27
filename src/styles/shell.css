@@ -12,25 +12,14 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 14% 8%, #d4e8e4, transparent 55%),
-    radial-gradient(ellipse at 85% 40%, #e3dcf0, transparent 60%), #edf1f6;
-}
-.site-scene img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 45%;
-  opacity: 1;
+    radial-gradient(ellipse at 14% 8%, #d7eefd, transparent 55%),
+    radial-gradient(ellipse at 85% 40%, #e8edf9, transparent 60%), #edf7ff;
 }
 .site-scene::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(var(--scene-veil), var(--scene-veil)), var(--scene-darken);
-}
-:root[data-scene='mist'] .site-scene img,
-:root[data-scene='paper'] .site-scene img {
-  opacity: 0;
 }
 :root[data-scene='paper'] .site-scene {
   background: var(--bg);
@@ -40,8 +29,8 @@ body {
 }
 :root[data-theme='dark'][data-scene='mist'] .site-scene {
   background:
-    radial-gradient(ellipse at 0 0, #264d52, transparent 65%),
-    radial-gradient(ellipse at 100% 80%, #463a60, transparent 65%), #142336;
+    radial-gradient(ellipse at 0 0, #244d75, transparent 65%),
+    radial-gradient(ellipse at 100% 80%, #293b60, transparent 65%), #10243b;
 }
 .glass-card {
   border: 1px solid var(--glass-edge);
@@ -97,6 +86,7 @@ body {
   letter-spacing: 0.09em;
 }
 .directory-toggle {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,6 +99,9 @@ body {
   list-style: none;
   font-size: 1rem;
   color: var(--body);
+}
+.site-directory {
+  flex-shrink: 0;
 }
 .directory-toggle::-webkit-details-marker {
   display: none;
@@ -357,11 +350,8 @@ main > .shell:not(.home-dashboard):not(.article-layout) {
   line-height: 1.8;
 }
 @supports (backdrop-filter: blur(1px)) {
-  .site-header {
-    backdrop-filter: blur(16px);
-  }
-  .glass-card {
-    backdrop-filter: blur(10px);
+  :root:is([data-wallpaper='fullscreen'], [data-wallpaper='transparent']) .site-header {
+    backdrop-filter: blur(12px);
   }
   :root[data-solid='true'] .glass-card,
   :root[data-solid='true'] .site-header {
@@ -431,6 +421,9 @@ main > .shell:not(.home-dashboard):not(.article-layout) {
   }
 }
 @media (max-width: 360px) {
+  .directory-toggle > .icon {
+    display: none;
+  }
   .directory-toggle {
     gap: var(--space-1);
     padding-inline: var(--space-2);

@@ -15,10 +15,10 @@ const catalog = parseCompanions(
   JSON.stringify(entries.map((entry) => ({ ...entry, image: '/Astro/' + entry.image }))),
 );
 
-test('all seven requested companions have local artwork and original encouragement', () => {
+test('only ATRI is published with local artwork and original encouragement', () => {
   assert.deepEqual(
     catalog.map((item) => item.id),
-    ['atri', 'tsumugi', 'shiki', 'kud', 'hitori', 'nijika', 'kita'],
+    ['atri'],
   );
   assert(catalog.every((item) => item.lines.length >= 2));
 });
@@ -42,7 +42,7 @@ test('malformed, duplicated and remote-image catalog entries cannot reach the wi
 });
 test('preferences survive valid saves, recover removed characters and respect mobile defaults', () => {
   const saved = {
-    id: 'kud',
+    id: 'atri',
     compact: false,
     hidden: true,
     quiet: true,
@@ -50,6 +50,10 @@ test('preferences survive valid saves, recover removed characters and respect mo
   };
   assert.deepEqual(parseCompanionPreference(JSON.stringify(saved), catalog, true), saved);
   assert.equal(parseCompanionPreference('{bad', catalog, true).compact, true);
+  assert.deepEqual(
+    parseCompanionPreference(JSON.stringify({ ...saved, id: 'hitori' }), catalog),
+    saved,
+  );
   assert.equal(parseCompanionPreference('null', catalog).hidden, false);
   assert.equal(
     parseCompanionPreference('{"id":"removed","compact":"false"}', catalog, true).id,

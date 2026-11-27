@@ -52,13 +52,13 @@
   text-shadow: 0 1px 4px var(--paper);
 }
 .companion-particle[data-tone='rose'] {
-  color: #dc75a0;
+  color: var(--ribbon);
 }
 .companion-particle[data-tone='gold'] {
   color: #c49b32;
 }
 .companion-particle[data-tone='mint'] {
-  color: #64a99d;
+  color: var(--accent);
 }
 .companion-avatar img {
   width: 100%;
@@ -157,7 +157,7 @@
   overscroll-behavior: contain;
 }
 .companion-picker::backdrop {
-  background: #10231c66;
+  background: #102c4866;
 }
 .companion-picker-heading {
   display: flex;
@@ -175,46 +175,27 @@
   font-size: var(--text-sm);
   line-height: 1.7;
 }
-.companion-choices {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-2);
-}
-.companion-choice {
-  display: grid;
-  justify-items: center;
-  align-content: start;
-  gap: var(--space-1);
-  min-width: 0;
-  padding: var(--space-2) var(--space-1) var(--space-3);
-  border: 1px solid transparent;
+.atri-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: var(--bg);
-  color: var(--text);
-  cursor: pointer;
-  transition:
-    background var(--duration-fast),
-    border-color var(--duration-fast),
-    translate var(--duration-normal) var(--ease-out);
-}
-.companion-choice img {
-  display: block;
-  width: 100%;
-  height: 105px;
-  object-fit: contain;
-  pointer-events: none;
-}
-.companion-choice strong {
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-.companion-choice small {
-  color: var(--muted);
-  font-size: 11px;
-}
-.companion-choice[aria-pressed='true'] {
   background: var(--soft);
-  border-color: var(--accent);
+}
+.atri-identity img {
+  width: 72px;
+  height: 90px;
+  object-fit: contain;
+}
+.atri-identity strong {
+  font-size: var(--text-lg);
+}
+.atri-identity p {
+  color: var(--body);
+  font-size: var(--text-sm);
+  margin-top: var(--space-2);
 }
 .companion-options {
   margin-top: var(--space-5);
@@ -257,10 +238,6 @@
   min-height: var(--control-size);
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .companion-choice:hover {
-    translate: 0 -2px;
-    background: var(--soft);
-  }
   .companion-avatar:hover img {
     rotate: -3deg;
   }
@@ -308,12 +285,6 @@
 @media (max-width: 40rem) {
   .companion-picker {
     padding: var(--space-4);
-  }
-  .companion-choices {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .companion-choice img {
-    height: 96px;
   }
   .companion-avatar {
     height: 140px;

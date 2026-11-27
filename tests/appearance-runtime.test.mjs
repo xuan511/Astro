@@ -220,7 +220,7 @@ test('appearance reset restores configured defaults and other-tab updates pass t
   assert.equal(app.state.sidebar, 'both');
   assert.equal(app.state.layout, 'grid');
   assert.equal(app.state.scene, 'coast');
-  assert.equal(app.hue, '165');
+  assert.equal(app.hue, '205');
 });
 test('appearance controls use the dialog controller and close on client navigation', () => {
   const app = harness();

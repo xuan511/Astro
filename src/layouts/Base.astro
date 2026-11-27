@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import Player from '../components/Player.astro';
 import QuickSearch from '../components/QuickSearch.astro';
 import Companion from '../components/Companion.astro';
+import Analytics from '../components/Analytics.astro';
 import Appearance from '../components/Appearance.astro';
 import { displayBootstrap } from '../lib/layout-preferences';
 import { presentation, appearanceDefaults } from '../config/presentation';
@@ -17,6 +18,7 @@ import { themeBootstrap } from '../lib/theme-preferences';
 import '../styles/global.css';
 import '../styles/shell.css';
 import '../styles/layout.css';
+import '../styles/analytics.css';
 interface Props extends SeoProps {
   section?: string;
 }
@@ -100,13 +102,18 @@ const pageMotion = {
     </a>
     <Header section={section} />
     <div class:list={['wallpaper-banner', 'shell', { 'is-home': isHome }]} aria-hidden="true">
-      <img
-        src={withBase(presentation.wallpaper.image)}
-        alt=""
-        width="1600"
-        height="900"
-        fetchpriority={isHome ? 'high' : 'auto'}
-      />
+      {isHome && (
+        <img
+          src={withBase(presentation.wallpaper.responsive.large)}
+          srcset={`${withBase(presentation.wallpaper.responsive.small)} 800w, ${withBase(presentation.wallpaper.responsive.large)} 1280w`}
+          sizes="(max-width: 800px) 100vw, 1280px"
+          alt=""
+          width="1600"
+          height="900"
+          fetchpriority={isHome ? 'high' : 'auto'}
+          decoding="async"
+        />
+      )}
       <span>在日常里，收藏微光。</span>
     </div>
     <div
@@ -144,6 +151,7 @@ const pageMotion = {
     <QuickSearch />
     <Companion />
     <Appearance />
+    <Analytics />
     <div id="site-announcement" class="sr-only" role="status" aria-live="polite"></div>
     <script>
       import '../scripts/site';

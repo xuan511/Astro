@@ -1,0 +1,15 @@
+---
+import type { CountName } from '../lib/analytics';
+interface Props {
+  metric: CountName;
+  label: string;
+  unit?: string;
+}
+const { metric, label, unit = '次' } = Astro.props;
+---
+
+<span class="visit-count">
+  <span>{label}</span>
+  <strong data-visit-count={metric}>—</strong>
+  <span>{unit}</span>
+</span>

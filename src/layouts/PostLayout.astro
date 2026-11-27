@@ -11,6 +11,7 @@ import { withBase, postPath, taxonomyPath, formatDate, readingMinutes } from '..
 import 'katex/dist/katex.min.css';
 import '../styles/prose.css';
 import TocLinks from '../components/TocLinks.astro';
+import VisitCount from '../components/VisitCount.astro';
 interface Props {
   post: CollectionEntry<'posts'>;
   previous?: CollectionEntry<'posts'>;
@@ -85,6 +86,7 @@ const jsonLd = {
             <time datetime={data.updatedAt.toISOString()}>更新于 {formatDate(data.updatedAt)}</time>
           )}
           <span>约 {readingMinutes(post.body)} 分钟</span>
+          <VisitCount metric="page_pv" label="阅读" />
         </div>
         <nav class="article-tags" aria-label="文章标签">
           {data.tags.map((tag) => (

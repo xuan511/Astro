@@ -3,6 +3,7 @@ import { site } from '../config/site';
 import { withBase } from '../lib/paths';
 import footerHtml from '../config/footer.html?raw';
 import { presentation } from '../config/presentation';
+import VisitCount from './VisitCount.astro';
 ---
 
 <footer class="site-footer shell">
@@ -42,7 +43,15 @@ import { presentation } from '../config/presentation';
     </>
   )}
   <div class="footer-custom" set:html={footerHtml} />
+  <div class="footer-statistics">
+    <VisitCount metric="site_pv" label="访问" />
+    <VisitCount metric="site_uv" label="访客" unit="位" />
+    <a href={withBase('stats/')}>访问统计</a>
+    <span class="sr-only" data-visit-status role="status" aria-live="polite">
+      正在读取访问统计
+    </span>
+  </div>
   <button class="companion-show" type="button" data-companion-show hidden>
-    小伙伴
+    亚托莉
   </button>
 </footer>

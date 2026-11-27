@@ -28,48 +28,6 @@ const personalities: Record<string, Personality> = {
     pet: '充电完成！再摸一下也可以哦。',
     celebrate: '收到好多喜欢！元气满满地出发～',
   },
-  tsumugi: {
-    sequence: ['sway', 'bow', 'twirl', 'bounce', 'shy'],
-    symbols: ['❀', '♡'],
-    tone: 'rose',
-    pet: '姆啾～今天也被温柔地接住啦。',
-    celebrate: '姆啾姆啾～把这些快乐都收藏起来！',
-  },
-  shiki: {
-    sequence: ['twirl', 'sway', 'cheer', 'bow', 'bounce'],
-    symbols: ['✿', '✧'],
-    tone: 'rose',
-    pet: '诶嘿，今天的好运分你一半。',
-    celebrate: '发现一份小幸运！这次要一起开心呀。',
-  },
-  kud: {
-    sequence: ['bounce', 'cheer', 'sway', 'twirl', 'bow'],
-    symbols: ['✧', '♡'],
-    tone: 'gold',
-    pet: '哇呼～摸摸头，元气加满！',
-    celebrate: '哇呼～收到超级多的喜欢啦！',
-  },
-  hitori: {
-    sequence: ['shy', 'bow', 'sway', 'bounce', 'cheer'],
-    symbols: ['♪', '♡'],
-    tone: 'rose',
-    pet: '我、我会努力不紧张的…谢谢你。',
-    celebrate: '被、被发现了！今天也谢谢你的陪伴…',
-  },
-  nijika: {
-    sequence: ['cheer', 'bounce', 'sway', 'bow', 'twirl'],
-    symbols: ['♫', '✦'],
-    tone: 'gold',
-    pet: '补充元气成功！下一拍也一起吧。',
-    celebrate: '这个节奏不错！再一起开心一点吧！',
-  },
-  kita: {
-    sequence: ['twirl', 'cheer', 'sway', 'bounce', 'bow'],
-    symbols: ['♪', '✦'],
-    tone: 'rose',
-    pet: '收到你的喜欢啦，闪闪发光～',
-    celebrate: '今天的快乐加倍！你也闪闪发光呀！',
-  },
 };
 const motions: Record<ReactionName, { duration: number; frames: Keyframe[] }> = {
   bounce: {

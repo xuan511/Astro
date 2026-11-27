@@ -51,8 +51,8 @@ function mount(supported = true) {
   return { root, figure, effects, batches, motion: context.motion };
 }
 
-test('every requested character has varied, finite responses and a personal petting line', () => {
-  const ids = ['atri', 'tsumugi', 'shiki', 'kud', 'hitori', 'nijika', 'kita'];
+test('ATRI has varied, finite responses and a personal petting line', () => {
+  const ids = ['atri'];
   for (const id of ids) {
     const names = Array.from({ length: 5 }, (_, i) => reactionFor(id, i).name);
     assert(new Set(names).size >= 4);
@@ -66,26 +66,26 @@ test('every requested character has varied, finite responses and a personal pett
       assert(plan.frames.every((frame) => typeof frame.transform === 'string'));
     }
   }
-  assert.notEqual(reactionFor('atri', 0).name, reactionFor('hitori', 0).name);
+  assert.deepEqual(reactionFor('hitori', 0), reactionFor('atri', 0));
   assert.equal(reactionFor('constructor', NaN).name, 'bounce');
 });
 test('triple-click surprise respects its time window and resets after a pause or clock rollback', () => {
   let tap = null;
   for (const now of [0, 200, 450]) tap = advanceTap(tap, now);
   assert.equal(tap.count, 3);
-  assert.equal(reactionFor('kud', 2, 'tap', tap.count).name, 'celebrate');
+  assert.equal(reactionFor('atri', 2, 'tap', tap.count).name, 'celebrate');
   assert.equal(advanceTap(tap, 1400).count, 1);
   assert.equal(advanceTap(tap, 100).count, 1);
-  assert.equal(reactionFor('kud', 3, 'tap', 4).name, 'twirl');
+  assert.equal(reactionFor('atri', 3, 'tap', 4).name, 'sway');
 });
 test('new clicks replace the previous animation batch, and stale completion cannot clear new effects', async () => {
   const app = mount();
   app.motion.play(reactionFor('atri', 0), true);
   const first = app.batches.slice();
-  app.motion.play(reactionFor('hitori', 0), true);
+  app.motion.play(reactionFor('atri', 1), true);
   await settle();
   assert(first.every((x) => x.result.canceled));
-  assert.equal(app.root.dataset.reaction, 'shy');
+  assert.equal(app.root.dataset.reaction, 'cheer');
   assert.equal(app.effects.children.length, 6);
   const second = app.batches.slice(first.length);
   assert(second.every((x) => Number.isFinite(x.options.duration) && !x.options.iterations));
@@ -96,9 +96,9 @@ test('new clicks replace the previous animation batch, and stale completion cann
 });
 test('quiet/reduced-motion fallback creates no effects, and interruption cancels everything', async () => {
   const app = mount();
-  assert.equal(app.motion.play(reactionFor('kud', 0, 'pet'), false), false);
+  assert.equal(app.motion.play(reactionFor('atri', 0, 'pet'), false), false);
   assert.equal(app.batches.length, 0);
-  app.motion.play(reactionFor('kita', 0, 'tap', 3), true);
+  app.motion.play(reactionFor('atri', 0, 'tap', 3), true);
   assert.equal(app.effects.children.length, 12);
   app.motion.stop();
   await settle();

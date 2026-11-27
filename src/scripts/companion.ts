@@ -36,7 +36,7 @@ if (element && catalog.length) {
     root.querySelector<HTMLElement>('[data-companion-effects]')!,
   );
   const picker = createDialogController(dialog, {
-    initialFocus: () => dialog.querySelector<HTMLButtonElement>('[aria-pressed="true"]'),
+    initialFocus: () => dialog.querySelector<HTMLInputElement>('[data-companion-quiet]'),
   });
   let messageTimer = 0;
   let holdTimer = 0;
@@ -122,9 +122,6 @@ if (element && catalog.length) {
       if (img.getAttribute('src') !== item.image) img.src = item.image;
       img.alt = img.closest('[data-companion-expand]') ? '' : item.name;
     });
-    root.querySelectorAll<HTMLButtonElement>('[data-companion-choice]').forEach((button) => {
-      button.setAttribute('aria-pressed', String(button.dataset.companionChoice === state.id));
-    });
     quiet.checked = state.quiet;
     position();
     document.querySelectorAll<HTMLButtonElement>('[data-companion-show]').forEach((button) => {
@@ -160,17 +157,7 @@ if (element && catalog.length) {
     } else if (button.hasAttribute('data-companion-pet')) greet('pet');
     else if (button.hasAttribute('data-companion-picker')) picker.open(button);
     else if (button.hasAttribute('data-companion-close')) picker.close();
-    else if (button.dataset.companionChoice) {
-      state.id = button.dataset.companionChoice;
-      lineIndex = 0;
-      reactionStep = 0;
-      taps = null;
-      dismissMessage();
-      save();
-      render();
-      picker.close();
-      greet('tap', false);
-    } else if (button.hasAttribute('data-companion-compact')) {
+    else if (button.hasAttribute('data-companion-compact')) {
       dismissMessage();
       state.compact = true;
       save();

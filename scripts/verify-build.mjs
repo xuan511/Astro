@@ -110,7 +110,21 @@ for (const file of pages) {
   const choices = JSON.parse(companionCatalog[1]);
   assert(choices.length > 0);
   assert.equal(new Set(choices.map((item) => item.id)).size, choices.length);
-  assert.equal((html.match(/\bdata-companion-choice=/g) || []).length, choices.length);
+  assert.deepEqual(
+    choices.map((item) => item.id),
+    ['atri'],
+    `Only ATRI may be published: ${file}`,
+  );
+  assert.equal((html.match(/\bdata-companion-choice=/g) || []).length, 0);
+  assert.equal(
+    (html.match(/\bdata-analytics-config(?:\s|>|=)/g) || []).length,
+    1,
+    `One counter configuration required: ${file}`,
+  );
+  assert(
+    !/<script\b[^>]*src="https?:\/\//.test(html),
+    `Remote executable scripts must not enter the page: ${file}`,
+  );
   for (const companion of choices) await exists(new URL(companion.image, site));
   assert.equal(audios.length, 1, `Expected one audio element: ${file}`);
   assert.match(audios[0][0], /\bid="journal-audio"/);
@@ -146,6 +160,12 @@ for (const file of pages) {
     }
   }
   verifyPresentation(html, { article: articlePage, label: file });
+  if (articlePage)
+    assert.equal(
+      (html.match(/\bdata-visit-count="page_pv"/g) || []).length,
+      1,
+      `One article reading count required: ${file}`,
+    );
   if (/class="[^\"]*katex/.test(html)) mathPages++;
   if (html.includes('astro-code')) highlightedPages++;
   assert(!html.includes('PRIVATE-DRAFT-NEVER-PUBLISH-SENTINEL'), `Draft exposed: ${file}`);
