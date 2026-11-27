@@ -1,4 +1,4 @@
-# 拾间 · 红叶清雨的个人博客
+# Qing Notes · 红叶清雨的个人博客
 
 红叶清雨的个人网站，以中文阅读、Markdown 写作和音乐为中心。使用 Astro 7、TypeScript、Content Collections 与 MDX，支持 GitHub Pages。由原版拾间渐进迁移，保留视觉语言、明确标记的示例内容与旧数据恢复入口。
 

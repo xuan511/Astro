@@ -12,7 +12,7 @@ const posts = await publishedPosts();
 const projects = (await getCollection('projects')).filter((project) => project.data.featured);
 ---
 
-<Base>
+<Base description={site.homeDescription}>
   <div class="home-journal" data-home-dashboard>
     <header class="journal-intro glass-card">
       <p class="eyebrow">{site.hero.note}</p>
