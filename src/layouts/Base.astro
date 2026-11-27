@@ -69,6 +69,9 @@ const pageMotion = {
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="light dark" />
     <SeoHead {title} {description} {noindex} {image} {ogType} />
+    {isHome && (
+      <meta name="google-site-verification" content="rsewA-R6CZpQvEXXO9iinn4m2JOPSnRIr76kWaWB2wU" />
+    )}
     <script is:inline set:html={themeBootstrap(preferenceKey, site.defaultTheme)} />
     <script
       is:inline
