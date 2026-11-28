@@ -16,13 +16,15 @@ import '../../styles/prose.css';
     />
     <div class="about-layout">
       <aside class="about-profile">
-        <img
-          class="avatar"
-          src={withBase(site.avatar)}
-          width="100"
-          height="100"
-          alt={`${site.author} 的头像`}
-        />
+        <span class="avatar avatar-portrait" style="--avatar-size:100px">
+          <img
+            src={withBase(site.avatar)}
+            width="384"
+            height="614"
+            alt={`${site.author} 的头像`}
+            decoding="async"
+          />
+        </span>
         <h2>{site.author}</h2>
         <div class="about-interests">
           {site.interests.map((interest) => (

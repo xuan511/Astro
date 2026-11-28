@@ -1,0 +1,25 @@
+/* Preserve the supplied portrait; frame the face in CSS, sharing one small cached image. */
+.avatar-portrait {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  aspect-ratio: 1;
+}
+.avatar-portrait > img,
+.brand-mark > .avatar-portrait-image {
+  position: absolute;
+  left: 50%;
+  top: -20%;
+  width: 180%;
+  max-width: none;
+  height: auto;
+  object-fit: initial;
+  transform: translateX(-50%);
+}
+.brand-mark:has(.avatar-portrait-image) {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}

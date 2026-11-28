@@ -22,7 +22,7 @@ export const site: SiteConfig = {
     '红叶清雨的个人博客，记录 STM32、ESP32 和 Linux 的开发笔记与项目实践，也收录个人日志与口琴谱。',
   author: '红叶清雨',
   description: '记录代码、日常与值得留下的片刻。',
-  avatar: 'images/avatar.svg',
+  avatar: 'images/avatar-user.webp',
   hero: {
     title: '记录，是生活的\n另一种回声。',
     description: '关于代码的思考，关于生活的碎片。\n把那些不想忘记的事情，慢慢写下来。',

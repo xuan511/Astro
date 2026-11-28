@@ -19,13 +19,15 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
   <>
     <section class="sidebar-card profile-widget">
       <a href={withBase('about/')}>
-        <img
-          class="avatar"
-          src={withBase(site.avatar)}
-          alt={`${site.author}的头像`}
-          width="76"
-          height="76"
-        />
+        <span class="avatar avatar-portrait" style="--avatar-size:76px">
+          <img
+            src={withBase(site.avatar)}
+            alt={`${site.author}的头像`}
+            width="384"
+            height="614"
+            decoding="async"
+          />
+        </span>
       </a>
       <h2>{site.author}</h2>
       <p>{site.description}</p>

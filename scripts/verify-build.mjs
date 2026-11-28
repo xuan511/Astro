@@ -32,7 +32,17 @@ let links = 0,
   mathPages = 0,
   highlightedPages = 0,
   jsGzip = 0,
+  optionalModelJsGzip = 0,
   cssGzip = 0;
+const optionalScripts = new Set();
+const framePath = 'companion/atri/';
+const frameHtml = await readFile(join(root, framePath, 'index.html'), 'utf8');
+// Only this isolated, noindex document may own the optional renderer bundle.
+for (const match of frameHtml.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/g)) {
+  const url = new URL(match[1], new URL(base + framePath, site));
+  optionalScripts.add(resolve(root, decodeURIComponent(url.pathname.slice(base.length))));
+}
+assert.equal(optionalScripts.size, 1, 'One isolated Live2D script entry required');
 async function exists(url) {
   assert.equal(url.origin, new URL(site).origin, `Unexpected origin: ${url}`);
   assert(url.pathname.startsWith(base), `Missing base path: ${url}`);
@@ -56,6 +66,14 @@ for (const file of pages) {
   const noindex = /<meta\b[^>]*name="robots"[^>]*content="[^"]*\bnoindex\b/.test(html);
   if (!isIndexablePath(url.pathname, base))
     assert(noindex, `Utility page must declare noindex: ${file}`);
+  if (path === framePath) {
+    assert.match(html, /<canvas\b/);
+    assert.match(html, /data-live2d-model="https:\/\/raw\.githubusercontent\.com\/luckykeeper\//);
+    assert(!html.includes('data-analytics-config'), 'Model frame must not inflate page views');
+    assert(!html.includes('<audio'), 'Model frame must remain silent');
+    for (const script of optionalScripts) await access(script);
+    continue;
+  }
   if (!noindex) indexablePages.add(url.href);
   assert.match(html, /<html[^>]+lang="zh-CN"/);
   const directories = [...html.matchAll(/<details\b[^>]*\bdata-site-directory\b[^>]*>/g)];
@@ -116,6 +134,12 @@ for (const file of pages) {
     `Only ATRI may be published: ${file}`,
   );
   assert.equal((html.match(/\bdata-companion-choice=/g) || []).length, 0);
+  assert.equal((html.match(/\bdata-companion-live2d(?:\s|>|=)/g) || []).length, 1);
+  assert(!/<iframe\b/.test(html), 'Live2D must wait for the visitor to enable it');
+  for (const script of optionalScripts) {
+    const name = relative(root, script).split(sep).join('/');
+    assert(!html.includes(name), 'Model engine must not be eagerly referenced by the shared shell');
+  }
   assert.equal(
     (html.match(/\bdata-analytics-config(?:\s|>|=)/g) || []).length,
     1,
@@ -203,8 +227,11 @@ for (const file of files) {
       !(await readFile(file, 'utf8')).includes('PRIVATE-DRAFT-NEVER-PUBLISH-SENTINEL'),
       `Draft leaked: ${file}`,
     );
-  if (assetPath.startsWith('_astro/') && ext === '.js')
-    jsGzip += gzipSync(await readFile(file)).length;
+  if (assetPath.startsWith('_astro/') && ext === '.js') {
+    const bytes = gzipSync(await readFile(file)).length;
+    if (optionalScripts.has(file)) optionalModelJsGzip += bytes;
+    else jsGzip += bytes;
+  }
   if (assetPath.startsWith('_astro/') && ext === '.css') {
     const css = await readFile(file, 'utf8');
     cssGzip += gzipSync(css).length;
@@ -270,6 +297,10 @@ for (const track of tracks)
     if (!/^https?:\/\//.test(path)) await exists(new URL(base + path, site));
   }
 assert(jsGzip < 60_000, `Main JS budget exceeded: ${jsGzip}`);
+assert(
+  optionalModelJsGzip > 0 && optionalModelJsGzip < 250_000,
+  `Optional Live2D engine budget exceeded: ${optionalModelJsGzip}`,
+);
 assert(cssGzip < 45_000, `Main CSS budget exceeded: ${cssGzip}`);
 const report = {
   base,
@@ -282,6 +313,7 @@ const report = {
   mathPages,
   highlightedPages,
   allMainJavaScriptGzip: jsGzip,
+  optionalLive2DJavaScriptGzip: optionalModelJsGzip,
   allMainStylesGzip: cssGzip,
   draftIsolation: 'passed',
   canonicalRssSitemap: 'passed',
@@ -301,6 +333,7 @@ if (process.env.GITHUB_STEP_SUMMARY) {
       `| 页面、资源与字体引用 | ${links} |`,
       `| 公开文章 / RSS | ${articles} / ${rssItems} |`,
       `| JS / CSS gzip 估算 | ${jsGzip} B / ${cssGzip} B |`,
+      `| 可选 Live2D JS gzip 估算（点击后加载） | ${optionalModelJsGzip} B |`,
       '| Canonical、Sitemap、草稿隔离 | 通过 |',
       '',
       '构建检查不等于正式部署成功，也不代表 Lighthouse 实测分数。',

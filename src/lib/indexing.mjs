@@ -7,6 +7,8 @@ export function isIndexablePath(pathname, base = '/') {
   return (
     !['404', '404.html', 'search', 'writing', 'legacy', 'projects/embedded-console'].includes(
       path,
-    ) && !path.startsWith('legacy/')
+    ) &&
+    !path.startsWith('legacy/') &&
+    !path.startsWith('companion/')
   );
 }

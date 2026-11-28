@@ -1,6 +1,7 @@
 import { createDialogController } from '../lib/dialog';
 import { advanceTap, reactionFor, type TapMemory } from '../lib/companion-reactions';
 import { createCompanionMotion } from './companion-motion';
+import { createLive2DFrame, shouldMountLive2D } from '../lib/live2d-frame';
 import {
   parseCompanions,
   parseCompanionPreference,
@@ -30,6 +31,65 @@ if (element && catalog.length) {
   const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
   const quiet = root.querySelector<HTMLInputElement>('[data-companion-quiet]')!;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const mobile = matchMedia('(max-width: 40rem)');
+  const liveToggle = root.querySelector<HTMLInputElement>('[data-companion-live2d]')!;
+  const liveStatus = root.querySelector<HTMLElement>('[data-live2d-status]')!;
+  const liveKey = `${key}:live2d`;
+  let liveEnabled = false;
+  try {
+    liveEnabled = localStorage.getItem(liveKey) === 'on';
+  } catch {
+    /* Optional preference. */
+  }
+  let loadTimer = 0;
+  const live = createLive2DFrame(
+    () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = root.dataset.live2dFrame!;
+      iframe.title = '亚托莉 Live2D 看板娘';
+      iframe.tabIndex = -1;
+      iframe.setAttribute('aria-hidden', 'true');
+      iframe.referrerPolicy = 'no-referrer';
+      root.querySelector('[data-live2d-host]')!.append(iframe);
+      loadTimer = window.setTimeout(() => live.fail(iframe), 22000);
+      return iframe;
+    },
+    (status) => {
+      root.dataset.live2d = status;
+      if (status !== 'loading') clearTimeout(loadTimer);
+      liveStatus.textContent =
+        status === 'loading'
+          ? '亚托莉正在准备中，首次加载约 3.5 MB…'
+          : status === 'ready'
+            ? 'Live2D 已就绪。移动鼠标、戳一戳或摸摸头试试。'
+            : status === 'error'
+              ? '模型暂时无法加载，已使用轻量形象。关闭后重新开启可重试。'
+              : liveEnabled
+                ? 'Live2D 已暂停。展开角色，并关闭安静陪伴后，在宽屏页面中启用。'
+                : '开启后加载动态模型，约 3.5 MB。手机与安静陪伴时使用轻量形象。';
+    },
+  );
+  const sendModel = (type: string, data: Record<string, number> = {}) => {
+    if (root.dataset.live2d === 'ready')
+      live.current?.contentWindow?.postMessage(
+        { source: 'qing-atri-control', type, ...data },
+        location.origin,
+      );
+  };
+  window.addEventListener('message', (event) => {
+    const iframe = live.current;
+    if (
+      !iframe ||
+      event.source !== iframe.contentWindow ||
+      event.origin !== location.origin ||
+      event.data?.source !== 'qing-atri'
+    )
+      return;
+    if (event.data.type === 'ready') {
+      live.ready(iframe);
+      schedulePosition();
+    } else if (event.data.type === 'error') live.fail(iframe);
+  });
   const motion = createCompanionMotion(
     root,
     root.querySelector<HTMLElement>('[data-companion-figure]')!,
@@ -123,6 +183,18 @@ if (element && catalog.length) {
       img.alt = img.closest('[data-companion-expand]') ? '' : item.name;
     });
     quiet.checked = state.quiet;
+    liveToggle.checked = liveEnabled;
+    live.sync(
+      shouldMountLive2D({
+        enabled: liveEnabled,
+        hidden: state.hidden,
+        compact: state.compact,
+        quiet: state.quiet,
+        reducedMotion: reducedMotion.matches,
+        mobile: mobile.matches,
+        away: document.hidden,
+      }),
+    );
     position();
     document.querySelectorAll<HTMLButtonElement>('[data-companion-show]').forEach((button) => {
       button.hidden = false;
@@ -136,6 +208,7 @@ if (element && catalog.length) {
     bubble.textContent = plan.line || item.lines[lineIndex++ % item.lines.length];
     bubble.hidden = false;
     motion.play(plan, !state.quiet && !reducedMotion.matches && !document.hidden);
+    sendModel(kind);
     messageTimer = window.setTimeout(dismissMessage, 4500);
   }
   document.addEventListener('click', (event) => {
@@ -186,6 +259,24 @@ if (element && catalog.length) {
     save();
     render();
   });
+  liveToggle.addEventListener('change', () => {
+    liveEnabled = liveToggle.checked;
+    try {
+      localStorage.setItem(liveKey, liveEnabled ? 'on' : 'off');
+    } catch {
+      /* Optional persistence. */
+    }
+    render();
+  });
+  avatar.addEventListener('pointermove', (event) => {
+    if (root.dataset.live2d !== 'ready' || drag?.moved) return;
+    const bounds = avatar.getBoundingClientRect();
+    sendModel('look', {
+      x: ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+      y: 1 - ((event.clientY - bounds.top) / bounds.height) * 2,
+    });
+  });
+  avatar.addEventListener('pointerleave', () => sendModel('reset'));
   avatar.addEventListener('pointerdown', (event) => {
     if (!event.isPrimary || event.button !== 0) return;
     suppressClick = false;
@@ -233,7 +324,9 @@ if (element && catalog.length) {
   avatar.addEventListener('contextmenu', (event) => event.preventDefault());
   reducedMotion.addEventListener('change', () => {
     if (reducedMotion.matches) motion.stop();
+    render();
   });
+  mobile.addEventListener('change', render);
   avatar.addEventListener('keydown', (event) => {
     if (event.key === 'Home') {
       event.preventDefault();
@@ -263,6 +356,7 @@ if (element && catalog.length) {
   document.addEventListener('visibilitychange', () => {
     root.classList.toggle('is-away', document.hidden);
     if (document.hidden) dismissMessage();
+    render();
   });
   document.addEventListener('astro:before-swap', () => {
     taps = null;

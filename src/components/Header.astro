@@ -20,7 +20,14 @@ function currentSection(path: string) {
   <div class="shell header-inner">
     <a class="brand" href={withBase()} aria-label={`${site.title} 首页`}>
       <span class="brand-mark">
-        <img src={withBase(presentation.navbar.logo)} alt="" width="36" height="36" />
+        <img
+          class={presentation.navbar.logo === site.avatar ? 'avatar-portrait-image' : undefined}
+          src={withBase(presentation.navbar.logo)}
+          alt=""
+          width="36"
+          height="36"
+          decoding="async"
+        />
       </span>
       <span>
         <span class="brand-name">{presentation.navbar.title}</span>
