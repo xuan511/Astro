@@ -27,7 +27,13 @@ const { data } = post;
     )}
     <div class="post-card-content">
       <div class="post-meta">
-        <span>{data.category}</span>
+        <span class="post-category">
+          <Icon
+            name={data.format === 'score' ? 'music' : data.kind === 'tech' ? 'code' : 'leaf'}
+            size={14}
+          />
+          {data.category}
+        </span>
         <span class="meta-dot"></span>
         <time datetime={data.publishedAt.toISOString()}>{formatDate(data.publishedAt)}</time>
         {data.demo && <span class="sample-badge">示例</span>}

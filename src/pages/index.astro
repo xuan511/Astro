@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PostFeed from '../components/PostFeed.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Icon from '../components/Icon.astro';
+import AnimeOrnament from '../components/AnimeOrnament.astro';
 import { site } from '../config/site';
 import { withBase } from '../lib/paths';
 import { publishedPosts } from '../lib/content';
@@ -15,9 +16,17 @@ const projects = (await getCollection('projects')).filter((project) => project.d
 <Base description={site.homeDescription}>
   <div class="home-journal" data-home-dashboard>
     <header class="journal-intro glass-card">
-      <p class="eyebrow">{site.hero.note}</p>
+      <div class="journal-overline">
+        <p class="eyebrow">{site.hero.note}</p>
+        <AnimeOrnament />
+      </div>
       <h1>{site.hero.title.replace('\n', '')}</h1>
-      <p>{site.description}</p>
+      <div class="journal-description">
+        <p>{site.description}</p>
+        <span class="journal-sticker">
+          <Icon name="heart" size={15} /> 收藏喜欢的瞬间
+        </span>
+      </div>
       <a
         class="journal-search"
         href={withBase('search/')}

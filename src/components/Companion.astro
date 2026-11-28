@@ -3,7 +3,6 @@ import Icon from './Icon.astro';
 import catalog from '../data/companions.json';
 import { withBase } from '../lib/paths';
 import '../styles/companion.css';
-import { live2d } from '../config/companion';
 const companions = catalog.map((item) => ({ ...item, image: withBase(item.image) }));
 const first = companions[0];
 ---
@@ -12,18 +11,23 @@ const first = companions[0];
   id="site-companion"
   class="companion"
   data-companion-root
-  data-live2d-frame={withBase(live2d.frame)}
   transition:persist="shijian-companion"
   aria-label="亚托莉陪伴"
   hidden
 >
   <p class="companion-bubble" data-companion-bubble role="status" aria-live="polite" hidden></p>
   <div class="companion-full" data-companion-full>
-    <div class="companion-stage">
-      <span class="companion-figure" data-companion-figure aria-hidden="true">
+    <button
+      class="companion-avatar"
+      type="button"
+      data-companion-greet
+      aria-label="和亚托莉互动"
+      aria-describedby="companion-help"
+    >
+      <span class="companion-figure" data-companion-figure>
         <img
           src={first.image}
-          alt=""
+          alt="亚托莉"
           width="256"
           height="320"
           loading="lazy"
@@ -32,18 +36,9 @@ const first = companions[0];
           decoding="async"
           data-companion-image
         />
-        <span class="companion-live2d" data-live2d-host></span>
       </span>
-      <button
-        class="companion-avatar"
-        type="button"
-        data-companion-greet
-        aria-label="和亚托莉互动"
-        aria-describedby="companion-help"
-      >
-        <span class="companion-effects" data-companion-effects aria-hidden="true"></span>
-      </button>
-    </div>
+      <span class="companion-effects" data-companion-effects aria-hidden="true"></span>
+    </button>
     <div class="companion-toolbar">
       <button
         class="icon-button"
@@ -119,27 +114,6 @@ const first = companions[0];
       戳一戳、连续点三下，或长按摸摸头。小动作只在互动时播放，音乐响起时也会轻轻摇摆。
     </p>
     <div class="companion-options">
-      <label>
-        <input type="checkbox" data-companion-live2d />
-        Live2D 亚托莉
-      </label>
-      <p data-live2d-status role="status">
-        开启后加载立体动态模型，约 3.5 MB。手机与安静陪伴时使用轻量形象。
-      </p>
-      <p class="companion-credit">
-        模型：
-        <a href={live2d.authorUrl} target="_blank" rel="noreferrer">
-          {live2d.author}
-        </a>
-        ·{' '}
-        <a href={live2d.source} target="_blank" rel="noreferrer">
-          素材来源
-        </a>
-        ·{' '}
-        <a href="https://github.com/hacxy/l2d" target="_blank" rel="noreferrer">
-          Live2D 引擎
-        </a>
-      </p>
       <label>
         <input type="checkbox" data-companion-quiet />
         安静陪伴，减少角色动作

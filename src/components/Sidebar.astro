@@ -6,6 +6,7 @@ import { groupPostsByTaxonomy } from '../lib/post-query';
 import { withBase, postPath, taxonomyPath, formatDate } from '../lib/paths';
 import Icon from './Icon.astro';
 import VisitCount from './VisitCount.astro';
+import AnimeOrnament from './AnimeOrnament.astro';
 interface Props {
   side: 'left' | 'right';
 }
@@ -18,6 +19,9 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
 {side === 'left' ? (
   <>
     <section class="sidebar-card profile-widget">
+      <div class="profile-decoration">
+        <AnimeOrnament compact />
+      </div>
       <a href={withBase('about/')}>
         <span class="avatar avatar-portrait" style="--avatar-size:76px">
           <img
@@ -29,6 +33,7 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
           />
         </span>
       </a>
+      <p class="profile-label">海风与日常的手记</p>
       <h2>{site.author}</h2>
       <p>{site.description}</p>
       <div class="profile-topics">

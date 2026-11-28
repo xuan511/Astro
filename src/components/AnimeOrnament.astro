@@ -1,0 +1,40 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<svg
+  class:list={['anime-ornament', { compact }]}
+  viewBox="0 0 140 88"
+  width="140"
+  height="88"
+  fill="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path
+    class="anime-trail"
+    d="M8 64c23-45 96-52 120-21S51 93 43 56c-3-15 22-36 59-44"
+    stroke="currentColor"
+    stroke-width="1.2"
+    stroke-dasharray="3 5"
+  />
+  <path
+    class="anime-star"
+    d="m75 13 9 22 22 9-22 9-9 22-9-22-22-9 22-9Z"
+    fill="currentColor"
+    stroke="currentColor"
+    stroke-linejoin="round"
+    stroke-width="2"
+  />
+  <path d="m75 30 4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill="var(--paper)" />
+  <path
+    class="anime-pink"
+    d="m24 18 3 8 8 3-8 3-3 8-3-8-8-3 8-3ZM115 58l3 8 8 3-8 3-3 8-3-8-8-3 8-3Z"
+    fill="currentColor"
+  />
+  <circle cx="114" cy="22" r="3" stroke="currentColor" stroke-width="1.5" />
+  <circle cx="40" cy="70" r="2" fill="currentColor" />
+</svg>

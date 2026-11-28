@@ -1,0 +1,269 @@
+/* Coastal anime stationery. Decorative only: no extra requests, fonts or animation loops. */
+:root {
+  --anime-blush: color-mix(in srgb, var(--sand) 65%, var(--paper));
+  --anime-edge: color-mix(in srgb, var(--accent) 22%, var(--line));
+  --anime-pink: color-mix(in srgb, var(--ribbon) 76%, var(--text));
+  --anime-grid: color-mix(in srgb, var(--line) 35%, transparent);
+}
+.anime-ornament {
+  display: block;
+  flex-shrink: 0;
+  width: 112px;
+  height: 70px;
+  color: var(--accent);
+  pointer-events: none;
+}
+.anime-ornament .anime-trail {
+  opacity: 0.45;
+}
+.anime-ornament .anime-pink {
+  color: var(--anime-pink);
+}
+.anime-ornament .anime-star {
+  opacity: 0.8;
+}
+.anime-ornament.compact {
+  width: 72px;
+  height: 46px;
+}
+.journal-intro {
+  background: linear-gradient(135deg, var(--glass) 55%, var(--anime-blush));
+  border-color: var(--anime-edge);
+}
+.journal-overline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: 36px;
+  margin-top: -8px;
+}
+.journal-overline .anime-ornament {
+  width: 88px;
+  height: 56px;
+}
+.journal-description {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.journal-description > p {
+  color: var(--body);
+  font-size: var(--text-base);
+}
+.journal-overline .eyebrow {
+  max-width: 24rem;
+}
+.journal-intro .journal-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 3px 12px;
+  border: 1px dashed var(--anime-edge);
+  border-radius: 6px 14px 14px 6px;
+  background: var(--paper);
+  color: var(--anime-pink);
+  font-size: var(--text-sm);
+}
+.journal-sticker > svg {
+  fill: var(--anime-blush);
+}
+.journal-search {
+  border-radius: 12px 12px 22px 12px;
+  border-color: var(--anime-edge);
+}
+.site-header {
+  border-bottom: 3px solid var(--anime-edge);
+}
+.brand-name {
+  text-shadow: 2px 2px 0 var(--soft);
+}
+.directory-toggle,
+.layout-options {
+  background: linear-gradient(135deg, var(--paper), var(--soft));
+}
+.directory-group > p {
+  padding-left: 10px;
+  border-left: 3px solid var(--anime-pink);
+}
+.profile-widget {
+  position: relative;
+  overflow: hidden;
+  padding-top: 42px;
+  background:
+    radial-gradient(circle, var(--anime-grid) 1px, transparent 1.5px) 0 0 / 10px 10px,
+    linear-gradient(135deg, var(--soft), var(--anime-blush)) 0 0 / 100% 76px no-repeat,
+    var(--glass);
+}
+.profile-widget > :not(.profile-decoration) {
+  position: relative;
+}
+.profile-decoration {
+  position: absolute;
+  right: 4px;
+  top: 8px;
+}
+.profile-widget .avatar {
+  outline: 1px dashed var(--anime-edge);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--paper) 60%, transparent);
+  margin-bottom: var(--space-3);
+}
+.profile-widget .profile-label {
+  width: fit-content;
+  margin: 0 auto var(--space-3);
+  padding: 2px 12px;
+  border-radius: 4px;
+  background: var(--anime-blush);
+  color: var(--anime-pink);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+}
+.profile-topics span,
+.tag-widget a {
+  border: 1px dashed var(--anime-edge);
+  border-radius: 10px 4px 10px 4px;
+}
+.sidebar-card:not(.profile-widget) > h2,
+.section-heading > h2,
+.toc > h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.sidebar-card:not(.profile-widget) > h2::before,
+.section-heading > h2::before,
+.toc > h2::before {
+  content: '';
+  width: 13px;
+  height: 17px;
+  flex-shrink: 0;
+  background: var(--anime-pink);
+  clip-path: polygon(50% 0, 63% 37%, 100% 50%, 63% 63%, 50% 100%, 37% 63%, 0 50%, 37% 37%);
+}
+.sidebar-note {
+  border: 1px dashed var(--anime-edge);
+  background: linear-gradient(140deg, var(--soft), var(--anime-blush));
+  border-radius: 6px 24px 24px 24px;
+}
+.journal-collections a {
+  border-radius: 12px 12px 12px 4px;
+  box-shadow: 0 3px 0 var(--soft);
+}
+.post-feed .post-card {
+  border-color: var(--anime-edge);
+  border-radius: 12px 24px 12px 24px;
+  background: linear-gradient(150deg, var(--glass) 78%, var(--soft));
+  transition:
+    border-color var(--duration-fast),
+    box-shadow var(--duration-normal);
+}
+.post-card .post-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 8px 8px 8px 2px;
+  background: var(--soft);
+  border: 1px solid var(--anime-edge);
+  color: var(--accent);
+  line-height: 1.6;
+}
+.post-card .tag-line > span {
+  color: var(--accent);
+}
+.post-card .post-card-tail {
+  border-top: 1px dashed var(--line);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+}
+.post-feed .post-card .post-card-tail {
+  margin-top: auto;
+}
+.prose blockquote {
+  border-left-color: var(--anime-pink);
+  background: linear-gradient(90deg, var(--soft), transparent);
+}
+.mini-player,
+.player-capsule,
+.companion-toolbar {
+  border-color: var(--anime-edge);
+  background: linear-gradient(115deg, var(--paper) 40%, var(--soft));
+  box-shadow:
+    0 5px 0 color-mix(in srgb, var(--soft) 70%, transparent),
+    var(--shadow-float);
+}
+.mini-cover {
+  border-radius: 50%;
+  border: 3px solid var(--soft);
+}
+.capsule-cover {
+  outline: 1px dashed var(--anime-edge);
+  outline-offset: 3px;
+}
+.player-play {
+  box-shadow: 0 0 0 4px var(--soft);
+}
+.queue-track.current-track {
+  border-color: var(--anime-edge);
+  background: linear-gradient(100deg, var(--soft), var(--anime-blush));
+}
+:is(.queue-dialog, .appearance-dialog, .companion-picker, .search-dialog) {
+  border-color: var(--anime-edge);
+  border-top: 4px solid var(--anime-edge);
+  background: linear-gradient(145deg, var(--paper) 75%, var(--soft));
+}
+:is(.queue-heading, .appearance-heading, .companion-picker-heading, .search-dialog-heading)
+  .eyebrow::before {
+  width: 10px;
+  height: 10px;
+  rotate: 45deg;
+  border-radius: 2px;
+  background: var(--anime-pink);
+}
+.companion-bubble {
+  border-style: dashed;
+}
+.category-widget small {
+  background: var(--soft);
+  border-radius: 50%;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .post-feed .post-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .journal-overline:hover .anime-star {
+    transform: rotate(8deg);
+    transform-origin: 75px 44px;
+  }
+  .anime-star {
+    transition: transform 240ms var(--ease-out);
+  }
+}
+@media (max-width: 40rem) {
+  .journal-overline {
+    margin-top: -4px;
+  }
+  .journal-overline .anime-ornament {
+    width: 64px;
+    height: 46px;
+  }
+  .journal-overline .eyebrow {
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+  }
+  .journal-intro .journal-sticker {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .anime-ornament,
+  .profile-decoration {
+    display: none;
+  }
+  .post-feed .post-card {
+    border-color: CanvasText;
+  }
+}
