@@ -9,11 +9,7 @@ import '../../styles/prose.css';
 
 <Base title="关于我" description={site.description}>
   <div class="shell">
-    <PageHeading
-      title={`你好，我是 ${site.author}。`}
-      eyebrow="BEHIND THE WORDS"
-      description={site.description}
-    />
+    <PageHeading title="关于我" />
     <div class="about-layout">
       <aside class="about-profile">
         <span class="avatar avatar-portrait" style="--avatar-size:100px">
@@ -46,14 +42,9 @@ import '../../styles/prose.css';
         </nav>
       </aside>
       <article class="prose">
-        <h2>一个可以慢慢生长的地方</h2>
-        {site.about.map((paragraph) => (
-          <p>{paragraph}</p>
-        ))}
-        <h2>文字之外，也做一点东西</h2>
-        <p>一些好奇心，会变成代码。已经开始的尝试与还在改进的项目，都整理在这里。</p>
+        <h2>项目</h2>
         <a class="button" href={withBase('projects/')}>
-          看看我的项目 <Icon name="arrow" size={15} />
+          项目列表 <Icon name="arrow" size={15} />
         </a>
         {site.timeline.length > 0 && (
           <>
@@ -68,9 +59,6 @@ import '../../styles/prose.css';
             </ol>
           </>
         )}
-        <blockquote>
-          <p>{site.footer}</p>
-        </blockquote>
       </article>
     </div>
   </div>

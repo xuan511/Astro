@@ -17,15 +17,8 @@ const projects = (await getCollection('projects')).filter((project) => project.d
   <div class="home-journal" data-home-dashboard>
     <header class="journal-intro glass-card">
       <div class="journal-overline">
-        <p class="eyebrow">{site.hero.note}</p>
+        <h1>{site.title}</h1>
         <AnimeOrnament />
-      </div>
-      <h1>{site.hero.title.replace('\n', '')}</h1>
-      <div class="journal-description">
-        <p>{site.description}</p>
-        <span class="journal-sticker">
-          <Icon name="heart" size={15} /> 收藏喜欢的瞬间
-        </span>
       </div>
       <a
         class="journal-search"
@@ -34,13 +27,13 @@ const projects = (await getCollection('projects')).filter((project) => project.d
         aria-label="搜索文章、项目与随记"
       >
         <Icon name="search" size={18} />
-        <span>搜索代码、日常，或一个新想法</span>
+        <span>搜索文章、项目</span>
         <kbd data-search-shortcut>Ctrl K</kbd>
       </a>
     </header>
     <section id="latest" aria-labelledby="latest-heading">
       <div class="section-heading">
-        <h2 id="latest-heading">最近的记录</h2>
+        <h2 id="latest-heading">最新文章</h2>
         <a class="text-link" href={withBase('archive/')}>
           全部归档
         </a>
@@ -64,7 +57,7 @@ const projects = (await getCollection('projects')).filter((project) => project.d
     </section>
     <section class="journal-projects" aria-labelledby="projects-heading">
       <div class="section-heading">
-        <h2 id="projects-heading">把想法做出来</h2>
+        <h2 id="projects-heading">项目</h2>
         <a class="text-link" href={withBase('projects/')}>
           所有项目
         </a>

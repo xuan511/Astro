@@ -7,20 +7,19 @@ import { taxonomyPath, withBase } from '../lib/paths';
 import { groupPostsByTaxonomy } from '../lib/post-query';
 interface Props {
   title: string;
-  eyebrow: string;
   description: string;
   posts: CollectionEntry<'posts'>[];
   kind?: 'tech' | 'life' | 'log';
   section?: string;
 }
-const { title, eyebrow, description, posts, section } = Astro.props;
+const { title, description, posts, section } = Astro.props;
 const categories = groupPostsByTaxonomy(posts, 'category');
 ---
 
 <Base title={title} description={description} section={section}>
   <div class="post-index">
     <div class="index-heading">
-      <PageHeading title={title} eyebrow={eyebrow} description={description} />
+      <PageHeading title={title} />
       <nav class="filter-links" aria-label="文章分类">
         <a class="pill" href={withBase('archive/')}>
           全部归档
@@ -36,8 +35,7 @@ const categories = groupPostsByTaxonomy(posts, 'category');
       <PostFeed posts={posts} />
       {posts.length === 0 && (
         <div class="empty-state">
-          <h2>这里还很安静。</h2>
-          <p>新的记录会从下一次落笔开始。</p>
+          <h2>暂无文章</h2>
         </div>
       )}
     </section>

@@ -99,14 +99,7 @@
   color: var(--body);
   overflow-wrap: anywhere;
 }
-.project-preview-content .project-preview-note {
-  margin-block: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: var(--leading-body);
-}
+
 .project-preview-actions {
   display: flex;
   align-items: center;

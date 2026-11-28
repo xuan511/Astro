@@ -41,7 +41,7 @@ const suggestions = [...counts]
         name="q"
         type="search"
         maxlength="120"
-        placeholder="标题、正文、标签或项目 ID…"
+        placeholder="搜索文章、项目"
         autocomplete="off"
         enterkeyhint="search"
         data-search-input
@@ -93,7 +93,7 @@ const suggestions = [...counts]
   </div>
   {suggestions.length > 0 && (
     <div class="search-suggestions" data-search-suggestions>
-      <span>从一个标签开始</span>
+      <span>标签</span>
       {suggestions.map((tag) => (
         <button class="pill" type="button" data-search-suggestion={tag}>
           #{tag}
@@ -101,9 +101,7 @@ const suggestions = [...counts]
       ))}
     </div>
   )}
-  <p role="status" aria-live="polite" class="search-status" data-search-status>
-    输入关键词，搜索公开文章与项目。
-  </p>
+  <p role="status" aria-live="polite" class="search-status" data-search-status></p>
   <div class="search-results" aria-busy="false" data-search-results></div>
   <button type="button" class="button search-more" data-search-more hidden>
     显示更多结果

@@ -161,14 +161,13 @@ const first = tracks[0];
   <dialog class="queue-dialog" id="queue-dialog" aria-labelledby="queue-title">
     <div class="queue-heading">
       <div>
-        <p class="eyebrow">A SOUNDTRACK FOR TODAY</p>
-        <h2 id="queue-title">给日常一点背景乐</h2>
+        <h2 id="queue-title">播放列表</h2>
       </div>
       <button class="icon-button" type="button" data-queue-close aria-label="关闭播放列表">
         <Icon name="close" />
       </button>
     </div>
-    <p class="queue-intro">{tracks.length} 首音乐 · 第一次播放，由你按下开始。</p>
+    <p class="queue-intro">{tracks.length} 首</p>
     <div class="queue-tracks">
       {tracks.map((track, index) => (
         <button

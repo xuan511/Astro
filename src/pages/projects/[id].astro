@@ -18,7 +18,7 @@ const { data } = project;
 
 <Base title={data.name} description={data.description}>
   <div class="shell project-detail">
-    <PageHeading title={data.name} eyebrow="PROJECT JOURNAL" description={data.description}>
+    <PageHeading title={data.name}>
       <div class="project-detail-meta">
         <span class="project-status">{data.status}</span>
         <a class="button" href={data.github} target="_blank" rel="noopener noreferrer">
@@ -39,7 +39,8 @@ const { data } = project;
       />
     )}
     <article class="prose">
-      <h2>关于这个项目</h2>
+      <p>{data.description}</p>
+      <h2>项目说明</h2>
       {data.details.map((paragraph) => (
         <p>{paragraph}</p>
       ))}
@@ -59,7 +60,7 @@ const { data } = project;
       </section>
     )}
     <a class="text-link project-detail-return" href={withBase('projects/')}>
-      继续看看其他项目 <Icon name="arrow" size={15} />
+      项目列表 <Icon name="arrow" size={15} />
     </a>
   </div>
 </Base>

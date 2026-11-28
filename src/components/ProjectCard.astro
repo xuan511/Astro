@@ -16,7 +16,6 @@ const titleId = `project-card-title-${project.id}`;
 <article class="project-card">
   <a class="project-card-link" href={projectPath(project.id)} aria-labelledby={titleId}>
     <div class="project-card-top">
-      <span class="project-number">{String(index + 1).padStart(2, '0')} / PROJECT JOURNAL</span>
       <span class="project-status">{data.status}</span>
     </div>
     <div class="project-glyph" aria-hidden="true">

@@ -36,39 +36,13 @@
   justify-content: space-between;
   gap: var(--space-3);
   height: 36px;
-  margin-top: -8px;
+  margin-top: 0;
 }
 .journal-overline .anime-ornament {
   width: 88px;
   height: 56px;
 }
-.journal-description {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-.journal-description > p {
-  color: var(--body);
-  font-size: var(--text-base);
-}
-.journal-overline .eyebrow {
-  max-width: 24rem;
-}
-.journal-intro .journal-sticker {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 3px 12px;
-  border: 1px dashed var(--anime-edge);
-  border-radius: 6px 14px 14px 6px;
-  background: var(--paper);
-  color: var(--anime-pink);
-  font-size: var(--text-sm);
-}
-.journal-sticker > svg {
-  fill: var(--anime-blush);
-}
+
 .journal-search {
   border-radius: 12px 12px 22px 12px;
   border-color: var(--anime-edge);
@@ -110,16 +84,7 @@
   box-shadow: 0 0 0 8px color-mix(in srgb, var(--paper) 60%, transparent);
   margin-bottom: var(--space-3);
 }
-.profile-widget .profile-label {
-  width: fit-content;
-  margin: 0 auto var(--space-3);
-  padding: 2px 12px;
-  border-radius: 4px;
-  background: var(--anime-blush);
-  color: var(--anime-pink);
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-}
+
 .profile-topics span,
 .tag-widget a {
   border: 1px dashed var(--anime-edge);
@@ -244,18 +209,11 @@
 }
 @media (max-width: 40rem) {
   .journal-overline {
-    margin-top: -4px;
+    margin-top: 0;
   }
   .journal-overline .anime-ornament {
     width: 64px;
     height: 46px;
-  }
-  .journal-overline .eyebrow {
-    font-size: var(--text-xs);
-    letter-spacing: 0.04em;
-  }
-  .journal-intro .journal-sticker {
-    display: none;
   }
 }
 @media (forced-colors: active) {
@@ -266,4 +224,8 @@
   .post-feed .post-card {
     border-color: CanvasText;
   }
+}
+
+.journal-overline h1 {
+  margin: 0;
 }

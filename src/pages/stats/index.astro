@@ -12,31 +12,23 @@ const groups = groupPostsByTaxonomy(posts, 'category');
 
 <Base title="访问统计" description="Qing Notes 的累计访问、今日访问与内容分布。" section="stats/">
   <div class="shell statistics-page">
-    <PageHeading
-      title="每一次来访，都留下回声"
-      eyebrow="SITE STATISTICS"
-      description="看看小站被翻阅的次数，也看看记录慢慢积累的样子。"
-    />
+    <PageHeading title="访问统计" />
     <div class="statistics-grid">
       <section>
         <h2>累计访问量</h2>
         <VisitCount metric="site_pv" label="" />
-        <p>全站页面打开次数</p>
       </section>
       <section>
-        <h2>累计访客数</h2>
+        <h2>累计访客数（估算）</h2>
         <VisitCount metric="site_uv" label="" unit="位" />
-        <p>由统计服务估算的访客数</p>
       </section>
       <section>
         <h2>今日访问量</h2>
         <VisitCount metric="today_pv" label="" />
-        <p>当天的页面打开次数</p>
       </section>
       <section>
-        <h2>今日访客数</h2>
+        <h2>今日访客数（估算）</h2>
         <VisitCount metric="today_uv" label="" unit="位" />
-        <p>同一访客当天多次访问去重</p>
       </section>
     </div>
     <p class="statistics-status" data-visit-status role="status" aria-live="polite">
@@ -53,21 +45,22 @@ const groups = groupPostsByTaxonomy(posts, 'category');
         ))}
       </nav>
     </section>
-    <section class="statistics-explainer" id="counting">
-      <h2>这些数字如何记录</h2>
-      <p>
-        本站于 {analytics.introducedAt} 接入{' '}
-        <a href={analytics.providerUrl} target="_blank" rel="noopener noreferrer">
-          {analytics.provider}
-        </a>
-        。文章标题下显示该页面的累计阅读次数，站内切页也会计数。同一页面的滚动、展开目录或播放音乐不会重复增加阅读量。
-      </p>
-      <p>
-        访问统计按域名聚合，文章按完整页面路径区分；查询参数和页内锚点会移除。统计服务接收当前公开页面地址及请求连接信息，用于累计与去重；本站不发送搜索词、来源页参数或页面内点击事件。
-      </p>
-      <p>
-        今日数据每天重置。计数不能追溯接入前未记录的访问，也不代表准确的真人数量。服务被拦截或暂时不可用时显示「—」，正文和音乐仍可正常使用。这里展示累计与今日汇总，不提供未经采集的历史趋势。
-      </p>
+    <section class="statistics-source">
+      <h2>统计信息</h2>
+      <dl>
+        <div>
+          <dt>服务</dt>
+          <dd>
+            <a href={analytics.providerUrl} target="_blank" rel="noopener noreferrer">
+              {analytics.provider}
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt>接入日期</dt>
+          <dd>{analytics.introducedAt}</dd>
+        </div>
+      </dl>
     </section>
   </div>
 </Base>

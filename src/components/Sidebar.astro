@@ -33,9 +33,7 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
           />
         </span>
       </a>
-      <p class="profile-label">海风与日常的手记</p>
       <h2>{site.author}</h2>
-      <p>{site.description}</p>
       <div class="profile-topics">
         {site.interests.map((interest) => (
           <span>{interest}</span>
@@ -64,7 +62,7 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
       </nav>
     </section>
     <section class="sidebar-card browse-widget">
-      <h2>在小站里走走</h2>
+      <h2>导航</h2>
       {presentation.navbar.links.map((group) => (
         <details class="sidebar-directory">
           <summary>
@@ -85,16 +83,15 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
       ))}
     </section>
     <a class="sidebar-card sidebar-note" href={withBase('music/scores/')}>
-      <span class="eyebrow">SUMMER POCKETS</span>
-      <strong>给音乐留一点时间</strong>
-      <span>半音阶口琴谱与夏日的旋律。</span>
+      <strong>Summer Pockets</strong>
+      <span>半音阶口琴谱</span>
       <Icon name="music" size={24} />
     </a>
   </>
 ) : (
   <>
     <section class="sidebar-card sidebar-statistics">
-      <h2>小站足迹</h2>
+      <h2>访问统计</h2>
       <VisitCount metric="site_pv" label="累计访问" />
       <VisitCount metric="site_uv" label="累计访客" unit="位" />
       <a class="text-link" href={withBase('stats/')}>
@@ -113,7 +110,7 @@ const tags = groupPostsByTaxonomy(posts, 'tags').sort((a, b) => b.posts.length -
       </nav>
     </section>
     <section class="sidebar-card">
-      <h2>沿着标签继续读</h2>
+      <h2>标签</h2>
       <nav class="tag-widget" aria-label="侧栏文章标签">
         {tags.slice(0, 12).map((group) => (
           <a href={taxonomyPath('tags', group.name)}>#{group.name}</a>

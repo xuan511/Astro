@@ -96,7 +96,6 @@ const first = companions[0];
   <dialog id="companion-picker" class="companion-picker" aria-labelledby="companion-picker-title">
     <div class="companion-picker-heading">
       <div>
-        <p class="eyebrow">ATRI · MY DEAR MOMENTS</p>
         <h2 id="companion-picker-title">亚托莉的陪伴设置</h2>
       </div>
       <button class="icon-button" type="button" data-companion-close aria-label="关闭陪伴设置">
@@ -107,18 +106,14 @@ const first = companions[0];
       <img src={first.image} alt="" width="72" height="90" loading="lazy" decoding="async" />
       <div>
         <strong>亚托莉</strong>
-        <p>陪你阅读，也提醒你休息充电。</p>
       </div>
     </div>
-    <p class="companion-picker-note">
-      戳一戳、连续点三下，或长按摸摸头。小动作只在互动时播放，音乐响起时也会轻轻摇摆。
-    </p>
     <div class="companion-options">
       <label>
         <input type="checkbox" data-companion-quiet />
-        安静陪伴，减少角色动作
+        安静陪伴
       </label>
-      <p>角色可以拖动；手机默认收起。隐藏后可从页脚「亚托莉」找回来。</p>
+      <p>隐藏后从页脚「亚托莉」唤回。</p>
       <div>
         <button class="button" type="button" data-companion-reset>
           位置复位

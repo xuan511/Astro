@@ -11,9 +11,4 @@ export async function getStaticPaths() {
 const { category, posts } = Astro.props;
 ---
 
-<PostIndex
-  title={category}
-  eyebrow="COLLECTION"
-  description={`归在「${category}」里的文字与片刻。`}
-  posts={posts}
-/>
+<PostIndex title={category} description={`${category} 分类文章。`} posts={posts} />

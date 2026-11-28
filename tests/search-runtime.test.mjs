@@ -266,7 +266,7 @@ test('scope buttons and removable conditions keep filtering, pressed states and 
   assert.equal(app.nodes['remove-query'].hidden, true);
   assert.equal(app.nodes['remove-kind'].hidden, false);
   assert.equal(app.document.activeElement, app.nodes.input);
-  assert.equal(app.nodes.status.textContent, '输入关键词，在项目中查找。');
+  assert.equal(app.nodes.status.textContent, '');
 
   app.input('Linux');
   await setImmediate();

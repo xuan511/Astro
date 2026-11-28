@@ -52,7 +52,6 @@ export const presentation = {
   navbar: {
     logo: site.avatar,
     title: site.title,
-    subtitle: `${site.author}的个人手记`,
     links: site.navigation,
   },
 };

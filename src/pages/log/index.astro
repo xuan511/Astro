@@ -4,9 +4,4 @@ import { publishedPosts } from '../../lib/content';
 const posts = await publishedPosts('log');
 ---
 
-<PostIndex
-  title="日志"
-  eyebrow="JOURNAL"
-  description="按日期查阅已发布的日志。"
-  posts={posts}
-/>
+<PostIndex title="日志" description="按日期查阅已发布的日志。" posts={posts} />

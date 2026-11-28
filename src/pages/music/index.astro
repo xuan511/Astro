@@ -11,13 +11,9 @@ const first = tracks[0];
 const scores = await publishedScores();
 ---
 
-<Base title="音乐房间" description="给日常一点背景乐。选择一首音乐，让时间慢下来。">
+<Base title="音乐台" description="音乐播放列表与半音阶口琴谱。">
   <div class="shell">
-    <PageHeading
-      title="给日常一点背景乐"
-      eyebrow="THE LISTENING ROOM"
-      description="文字之外，还有旋律。\n选择一首，让时间慢下来。"
-    />
+    <PageHeading title="音乐台" />
     {first ? (
       <div class="music-room">
         <section
@@ -82,16 +78,15 @@ const scores = await publishedScores();
               />
             </label>
           </div>
-          <p class="mode-hint" id="room-mode-hint" data-mode-hint>
+          <p class="sr-only" id="room-mode-hint" data-mode-hint>
             按歌单顺序播放，最后一首结束后停止。
           </p>
           <p class="player-feedback" data-player-feedback role="status"></p>
         </section>
         <section class="music-playlist" aria-labelledby="playlist-title">
           <h2 id="playlist-title">
-            此刻的歌单 <span class="count">{tracks.length} 首</span>
+            播放列表 <span class="count">{tracks.length} 首</span>
           </h2>
-          <p class="playlist-description">{tracks.length} 首完整音乐</p>
           {tracks.map((track, index) => (
             <div class="music-track-row">
               <button
@@ -135,29 +130,23 @@ const scores = await publishedScores();
               ))}
             </ul>
           </details>
-          <p class="room-note">
-            安静也很好。
-            <br />
-            音乐不会自动响起。
-          </p>
         </section>
       </div>
     ) : (
       <div class="empty-state">
         <Icon name="music" size={32} />
-        <h2>歌单还很安静。</h2>
-        <p>新的旋律，会在以后慢慢加入。</p>
+        <h2>暂无音乐</h2>
       </div>
     )}
     {scores.length > 0 && (
       <section class="music-scores" aria-labelledby="scores-title">
         <div class="music-scores-heading">
-          <h2 id="scores-title">我的口琴谱</h2>
+          <h2 id="scores-title">口琴谱</h2>
           <a class="text-link" href={withBase('music/scores/')}>
             全部琴谱
           </a>
         </div>
-        <p>把喜欢的旋律，留成可以随时翻开的谱子。</p>
+
         <ul>
           {scores.map((score) => (
             <li>

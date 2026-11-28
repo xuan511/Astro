@@ -80,11 +80,6 @@ function initSearch() {
       kindLabel.textContent = `范围：${searchScopes[selected]}`;
       removeKind.setAttribute('aria-label', `移除范围：${searchScopes[selected]}`);
     }
-    function emptyMessage() {
-      return kind.value === 'all'
-        ? '输入关键词，搜索公开文章与项目。'
-        : `输入关键词，在${searchScopes[kind.value as keyof typeof searchScopes]}中查找。`;
-    }
     async function run() {
       const seq = ++sequence,
         query = input.value.trim();
@@ -105,14 +100,14 @@ function initSearch() {
         );
       if (!query) {
         results.replaceChildren();
-        status.textContent = emptyMessage();
+        status.textContent = '';
         results.setAttribute('aria-busy', 'false');
         return;
       }
       if (!cachedIndex) {
         results.replaceChildren();
         results.setAttribute('aria-busy', 'true');
-        status.textContent = '正在翻找…';
+        status.textContent = '搜索中…';
       }
       try {
         const entries = cachedIndex ?? (await loadIndex());

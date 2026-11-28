@@ -6,28 +6,23 @@ import { formatDate } from '../../lib/paths';
 const notes = await recentNotes();
 ---
 
-<Base title="随手记下" description="不必每次都写成长篇。一句话，一点想法，也值得有个去处。">
+<Base title="随记" description="随记。">
   <div class="shell">
-    <PageHeading
-      title="一些生活的切片"
-      eyebrow="LITTLE MOMENTS"
-      description="不必每次都写成长篇。\n一句话，一点想法，也值得有个去处。"
-    />
+    <PageHeading title="随记" />
     <div class="notes-grid">
-      {notes.map((note, index) => (
+      {notes.map((note) => (
         <article class="note-card">
           <div>
             <time datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time>
             {note.data.demo && <span class="sample-badge">示例</span>}
           </div>
           <p>{note.data.body}</p>
-          <span>{String(index + 1).padStart(2, '0')} / a little thought</span>
         </article>
       ))}
     </div>
     {notes.length === 0 && (
       <div class="empty-state">
-        <h2>留一点空白，等下一次想起。</h2>
+        <h2>暂无随记</h2>
       </div>
     )}
   </div>

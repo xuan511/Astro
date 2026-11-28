@@ -395,24 +395,17 @@ main:focus {
   overflow-wrap: anywhere;
 }
 .page-heading {
-  padding-block: var(--space-6);
-  margin-bottom: var(--space-6);
+  padding-block: var(--space-5);
+  margin-bottom: var(--space-5);
   border-bottom: 1px solid var(--line);
 }
 .page-heading h1 {
-  margin: var(--space-3) 0 var(--space-4);
+  margin: 0;
   font: 600 clamp(1.75rem, 3vw, 2.125rem)/var(--leading-title) var(--sans);
   letter-spacing: -0.015em;
   overflow-wrap: anywhere;
 }
-.page-description {
-  max-width: var(--layout-reading);
-  color: var(--body);
-  font-size: var(--text-base);
-  line-height: var(--leading-body);
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-}
+
 .empty-state {
   padding: var(--space-8) var(--space-5);
   color: var(--muted);
@@ -486,18 +479,14 @@ main:focus {
     padding: var(--space-5);
   }
   .page-heading {
-    padding-block: var(--space-6) var(--space-5);
+    padding-block: var(--space-5);
     margin-bottom: var(--space-5);
   }
-  .page-description {
-    font-size: var(--text-sm);
-  }
+
   .site-footer {
     margin-top: var(--space-7);
   }
-  .footer-note {
-    display: none;
-  }
+
   .section-heading small {
     display: none;
   }

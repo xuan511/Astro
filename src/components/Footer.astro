@@ -12,37 +12,14 @@ import VisitCount from './VisitCount.astro';
       <p>
         © {new Date().getFullYear()} {site.author} · {site.title}
       </p>
-      <p class="footer-note">{site.footer}</p>
       <nav aria-label="页脚导航">
         <a href={withBase('archive/')}>归档</a>
         <a href={withBase('rss.xml')}>RSS</a>
         <a href={withBase('writing/')}>写作指南</a>
       </nav>
-      <p class="footer-credit">
-        布局参考：
-        <a href="https://github.com/Cuteleaf/Firefly" target="_blank" rel="noopener noreferrer">
-          Firefly
-        </a>{' '}
-        · 设计灵感：
-        <a
-          href="https://github.com/heiehiehi/XinghuisamaBlogs"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          XingHuiSama · XHBlogs
-        </a>{' '}
-        ·{' '}
-        <a
-          href="https://creativecommons.org/licenses/by-nc/4.0/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          CC BY-NC 4.0
-        </a>
-      </p>
     </>
   )}
-  <div class="footer-custom" set:html={footerHtml} />
+  {footerHtml.trim() && <div class="footer-custom" set:html={footerHtml} />}
   <div class="footer-statistics">
     <VisitCount metric="site_pv" label="访问" />
     <VisitCount metric="site_uv" label="访客" unit="位" />

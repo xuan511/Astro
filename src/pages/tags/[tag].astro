@@ -11,9 +11,4 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 ---
 
-<PostIndex
-  title={`# ${tag}`}
-  eyebrow="COLLECTION"
-  description={`一些有关「${tag}」的记录。`}
-  posts={posts}
-/>
+<PostIndex title={`# ${tag}`} description={`${tag} 标签文章。`} posts={posts} />

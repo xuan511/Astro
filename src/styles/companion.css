@@ -169,12 +169,7 @@
   margin: var(--space-2) 0 0;
   font-size: var(--text-xl);
 }
-.companion-picker-note {
-  margin: var(--space-3) 0 var(--space-5);
-  color: var(--muted);
-  font-size: var(--text-sm);
-  line-height: 1.7;
-}
+
 .atri-identity {
   display: flex;
   align-items: center;

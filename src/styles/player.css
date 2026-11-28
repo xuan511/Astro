@@ -552,11 +552,7 @@
   border-radius: 0;
   padding: var(--space-4) var(--space-2);
 }
-.playlist-description {
-  color: var(--muted);
-  font-size: var(--text-sm);
-  margin: 0 0 var(--space-3);
-}
+
 .music-scores {
   margin-top: var(--space-6);
   padding-top: var(--space-5);
@@ -573,9 +569,7 @@
   margin: 0;
   font-size: var(--text-xl);
 }
-.music-scores > p {
-  color: var(--muted);
-}
+
 .music-scores a {
   display: inline-flex;
   align-items: center;
@@ -611,12 +605,7 @@
 .music-room + .notice {
   margin-top: var(--space-6);
 }
-.room-note {
-  font: italic var(--text-sm)/1.8 var(--serif);
-  color: var(--muted);
-  text-align: center;
-  margin-top: var(--space-5);
-}
+
 @keyframes player-pulse {
   to {
     opacity: 0.45;

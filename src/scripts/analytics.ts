@@ -28,7 +28,7 @@ function render(state: VisitState | { status: 'preview' | 'disabled' }) {
   });
   const message = {
     loading: '正在读取访问统计',
-    ready: '累计访问数据由不蒜子提供',
+    ready: '',
     error: '统计暂不可用，稍后访问时再试',
     preview: '本地或预览环境不计数',
     disabled: '访问统计已关闭',
